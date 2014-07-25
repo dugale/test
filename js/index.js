@@ -47,6 +47,9 @@ var app = {
 
         console.log('Received Event: ' + id);
 */
+/*
         window.location.href = 'home.html';
+*/
+        isLoggedIn();
     }
 };
