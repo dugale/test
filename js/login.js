@@ -1,4 +1,5 @@
 function logIn() {
+/*
 alert(jQuery("#email").val());
 alert(jQuery("#password").val());
 
@@ -6,4 +7,5 @@ alert(jQuery("#password").val());
         window.localStorage.setItem("id", "1");            
         window.location.href = 'home.html';
     }
+*/
 }
