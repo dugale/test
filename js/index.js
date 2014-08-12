@@ -49,7 +49,7 @@ var app = {
 
         console.log('Received Event: ' + id);
 
-        $("#loginForm").on("submit",handleLogin);
+        $("#loginForm").on("submit",app.handleLogin);
 
     }
 
