@@ -38,18 +38,67 @@ var app = {
     // Update DOM on a Received Event
     receivedEvent: function(id) {
 
+        /*
         var parentElement = document.getElementById(id);
         var listeningElement = parentElement.querySelector('.listening');
         var receivedElement = parentElement.querySelector('.received');
 
         listeningElement.setAttribute('style', 'display:none;');
         receivedElement.setAttribute('style', 'display:block;');
+        */
 
         console.log('Received Event: ' + id);
 
-/*
-        window.location.href = 'home.html';
-        isLoggedIn();
-*/
+        $("#loginForm").on("submit",handleLogin);
+
     }
+
+    checkPreAuth: function() {
+        var form = $("#loginForm");
+        if(window.localStorage["email"] != undefined && window.localStorage["password"] != undefined) {
+            $("#email", form).val(window.localStorage["email"]);
+            $("#password", form).val(window.localStorage["password"]);
+
+            console.log('Previous login information found.');
+            this.handleLogin();
+        }
+    }
+
+    handleLogin: function() {
+        var form = $("#loginForm");    
+        //disable the button so we can't resubmit while we wait
+        $("#submitButton",form).attr("disabled","disabled");
+        var e = $("#email", form).val();
+        var p = $("#password", form).val();
+        console.log("click");
+
+
+        /*
+        if(e != '' && p!= '') {
+            $.post("http://www.coldfusionjedi.com/demos/2011/nov/10/service.cfc?method=login&returnformat=json", {email:e,password:p}, function(res) {
+                if(res == true) {
+                    //store
+                    window.localStorage["email"] = e;
+                    window.localStorage["password"] = p;             
+                    $.mobile.changePage("home.html");
+                } else {
+                    navigator.notification.alert("Your login failed", function() {});
+                }
+             $("#submitButton").removeAttr("disabled");
+            },"json");
+        }
+        */
+
+        // testing
+        $.mobile.changePage("home.html");
+        console.log("redirect to home");
+
+        return false;
+    }
+
+
+
 };
+
+
+

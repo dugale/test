@@ -22,10 +22,7 @@
 
 </head>
 
-<!--
-<body onload="init()">
--->
-<body>
+<body onLoad="app.initialize();">
     
 <div id="loginPage" data-role="page">
 
@@ -48,14 +45,18 @@
 
         <input type="submit" value="Login" id="submitButton">
         </form>
-        
     </div>
-
     <div data-role="footer">
         <h4>&copy; U-Vend, Inc.</h4>
     </div>
-
 </div>
+
+
+<script>
+$("#loginPage").live("pageinit", function(e) {
+        app.checkPreAuth();
+    });
+</script>
 
 </body>
 </html>
