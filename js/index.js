@@ -47,7 +47,7 @@ var app = {
         receivedElement.setAttribute('style', 'display:block;');
         */
 
-        console.log('Received Event: ' + id);
+        alert('Received Event: ' + id);
 
         $("#loginForm").on("submit",this.handleLogin);
 
@@ -59,7 +59,7 @@ var app = {
             $("#email", form).val(window.localStorage["email"]);
             $("#password", form).val(window.localStorage["password"]);
 
-            console.log('Previous login information found.');
+            alert('Previous login information found.');
             this.handleLogin();
         }
     }
@@ -70,7 +70,7 @@ var app = {
         $("#submitButton",form).attr("disabled","disabled");
         var e = $("#email", form).val();
         var p = $("#password", form).val();
-        console.log("click");
+        alert("click");
 
 
         /*
@@ -91,7 +91,7 @@ var app = {
 
         // testing
         $.mobile.changePage("home.html");
-        console.log("redirect to home");
+        alert("redirect to home");
 
         return false;
     }
