@@ -47,11 +47,11 @@ var app = {
         receivedElement.setAttribute('style', 'display:block;');
         */
 
-        alert('Received Event: ' + id);
+        console.log('Received Event: ' + id);
 
         $("#loginForm").on("submit",this.handleLogin);
 
-    }
+    },
 
     checkPreAuth: function() {
         var form = $("#loginForm");
@@ -59,10 +59,10 @@ var app = {
             $("#email", form).val(window.localStorage["email"]);
             $("#password", form).val(window.localStorage["password"]);
 
-            alert('Previous login information found.');
+            console.log('Previous login information found.');
             this.handleLogin();
         }
-    }
+    },
 
     handleLogin: function() {
         var form = $("#loginForm");    
@@ -70,28 +70,31 @@ var app = {
         $("#submitButton",form).attr("disabled","disabled");
         var e = $("#email", form).val();
         var p = $("#password", form).val();
-        alert("click");
+        console.log("[handleLogin]");
 
-
-        /*
         if(e != '' && p!= '') {
-            $.post("http://www.coldfusionjedi.com/demos/2011/nov/10/service.cfc?method=login&returnformat=json", {email:e,password:p}, function(res) {
+            console.log("sending email and password");
+            $.post("http://www.u-vend.dayawebdevelopment.com/app/login", {email:e,password:p}, function(res) {
                 if(res == true) {
+                    console.log("got true");
                     //store
                     window.localStorage["email"] = e;
                     window.localStorage["password"] = p;             
                     $.mobile.changePage("home.html");
                 } else {
+                    console.log("got false");
                     navigator.notification.alert("Your login failed", function() {});
                 }
              $("#submitButton").removeAttr("disabled");
             },"json");
         }
-        */
+        //need to add else clause here
 
+        /*
         // testing
         $.mobile.changePage("home.html");
-        alert("redirect to home");
+        console.log("redirect to home");
+        */
 
         return false;
     }
