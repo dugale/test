@@ -62,6 +62,9 @@ var app = {
             console.log('Previous login information found.');
             this.handleLogin();
         }
+        else {
+            console.log('Previous login information was not found.');
+        }
     },
 
     handleLogin: function() {
@@ -72,32 +75,41 @@ var app = {
         var p = $("#password", form).val();
         console.log("[handleLogin]");
 
+
+
         if(e != '' && p!= '') {
             console.log("sending email and password");
-            $.post("http://www.u-vend.dayawebdevelopment.com/app/login", {email:e,password:p}, function(res) {
-                if(res == true) {
-                    console.log("got true");
-                    //store
-                    window.localStorage["email"] = e;
-                    window.localStorage["password"] = p;             
-                    $.mobile.changePage("home.html");
-                } else {
-                    console.log("got false");
-                    navigator.notification.alert("Your login failed", function() {});
-                }
-             $("#submitButton").removeAttr("disabled");
-            },"json");
+
+            $.ajax({
+                url: "http://u-vend.dayawebdevelopment.com/app/login",
+                type: "POST",
+                data: {email:e,password:p}, 
+                success: function(res) {
+                    if(res.result == true) {
+                        console.log("login succeeded");
+                        //store
+                        window.localStorage["email"] = e;
+                        window.localStorage["password"] = p;             
+                        $.mobile.changePage("home.html");
+                    } else {
+                        console.log("got false");
+                        navigator.notification.alert("Your login failed", function() {});
+                    }
+                    $("#submitButton").removeAttr("disabled");
+                },
+                error: function (jqXHR, textStatus, errorThrown) { 
+                    console.log("Connection With Server Failed", jqXHR.error + ' ' + textStatus + ' ' + errorThrown);
+                },
+                dataType: "json"
+            });
         }
-        //need to add else clause here
-
-        /*
-        // testing
-        $.mobile.changePage("home.html");
-        console.log("redirect to home");
-        */
-
         return false;
     }
+
+
+
+
+
 
 
 
