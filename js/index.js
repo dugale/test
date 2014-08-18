@@ -80,6 +80,7 @@ var app = {
         if(e != '' && p!= '') {
             console.log("sending email and password");
 
+            /*
             $.ajax({
                 url: "http://u-vend.dayawebdevelopment.com/app/login",
                 type: "POST",
@@ -102,6 +103,7 @@ var app = {
                 },
                 dataType: "json"
             });
+            */
         }
         return false;
     }
