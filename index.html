@@ -12,27 +12,39 @@
     <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.3/jquery.mobile.min.css" />
     <link rel="stylesheet" type="text/css" href="css/index.css" />
 
-    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.3/jquery.mobile.min.js"></script>
-
+    <!-- critical -->
     <script type="text/javascript" src="phonegap.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript" src="js/sha1.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.3/jquery.mobile.min.js"></script>
+    <!-- /critical -->
+    <!-- plugins -->
+    <!-- /plugins -->
+    <!-- themes -->
+    <!-- /themes -->
+
 
 
 
 </head>
 
+<!-- fires after dom, images, scripts are loaded -->
 <body onLoad="app.initialize();">
 <body>
+
+
+<div id="launcherPage" data-role="page" data-theme="b">
+loading
+</div>
     
-<div id="loginPage" data-role="page">
+<div id="loginPage" data-role="page" data-theme="b">
 
     <div data-role="header">
             <h1>U-Vend, Inc.</h1>
     </div>
 
     <div data-role="content">    
-
         <form id="loginForm">
         <div data-role="fieldcontain" class="ui-hide-label">
             <label for="email">Email:</label>
@@ -47,19 +59,37 @@
         <input type="submit" value="Login" id="submitButton">
         </form>
     </div>
+
     <div data-role="footer">
         <h4>&copy; U-Vend, Inc.</h4>
     </div>
 </div>
 
-<!--
-<script>
-$("#loginPage").live("pageinit", function(e) {
 
-        // app.checkPreAuth();
-    });
-</script>
--->
+<div id="brandsPage" data-role="page" data-theme="b">
+
+    <div data-role="header">
+            <h1>U-Vend, Inc.</h1>
+    </div><!-- /header -->
+
+    <div data-role="content">   
+        <p><a href="#loginPage">Back to login</a></p>   
+        <p><a href="" onclick="app.fetchBrands()">Fetch brands</a></p>
+        <p><a href="" onclick="app.logout()">Log out</a></p>
+        <div id="brandsDisplay">
+        </div>
+
+
+
+    </div><!-- /content -->
+
+    <div data-role="footer">
+        <h4>&copy; U-Vend, Inc.</h4>
+    </div>
+
+
+</div>
+
 
 
 </body>
