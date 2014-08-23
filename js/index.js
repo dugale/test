@@ -125,6 +125,9 @@ var app = {
                 console.log("[Redirecting to brands.]");
                 $("#submitButton").removeAttr("disabled");
                 jQuery.mobile.changePage('#brandsPage');
+                // clear the form
+                $("#loginForm")[0].reset();    
+
             } else {
                 console.log("[Login failed.]", function() {});
                 $("#submitButton").removeAttr("disabled");
