@@ -46,6 +46,8 @@ var app = {
         
         $("#loginForm").on("submit",this.handleLogin);
 
+        jQuery("#breadCrumb0").jBreadCrumb();
+
     },
 
     "servers": {
@@ -122,9 +124,9 @@ var app = {
                 localStorage["token_private"] = r.token_private;
                 localStorage["token_public"] = r.token_public;
                 // redirect brands
-                console.log("[Redirecting to brands.]");
+                console.log("[Redirecting to home.]");
                 $("#submitButton").removeAttr("disabled");
-                jQuery.mobile.changePage('#brandsPage');
+                jQuery.mobile.changePage('#homePage');
                 // clear the form
                 $("#loginForm")[0].reset();    
 
@@ -170,6 +172,7 @@ var app = {
         jQuery.mobile.changePage('#loginPage');
 
     },
+
 
 };
 
