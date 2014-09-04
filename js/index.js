@@ -41,7 +41,14 @@ var app = {
     // Update DOM on a Received Event
     receivedEvent: function(id) {
         console.log('[receivedEvent: ' +  id + ']');
+
+        // disable 300ms click delay on mobile apps
+        $(function() {
+            FastClick.attach(document.body);
+        });
+
         jQuery.mobile.changePage('#loginPage');
+
         $("#loginForm").on("submit",this.handleLogin);
 
         // populate machine cups totals list view
