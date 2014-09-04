@@ -110,20 +110,14 @@ loading
 
     <div data-role="content">   
 
-    <ul data-role="listview" data-inset="true">
-
-            <li>
-                <a href="#machineFlavorsPage">Machine 1<span class="ui-li-count">250</span></a>
-            </li>
-            <li>
-                <a href="#machineFlavorsPage">Machine 1<span class="ui-li-count">250</span></a>
-            </li>
-            <li>
-                <a href="#machineFlavorsPage">Machine 1<span class="ui-li-count">250</span></a>
-            </li>
-        </ul>
-
-
+    <!--
+        // gets populated with this...
+        <li>
+            <a href="#machineFlavorsPage">Machine 1<span class="ui-li-count">250</span></a>
+        </li>
+    -->
+    <ul id="machineCupsPageList" data-role="listview" data-inset="true">
+    </ul>
 
     </div>
 
@@ -151,19 +145,11 @@ loading
 
     <div data-role="content">   
 
-
-        <ul data-role="listview" data-inset="true">
-
-            <li>
-                <a href="#machineFlavorEditPage">Cotton Candy<span class="ui-li-count">100</span></a>
-            </li>
-            <li>
-                <a href="#machineFlavorEditPage">Chocolate<span class="ui-li-count">89</span></a>
-            </li>
-            <li>
-                <a href="#machineFlavorEditPage">Swirl<span class="ui-li-count">18</span></a>
-            </li>
+        <!-- populated by js -->
+        <!-- <li> <a href="#machineFlavorEditPage">Swirl<span class="ui-li-count">18</span></a> </li> -->
+        <ul id="machineFlavorsPageList" data-role="listview" data-inset="true">
         </ul>
+
         <a href="#machineFlavorAddPage" data-role="button">Add Flavor</a>
 
     </div>
@@ -180,7 +166,7 @@ loading
 
 
     <div data-role="header">
-        <a href="" data-rel="back" data-icon="arrow-l" data-iconpos="notext">Back</a>
+    <a href="" data-rel="back" data-icon="arrow-l" data-iconpos="notext">Back</a> 
         <h1>Machine 15</h1>
     </div>
 
@@ -188,6 +174,7 @@ loading
     <div data-role="content">   
 
 
+        <form id="flavorEditForm">
         <ul data-role="listview" data-inset="true">
 
             <li>
@@ -201,7 +188,7 @@ loading
             <li>
             <div data-role="fieldcontain">
             <label for="cups-slider">Cups</label>
-            <input name="cups-slider" id="cups-slider" type="range" min="0" max="200" value="75">
+            <input name="cups-slider" id="cups-slider" type="range" min="0" max="200" value="75" />
             </div>
             </li>
 
@@ -210,6 +197,7 @@ loading
                 <input type="submit" value="Delete Flavor" id="submitButton">
             </li>
         </ul>
+        </form>
 
     </div>
 
@@ -234,6 +222,7 @@ loading
     <div data-role="content">   
 
 
+        <form id="flavorAddForm">
         <ul data-role="listview" data-inset="true">
 
             <li>
@@ -251,7 +240,7 @@ loading
             <li>
             <div data-role="fieldcontain">
             <label for="cups-slider">Cups</label>
-            <input name="cups-slider" id="cups-slider" type="range" min="0" max="200" value="75">
+            <input name="cups-slider" id="cups-slider" type="range" min="0" max="200" value="75" />
             </div>
             </li>
 
@@ -259,6 +248,60 @@ loading
                 <input type="submit" value="Add Flavor" id="submitButton">
             </li>
         </ul>
+        </form>
+
+    </div>
+
+    <div data-role="footer">
+        <h4>&copy; U-Vend, Inc.</h4>
+    </div>
+
+
+</div>
+
+<div id="rollsOfCoinPage" data-role="page" data-theme="a">
+
+    <div data-role="header">
+        <a href="" data-rel="back" data-icon="arrow-l" data-iconpos="notext">Back</a>
+        <h1>Rolls Of Coin (Routes)</h1>
+        <a href="#rollsOfCoinPage" data-ajax="false" data-icon="refresh" data-iconpos="notext">Reload</a>
+    </div>
+
+
+
+    <div data-role="content">   
+
+    <h2>8/23/2014</h2>
+
+        <ul data-role="listview" data-inset="true">
+
+            <li>
+                <a href="#rollsOfCoinEditPage">Van 15 - 111 W. Hampshire..., 50 Quarters, 30 Dimes, 15 Nickels, 0 Pennies</a>
+            </li>
+            <li>
+                <a href="#rollsOfCoinEditPage">Van 15 - 111 W. Hampshire..., 50 Quarters, 30 Dimes, 15 Nickels, 0 Pennies</a>
+            </li>
+            <li>
+                <a href="#rollsOfCoinEditPage">Van 15 - 111 W. Hampshire..., 50 Quarters, 30 Dimes, 15 Nickels, 0 Pennies</a>
+            </li>
+        </ul>
+
+    <h2>8/24/2014</h2>
+
+        <ul data-role="listview" data-inset="true">
+
+            <li>
+                <a href="#rollsOfCoinEditPage">Van 15 - 111 W. Hampshire..., 50 Quarters, 30 Dimes, 15 Nickels, 0 Pennies</a>
+            </li>
+            <li>
+                <a href="#rollsOfCoinEditPage">Van 15 - 111 W. Hampshire..., 50 Quarters, 30 Dimes, 15 Nickels, 0 Pennies</a>
+            </li>
+            <li>
+                <a href="#rollsOfCoinEditPage">Van 15 - 111 W. Hampshire..., 50 Quarters, 30 Dimes, 15 Nickels, 0 Pennies</a>
+            </li>
+        </ul>
+
+
 
     </div>
 
@@ -270,14 +313,11 @@ loading
 </div>
 
 
-
-
 <div id="rollsOfCoinEditPage" data-role="page" data-theme="a">
 
     <div data-role="header">
-        <a href="" data-rel="back" data-icon="delete">Cancel</a>
-        <h1>Rolls Of Coin</h1>
-        <a href="" data-icon="check">Save</a>
+        <a href="" data-rel="back" data-icon="arrow-l" data-iconpos="notext">Back</a>
+        <h1>Rolls Of Coin (8/25/2014)</h1>
     </div>
 
 
@@ -287,19 +327,43 @@ loading
     <h2>8/23/2014</h2>
     <h3>Van 15 - 111 W. Hampshire...</h3>
 
-    <div><a href="">Save</a></div>
+        <form id="coinEditForm">
+        <ul data-role="listview" data-inset="true">
+            <li>
+            <div data-role="fieldcontain">
+            <label for="quarters-slider">Quarters</label>
+            <input name="quarters-slider" id="quarters-slider" type="range" min="0" max="200" value="75" />
+            </div>
+            </li>
 
-    <table>
-    <tbody>
-        <tr><th>Quarters</th><td>5</td></tr>
-        <tr><th>Dimes</th><td>50</td></tr>
-        <tr><th>Nickels</th><td>20</td></tr>
-        <tr><th>Pennies</th><td>0</td></tr>
-    </tbody>
-    </table>
+            <li>
+            <div data-role="fieldcontain">
+            <label for="dimes-slider">Dimes</label>
+            <input name="dimes-slider" id="dimes-slider" type="range" min="0" max="200" value="75" />
+            </div>
+            </li>
+
+            <li>
+            <div data-role="fieldcontain">
+            <label for="nickels-slider">Nickels</label>
+            <input name="nickels-slider" id="nickels-slider" type="range" min="0" max="200" value="75" />
+            </div>
+            </li>
 
 
-    <div><a href="">Save</a></div>
+            <li>
+            <div data-role="fieldcontain">
+            <label for="pennies-slider">Pennies</label>
+            <input name="pennies-slider" id="pennies-slider" type="range" min="0" max="200" value="75" />
+            </div>
+            </li>
+
+            <li>
+                <input type="submit" value="Update Coins" id="submitButton">
+            </li>
+        </ul>
+        </form>
+
     </div>
 
     <div data-role="footer">

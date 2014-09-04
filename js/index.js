@@ -41,12 +41,13 @@ var app = {
     // Update DOM on a Received Event
     receivedEvent: function(id) {
         console.log('[receivedEvent: ' +  id + ']');
-
         jQuery.mobile.changePage('#loginPage');
-        
         $("#loginForm").on("submit",this.handleLogin);
 
-        jQuery("#breadCrumb0").jBreadCrumb();
+        // populate machine cups totals list view
+        $(document).on("pagecreate", "#machineCupsPage", app.fetchMachineCupTotals);
+
+        $(document).on("pagebeforeshow", "#machineFlavorsPage", app.fetchMachineFlavors);
 
     },
 
@@ -114,6 +115,42 @@ var app = {
         }
         return false;
     },
+    logout: function() {
+        
+        console.log["logout"];
+
+        if (localStorage) {
+            //console.log("[Public key before clearning localStorage:" + localStorage.getItem("token_public") + "]");
+            localStorage.clear();
+            //console.log("[Public key after clearning localStorage:" + localStorage.getItem("token_public") + "]");
+        }
+
+        console.log("[Redirecting to login.]");
+        jQuery.mobile.changePage('#loginPage');
+
+    },
+    fetchBrands: function() {
+        
+        console.log["fetchBrands"];
+
+        app.servers.private.query('fetchbrands', {}, app.callbacks.fetchBrands);
+    },
+    fetchMachineCupTotals: function() {
+        
+        console.log["fetchMachineCupTotals"];
+
+        app.servers.private.query('fetchmachinecuptotals', {}, app.callbacks.fetchMachineCupTotals);
+    },
+    fetchMachineFlavors: function() {
+        
+        console.log["fetchMachineFlavors"];
+
+        //populated when the list item was clicked in previous page
+        var info = $('#machineFlavorsPage').data("info");
+        var mId = info['id'];
+
+        app.servers.private.query('fetchmachineflavors', {machineId:mId}, app.callbacks.fetchMachineFlavors);
+    },
     "callbacks": {
         "handleLogin": function(r) {
             console.log("[callback: handleLogin");
@@ -151,27 +188,105 @@ var app = {
             }
 
         },
-    },
-    fetchBrands: function() {
-        
-        console.log["fetchBrands"];
+        "fetchMachineCupTotals": function(r) { 
 
-        app.servers.private.query('fetchbrands', {}, app.callbacks.fetchBrands);
-    },
-    logout: function() {
-        
-        console.log["logout"];
+            console.log("[fetchMachineCupTotals callback]");
 
-        if (localStorage) {
-            //console.log("[Public key before clearning localStorage:" + localStorage.getItem("token_public") + "]");
-            localStorage.clear();
-            //console.log("[Public key after clearning localStorage:" + localStorage.getItem("token_public") + "]");
-        }
+            if(r && r.code && r.code === "SUCCESS") {
+                console.log("[fetchMachineCupTotals SUCCESS]");
 
-        console.log("[Redirecting to login.]");
-        jQuery.mobile.changePage('#loginPage');
+                var output = '';
+                $.each(r.machines, function(index, value){                   
 
-    },
+                    var mId = value.machineId;
+                    var mType = value.machineType;
+                    var mCups = value.machineCupsTotal;
+
+                    output += '<li id="'+ mId +'"><a href="#machineFlavorsPage">' + mType + '-' + mId + '<span class="ui-li-count">' + mCups + '</span></a></li>';
+                });
+
+                //append list to ul
+                $("#machineCupsPageList").html(output).promise().done(function () {
+                    //use a promise() to wait for append to finish 
+                    //done() will run after append is done
+                    //add the click event for the redirection to happen to #machineFlavorsPage
+                    $(this).on("click", "li", function (e) {
+                        // override default event action
+                        e.preventDefault();
+                        //store the information in the next page's data
+                        $("#machineFlavorsPage").data("info", { id: this.id });
+                        // redirect
+                        console.log("[machineCupsPageList forwarding to machineFlavorsPage]");
+                        $.mobile.changePage("#machineFlavorsPage");
+                    });
+
+                    // refresh listview so that jq mobile applies styles to added li elements
+                    $(this).listview("refresh");
+                });
+
+
+            }
+            else {
+                console.log("[fetchMachineCupTotals ERROR]");
+                console.log("[fetchMachineCupTotals message:" + r.message + "]");
+                console.log("[Redirecting to login.]");
+                jQuery.mobile.changePage('#loginPage');
+            }
+
+        },
+        "fetchMachineFlavors": function(r) { 
+
+            console.log("[fetchMachineFlavors callback]");
+
+            if(r && r.code && r.code === "SUCCESS") {
+                console.log("[fetchMachineFlavors SUCCESS]");
+
+                var output = '';
+                $.each(r.machineFlavors, function(index, value){                   
+
+                    var mId = value.machineId;
+                    var mfId = value.machineFlavorId;
+                    var fId = value.flavorId;
+                    var fName = value.flavorName;
+                    var fQuantity = value.flavorQuantity;
+
+                    console.log("[fetchMachineFlavors mId:" + mId + "]");
+                    console.log("[fetchMachineFlavors mfId:" + mfId + "]");
+                    console.log("[fetchMachineFlavors fName:" + fName + "]");
+                    console.log("[fetchMachineFlavors fQuantity:" + fQuantity + "]");
+                    console.log("[fetchMachineFlavors ------------------]");
+
+                    output += '<li id="'+ mfId +'"><a href="#machineFlavorEditPage">' + fName + '<span class="ui-li-count">' + fQuantity + '</span></a></li>';
+                });
+
+                //append list to ul
+                $("#machineFlavorsPageList").html(output).promise().done(function () {
+                    //use a promise() to wait for append to finish 
+                    //done() will run after append is done
+                    //add the click event for the redirection to happen to #machineFlavorsPage
+                    $(this).on("click", "li", function (e) {
+                        e.preventDefault();
+                        //store the information in the next page's data
+                        $("#machineFlavorEditPage").data("info", { id: this.id });
+                        // redirect
+                        $.mobile.changePage("#machineFlavorEditPage");
+                    });
+
+                    // refresh listview so that jq mobile applies styles to added li elements
+                    $(this).listview("refresh");
+                });
+
+
+            }
+            else {
+                console.log("[fetchMachineFlavors ERROR]");
+                console.log("[fetchMachineFlavors message:" + r.message + "]");
+                console.log("[Redirecting to login.]");
+                jQuery.mobile.changePage('#loginPage');
+            }
+
+        },
+    }, // end callbacks
 
 
 };
