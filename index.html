@@ -13,28 +13,24 @@
     <!-- <link rel="stylesheet" type="text/css" href="css/index.css" /> -->
 
 
-    <!-- critical -->
     <script src="phonegap.js" type="text/javascript"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.min.js" type="text/javascript"></script>
     <script src="js/index.js" type="text/javascript"></script>
     <script src="js/sha1.js" type="text/javascript"></script>
-    <script src="js/fastclick.js" type="text/javascript"></script>
+
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.3/jquery.mobile.min.js" type="text/javascript"></script>
-    <!-- /critical -->
-    <!-- plugins -->
-    <!-- /plugins -->
-    <!-- themes -->
-    <!-- /themes -->
 </head>
 
 <!-- fires after dom, images, scripts are loaded -->
 <body onLoad="app.initialize();">
-<body>
 
 
+<!-- splash screen -->
 <div id="launcherPage" data-role="page" data-theme="a">
-loading
+<!--
+<img src="img/logo.png" style="display:block; margin-left:auto;margin-right:auto;">
+-->
 </div>
     
 <div id="loginPage" data-role="page" data-theme="a">
@@ -46,15 +42,23 @@ loading
     <div data-role="content">    
 
         <form id="loginForm">
+
+        <ul data-role="listview" data-inset="true">
+
+        <li>
         <div data-role="fieldcontain" class="ui-hide-label">
             <label for="email">Email:</label>
             <input type="text" name="email" id="email" value="" placeholder="Email" />
         </div>
+        </li>
 
+        <li>
         <div data-role="fieldcontain" class="ui-hide-label">
             <label for="password">Password:</label>
             <input type="password" name="password" id="password" value="" placeholder="Password" />
         </div>
+        </li>
+        </ul>
 
         <input type="submit" value="Login" id="submitButton">
         </form>
@@ -74,14 +78,11 @@ loading
 
 
     <div data-role="content">   
-        <!--
-        <p><a href="" data-role="button" onclick="app.fetchBrands()">Fetch brands</a></p>
-        <p><a href="#loginPage" data-role="button">Back to login</a></p>   
-        -->
-
-        <p><a href="#machineCupsPage" data-role="button">Machine Cups</a></p>   
-        <p><a href="#rollsOfCoinPage" data-role="button">Rolls Of Coin</a></p>   
-        <p><a href="" data-role="button" onclick="app.logout()">Log out</a></p>
+        <ul data-role="listview" data-inset="true">
+        <li><a href="#machineCupsPage" data-transition="slidefade">Machine Cups</a></li>
+        <li><a href="#rollsOfCoinPage" data-transition="slidefade">Rolls Of Coin</a></li>
+        <li><a href="" data-role="button" onclick="app.logout()">Log out</a></li>
+        </ul>
 
     </div>
 
@@ -99,16 +100,22 @@ loading
 
 <div id="machineCupsPage" data-role="page" data-theme="a">
 
+    <div data-role="panel" class="mypanel">
+        <p><a onclick="$('.mypanel:visible').panel('close');" data-role="button">Machine Cups</a></p>
+        <p><a href="#rollsOfCoinPage" data-role="button">Rolls Of Coin</a></p>
+        <p><a href="" data-role="button" onclick="app.logout()">Log out</a></p>
+    </div>
 
     <div data-role="header">
-        <a href="" data-rel="back" data-icon="arrow-l" data-iconpos="notext">Back</a>
-        <h1>Machine Cup Totals</h1>
-        <a href="#machineCupsPage" data-ajax="false" data-icon="refresh" data-iconpos="notext">Reload</a>
+        <a href="" data-rel="back" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slidefade">Back</a>
+        <h1>U-Vend, Inc.</h1>
+        <a onclick="$('.mypanel:visible').panel('open');" data-icon="bars" data-iconpos="notext" class="ui-btn-right">Bars</a>
     </div>
 
 
     <div data-role="content">   
 
+    <h1>Machine Cups</h1>
     <!--
         // gets populated with this...
         <li>
@@ -134,22 +141,28 @@ loading
 
 <div id="machineFlavorsPage" data-role="page" data-theme="a">
 
+    <div data-role="panel" class="mypanel">
+        <p><a href="#machineCupsPage" data-role="button">Machine Cups</a></p>
+        <p><a href="#rollsOfCoinPage" data-role="button">Rolls Of Coin</a></p>
+        <p><a href="" data-role="button" onclick="app.logout()">Log out</a></p>
+    </div>
 
     <div data-role="header">
-        <a href="" data-rel="back" data-icon="arrow-l" data-iconpos="notext">Back</a>
-        <h1>Machine 15 - Cups</h1>
-        <a href="#machineFlavorsPage" data-icon="refresh" data-iconpos="notext">Reload</a>
+        <a href="" data-rel="back" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slidefade">Back</a>
+        <h1>U-Vend, Inc.</h1>
+        <a onclick="$('.mypanel:visible').panel('open');" data-icon="bars" data-iconpos="notext" class="ui-btn-right">Bars</a>
     </div>
 
 
     <div data-role="content">   
 
+        <h1>Machine Flavors</h1>
         <!-- populated by js -->
         <!-- <li> <a href="#machineFlavorEditPage">Swirl<span class="ui-li-count">18</span></a> </li> -->
         <ul id="machineFlavorsPageList" data-role="listview" data-inset="true">
         </ul>
 
-        <a href="#machineFlavorAddPage" data-role="button">Add Flavor</a>
+        <a id="machineFlavorAddLink" href="#machineFlavorAddPage" data-role="button">Add Flavor</a>
 
     </div>
 
@@ -165,8 +178,8 @@ loading
 
 
     <div data-role="header">
-    <a href="" data-rel="back" data-icon="arrow-l" data-iconpos="notext">Back</a> 
-        <h1>Machine 15</h1>
+        <a href="" data-rel="back" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slidefade">Back</a>
+        <h1>U-Vend, Inc.</h1>
     </div>
 
 
@@ -178,22 +191,29 @@ loading
 
             <li>
             <div data-role="fieldcontain">
-            <label>Flavor</label>
-            <input type=text class="ui-disabled" value="Cotton Candy">
+            <label>Machine</label>
+            <input id="flavoredit-machine" type=text class="ui-disabled">
             </div>
             </li>
 
 
             <li>
             <div data-role="fieldcontain">
-            <label for="cups-count">Cups</label>
-            <input name="cups-count" id="cups-count" type="number" value=75 />
+            <label>Flavor</label>
+            <input id="flavoredit-flavor" type=text class="ui-disabled">
             </div>
             </li>
 
             <li>
-                <input type="submit" value="Update Flavor" id="submitButton">
-                <input type="submit" value="Delete Flavor" id="submitButton">
+            <div data-role="fieldcontain">
+            <label for="flavoredit-count">Cups</label>
+            <input id="flavoredit-count" name="flavoredit-count" id="cups-count" type="number" />
+            </div>
+            </li>
+
+            <li>
+                <input type="submit" value="Update Flavor" id="flavorEditUpdateSubmitButton">
+                <input type="submit" value="Delete Flavor" id="flavorEditDeleteSubmitButton">
             </li>
         </ul>
         </form>
@@ -213,8 +233,8 @@ loading
 
 
     <div data-role="header">
-        <a href="" data-rel="back" data-icon="arrow-l" data-iconpos="notext">Back</a>
-        <h1>Machine 15</h1>
+        <a href="" data-rel="back" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slidefade">Back</a>
+        <h1>U-Vend, Inc.</h1>
     </div>
 
 
@@ -226,11 +246,16 @@ loading
 
             <li>
             <div data-role="fieldcontain">
-            <label for="flavor-select">Flavor</label>
-            <select name="flavor-select" id="flavor-select">
-                    <option></option>
-                    <option value="Blueberry">Blueberry</option>
-                    <option value="Orange">Orange</option>
+            <label for="flavorAddMachine">Machine</label>
+            <input name="flavorAddMachine" id="flavorAddMachine" type=text class="ui-disabled">
+            </div>
+            </li>
+
+
+            <li>
+            <div data-role="fieldcontain">
+            <label for="flavorAddFlavor">Flavor</label>
+            <select name="flavorAddFlavor" id="flavorAddFlavor">
             </select>
             </div>
             </li>
@@ -238,13 +263,13 @@ loading
 
             <li>
             <div data-role="fieldcontain">
-            <label for="cups-count">Cups</label>
-            <input name="cups-count" id="cups-count" type="number" value="75" />
+            <label for="flavorAddCupsCount">Cups</label>
+            <input name="flavorAddCupsCount" id="flavorAddCupsCount" type="number" value="0" />
             </div>
             </li>
 
             <li>
-                <input type="submit" value="Add Flavor" id="submitButton">
+                <input type="submit" value="Add Flavor" id="flavorAddSubmitButton">
             </li>
         </ul>
         </form>
@@ -260,28 +285,33 @@ loading
 
 <div id="rollsOfCoinPage" data-role="page" data-theme="a">
 
-    <div data-role="header">
-        <a href="" data-rel="back" data-icon="arrow-l" data-iconpos="notext">Back</a>
-        <h1>Rolls Of Coin (Routes)</h1>
-        <a href="#rollsOfCoinPage" data-ajax="false" data-icon="refresh" data-iconpos="notext">Reload</a>
+    <div data-role="panel" class="mypanel">
+        <p><a href="#machineCupsPage" data-role="button">Machine Cups</a></p>
+        <p><a onclick="$('.mypanel:visible').panel('close');" data-role="button">Rolls Of Coin</a></p>
+        <p><a href="" data-role="button" onclick="app.logout()">Log out</a></p>
     </div>
 
-
+    <div data-role="header">
+        <a href="" data-rel="back" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slidefade">Back</a>
+        <h1>U-Vend, Inc.</h1>
+        <a onclick="$('.mypanel:visible').panel('open');" data-icon="bars" data-iconpos="notext" class="ui-btn-right">Bars</a>
+    </div>
 
     <div data-role="content">   
+    <h1>Rolls of Coin</h1>
 
     <h2>8/23/2014</h2>
 
         <ul data-role="listview" data-inset="true">
 
             <li>
-                <a href="#rollsOfCoinEditPage">Van 15 - 111 W. Hampshire..., 50 Quarters, 30 Dimes, 15 Nickels, 0 Pennies</a>
+                <a href="#rollsOfCoinEditPage" data-transition="slidefade">Van 15 - 111 W. Hampshire..., 50 Quarters, 30 Dimes, 15 Nickels, 0 Pennies</a>
             </li>
             <li>
-                <a href="#rollsOfCoinEditPage">Van 15 - 111 W. Hampshire..., 50 Quarters, 30 Dimes, 15 Nickels, 0 Pennies</a>
+                <a href="#rollsOfCoinEditPage" data-transition="slidefade">Van 15 - 111 W. Hampshire..., 50 Quarters, 30 Dimes, 15 Nickels, 0 Pennies</a>
             </li>
             <li>
-                <a href="#rollsOfCoinEditPage">Van 15 - 111 W. Hampshire..., 50 Quarters, 30 Dimes, 15 Nickels, 0 Pennies</a>
+                <a href="#rollsOfCoinEditPage" data-transition="slidefade">Van 15 - 111 W. Hampshire..., 50 Quarters, 30 Dimes, 15 Nickels, 0 Pennies</a>
             </li>
         </ul>
 
@@ -290,13 +320,13 @@ loading
         <ul data-role="listview" data-inset="true">
 
             <li>
-                <a href="#rollsOfCoinEditPage">Van 15 - 111 W. Hampshire..., 50 Quarters, 30 Dimes, 15 Nickels, 0 Pennies</a>
+                Van 15 - 111 W. Hampshire..., 50 Quarters, 30 Dimes, 15 Nickels, 0 Pennies
             </li>
             <li>
-                <a href="#rollsOfCoinEditPage">Van 15 - 111 W. Hampshire..., 50 Quarters, 30 Dimes, 15 Nickels, 0 Pennies</a>
+                Van 15 - 111 W. Hampshire..., 50 Quarters, 30 Dimes, 15 Nickels, 0 Pennies
             </li>
             <li>
-                <a href="#rollsOfCoinEditPage">Van 15 - 111 W. Hampshire..., 50 Quarters, 30 Dimes, 15 Nickels, 0 Pennies</a>
+                Van 15 - 111 W. Hampshire..., 50 Quarters, 30 Dimes, 15 Nickels, 0 Pennies
             </li>
         </ul>
 
@@ -315,10 +345,9 @@ loading
 <div id="rollsOfCoinEditPage" data-role="page" data-theme="a">
 
     <div data-role="header">
-        <a href="" data-rel="back" data-icon="arrow-l" data-iconpos="notext">Back</a>
-        <h1>Rolls Of Coin (8/25/2014)</h1>
+        <a href="" data-rel="back" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slidefade">Back</a>
+        <h1>U-Vend, Inc.</h1>
     </div>
-
 
 
     <div data-role="content">   
@@ -358,7 +387,7 @@ loading
             </li>
 
             <li>
-                <input type="submit" value="Update Coins" id="submitButton">
+                <input type="submit" value="Update Coins" id="rollsOfCoinEditSubmitButton">
             </li>
         </ul>
         </form>
@@ -367,6 +396,23 @@ loading
 
     <div data-role="footer">
         <h4>&copy; U-Vend, Inc.</h4>
+    </div>
+
+
+</div>
+
+<div id="modalDialogTest" data-role="dialog" data-theme="a">
+
+    <div data-role="header">
+    <h1> </h1>
+    </div>
+
+    <div data-role="content">   
+        <p id="modalDialogMessage"></p>
+        <a id="modalDialogRedirect" href="" data-role=button>OK</a>
+    </div>
+
+    <div data-role="footer">
     </div>
 
 
