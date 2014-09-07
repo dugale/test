@@ -58,12 +58,12 @@ var app = {
         $("#flavorEditDeleteSubmitButton").attr("disabled","disabled");
         $("#rollsOfCoinEditSubmitButton").attr("disabled","disabled");
 
-        // bind the "on click" event listner only once during initial page else will get added multiple times when "back" button is used
+        // bind the "on vclick" event listner only once during initial page else will get added multiple times when "back" button is used
         $(document).on("pagecreate", "#machineCupsPage", app.machineCupTotalsAttachClickListner);
         // populate list view every time page is visited 
         $(document).on("pagebeforeshow", "#machineCupsPage", app.fetchMachineCupTotals);
 
-        // bind the "on click" event listner only once during initial page else will get added multiple times when "back" button is used
+        // bind the "on vclick" event listner only once during initial page else will get added multiple times when "back" button is used
         $(document).on("pagecreate", "#machineFlavorsPage", app.machineFlavorsAttachClickListner);
         // populate list view every time page is visited 
         $(document).on("pagebeforeshow", "#machineFlavorsPage", app.fetchMachineFlavors);
@@ -178,8 +178,8 @@ var app = {
 
         console.log["machineCupTotalsAttachClickListner"];
 
-        // attach "on click" event listener to all list items
-        $("#machineCupsPageList").on("click", "li", function (e) {
+        // attach "on vclick" event listener to all list items
+        $("#machineCupsPageList").on("vclick", "li", function (e) {
             // override default event action
             e.preventDefault();
 
@@ -187,7 +187,7 @@ var app = {
 
             // redirect
             console.log("[machineCupsPageList forwarding to machineFlavorsPage]");
-            $.mobile.changePage("#machineFlavorsPage", {transition: "slidefade"});
+            $.mobile.changePage("#machineFlavorsPage", {transition: "slide"});
         });
 
     },
@@ -203,13 +203,13 @@ var app = {
 
         console.log["machineFlavorsAttachClickListner"];
 
-        $("#machineFlavorsPageList").on("click", "li", function (e) {
+        $("#machineFlavorsPageList").on("vclick", "li", function (e) {
             e.preventDefault();
 
             localStorage["machineFlavorId"] = this.id;
 
             // redirect
-            $.mobile.changePage("#machineFlavorEditPage", {transition: "slidefade"});
+            $.mobile.changePage("#machineFlavorEditPage", {transition: "slide"});
         });
     },
 
