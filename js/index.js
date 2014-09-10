@@ -51,14 +51,19 @@ var app = {
 
         $("#loginForm").on("submit",this.handleLogin);
 
-        // disable for now
-        // $("#flavorAddForm").on("submit",this.machineFlavorAddSubmit);
+        $("#flavorAddForm").on("submit",this.machineFlavorAddSubmit);
+
+        // default form action
+        $("#flavorEditForm").on("submit",this.machineFlavorEditSubmit);
+
+        /* disable  forms
         $("#flavorAddSubmitButton").attr("disabled","disabled");
         $("#flavorEditUpdateSubmitButton").attr("disabled","disabled");
         $("#flavorEditDeleteSubmitButton").attr("disabled","disabled");
         $("#rollsOfCoinEditSubmitButton").attr("disabled","disabled");
+        */
 
-        // bind the "on vclick" event listner only once during initial page else will get added multiple times when "back" button is used
+        // bind the "on vclick" event listner only once during initial page else will get added multiple times when "data-rel=back" button is used
         $(document).on("pagecreate", "#machineCupsPage", app.machineCupTotalsAttachClickListner);
         // populate list view every time page is visited 
         $(document).on("pagebeforeshow", "#machineCupsPage", app.fetchMachineCupTotals);
@@ -68,11 +73,11 @@ var app = {
         // populate list view every time page is visited 
         $(document).on("pagebeforeshow", "#machineFlavorsPage", app.fetchMachineFlavors);
 
-        // populate form every time page is visited
-        $(document).on("pagebeforeshow", "#machineFlavorEditPage", app.machineFlavorEdit);
-
         // populate list view every time page is visited 
         $(document).on("pagebeforeshow", "#machineFlavorAddPage", app.machineFlavorAdd);
+
+        // populate form every time page is visited
+        $(document).on("pagebeforeshow", "#machineFlavorEditPage", app.machineFlavorEdit);
     },
 
     /*
@@ -93,14 +98,14 @@ var app = {
             });
         },
         "public": {
-            "URL":  "http://u-vend.dayawebdevelopment.com/app/request",
+            "URL":  "http://u-vend.dayawebdevelopment.com/app/",
             // perform unauthenticated query
             "query": function (action, data, callback) { console.log("[public.query]");
                 app.servers.query(app.servers.public.URL+action, "GET", data, callback);
             }
         },
         "private": {
-            "URL": "http://u-vend.dayawebdevelopment.com/app/request",
+            "URL": "http://u-vend.dayawebdevelopment.com/app/",
             // perform authenticated query
             "query": function (action, data, callback) { console.log("[private.query]");
                 if (!localStorage || !localStorage.getItem("token_public") || !localStorage.getItem("token_private")) {
@@ -171,7 +176,7 @@ var app = {
         
         console.log["fetchMachineCupTotals"];
 
-        app.servers.private.query('fetchmachinecuptotals', {}, app.callbacks.fetchMachineCupTotals);
+        app.servers.private.query('machinesdisplay', {}, app.callbacks.fetchMachineCupTotals);
 
     },
     machineCupTotalsAttachClickListner: function() {
@@ -197,7 +202,7 @@ var app = {
 
         var mId = localStorage.getItem("machineId");
 
-        app.servers.private.query('fetchmachineflavors', {machineId:mId}, app.callbacks.fetchMachineFlavors);
+        app.servers.private.query('machineflavorsdisplay', {machineId:mId}, app.callbacks.fetchMachineFlavors);
     },
     machineFlavorsAttachClickListner: function() {
 
@@ -213,16 +218,6 @@ var app = {
         });
     },
 
-    machineFlavorEdit: function() {
-        
-        console.log["machineFlavorEdit"];
-
-        var mfId = localStorage.getItem("machineFlavorId");
-
-        app.servers.private.query('fetchmachineflavor', {machineFlavorId:mfId}, app.callbacks.machineFlavorEdit);
-    },
-
-
     machineFlavorAdd: function() {
         
         console.log["machineFlavorAdd"];
@@ -231,10 +226,9 @@ var app = {
 
         // fetch machine name (type and id)
         // fetch flavor options
-        app.servers.private.query('fetchmachineavailableflavors', {machineId:mId}, app.callbacks.machineFlavorAdd);
+        app.servers.private.query('machineflavoradd', {machineId:mId}, app.callbacks.machineFlavorAdd);
 
     },
-
     machineFlavorAddSubmit: function() {
 
         console.log('[machineFlavorAddSubmit]');
@@ -247,18 +241,67 @@ var app = {
         var fId = $("#flavorAddFlavor", form).val();
         var cups = $("#flavorAddCupsCount", form).val();
 
-        // add form validation 
-        if(1) {
-            console.log("[Sending add flavor info.]");
+        console.log("[Submitting machine flavor add info.]");
+        app.servers.private.query('machineflavoraddsubmit', {machineId:mId,flavorId:fId,flavorQuantity:cups}, app.callbacks.machineFlavorAddSubmit);
+        $("#flavorAddSubmitButton").removeAttr("disabled");
 
-            app.servers.private.query('addmachineflavor', {machineId:mId,flavorId:fId,}, app.callbacks.machineFlavorAdd);
-        }
-        else {
-            console.log("[Login failed.]", function() {});
-            $("#submitButton").removeAttr("disabled");
-        }
+        // stop form from submitting 'get' request by returning false
         return false;
     },
+    machineFlavorEdit: function() {
+        
+        console.log["machineFlavorEdit"];
+
+        var mId = localStorage.getItem("machineId");
+        var mfId = localStorage.getItem("machineFlavorId");
+
+        app.servers.private.query('machineflavoredit', {machineId:mId, machineFlavorId:mfId}, app.callbacks.machineFlavorEdit);
+    },
+    machineFlavorEditSubmit: function() {
+
+        // one form - two possible actions: update & delete 
+        // update & delete have separate callbacks
+
+        console.log('[machineFlavorEditSubmit]');
+
+        var form = $("#flavorEditForm");    
+
+        //disable both buttons so we can't resubmit while we wait
+        $("#flavorEditUpdateSubmitButton",form).attr("disabled","disabled");
+        $("#flavorEditDeleteSubmitButton",form).attr("disabled","disabled");
+
+        var mId = localStorage.getItem("machineId");
+        var mfId = localStorage.getItem("machineFlavorId");
+
+        var cups = $("#flavorEditCount", form).val();
+        var fId = $("#flavorEditFlavorId", form).val();
+        var formType = $("#submitClicked", form).val();
+
+        if (formType === "update") {
+
+            console.log('[machineFlavorEditSubmit - Update Flavor]');
+
+            console.log("[Submitting machine flavor edit info.]");
+            app.servers.private.query('machineflavorupdatesubmit', {machineId:mId,machineFlavorId:mfId,flavorId:fId,flavorQuantity:cups}, app.callbacks.machineFlavorUpdateSubmit);
+        }
+        else {
+            // it's a delete request
+            console.log('[machineFlavorEditSubmit - Delete Flavor]');
+
+            console.log("[Submitting machine flavor delete request.]");
+            app.servers.private.query('machineflavordeletesubmit', {machineId:mId,machineFlavorId:mfId,flavorQuantity:cups}, app.callbacks.machineFlavorDeleteSubmit);
+
+        }
+
+        // enable both buttons
+        $("#flavorEditUpdateSubmitButton").removeAttr("disabled");
+        $("#flavorEditDeleteSubmitButton").removeAttr("disabled");
+
+        // stop form from submitting 'get' request by returning false
+        return false;
+
+    },
+
 
     /*
     //  json callbacks 
@@ -328,15 +371,14 @@ var app = {
 
                 // data error - customize modal dialog and return
                 if (r.result === false) {
+
                     console.log("[fetchMachineFlavors: " + r.message + "]");
                     console.log("[fetchMachineFlavors redirecting to #machineCupsPage]");
-
                     $('#modalDialogMessage').html(r.message);
                     $('#modalDialogRedirect').attr('href','#machineCupsPage');
-
-                    jQuery.mobile.changePage('#modalDialogTest');
-
+                    jQuery.mobile.changePage('#modalDialog');
                     return;
+
                 }
 
                 var output = '';
@@ -347,8 +389,8 @@ var app = {
                     var fId = value.flavorId;
                     var fName = value.flavorName;
                     var fQuantity = value.flavorQuantity;
-
                     output += '<li id="'+ mfId +'"><a href="#machineFlavorEditPage">' + fName + '<span class="ui-li-count">' + fQuantity + '</span></a></li>';
+
                 });
 
                 //append list to ul
@@ -368,35 +410,6 @@ var app = {
             }
 
         },
-        "machineFlavorEdit": function(r) { 
-
-            console.log("[machineFlavorEdit callback]");
-
-            if(r && r.code && r.code === "SUCCESS") {
-                console.log("[machineFlavorEdit SUCCESS]");
-
-                mf = r.machineFlavor;
-
-                var machineId = mf.machineId;
-                var machineType = mf.machineType;
-                var machineFlavorId = mf.machineFlavorId;
-                var flavorId = mf.flavorId;
-                var flavorName = mf.flavorName;
-                var flavorQuantity = mf.flavorQuantity;
-
-                $("#flavoredit-machine").val(machineType + '-' + machineId);
-                $("#flavoredit-flavor").val(flavorName);
-                $("#flavoredit-count").val(flavorQuantity);
-
-            }
-            else {
-                console.log("[machineFlavorEdit ERROR]");
-                console.log("[machineFlavorEdit message:" + r.message + "]");
-                console.log("[Redirecting to login.]");
-                jQuery.mobile.changePage('#loginPage');
-            }
-
-        },
         "machineFlavorAdd": function(r) { 
 
             console.log("[machineFlavorAdd callback]");
@@ -404,17 +417,40 @@ var app = {
             if(r && r.code && r.code === "SUCCESS") {
                 console.log("[machineFlavorAdd SUCCESS]");
 
-                // data error - customize modal dialog and return
+                // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
-                    console.log("[fetchMachineFlavors: " + r.message + "]");
-                    console.log("[fetchMachineFlavors redirecting to #machineCupsPage]");
 
-                    $('#modalDialogMessage').html(r.message);
-                    $('#modalDialogRedirect').attr('href','#machineCupsPage');
+                    if (r.resultcode === "MACHINE DOES NOT EXIST") {
 
-                    jQuery.mobile.changePage('#modalDialogTest');
+                        console.log("[machineFlavorAdd redirecting to #machineCupsPage]");
+                        $('#modalDialogMessage').html('Machine no longer exists.');
+                        $('#modalDialogRedirect').attr('href','#machineCupsPage');
+                        jQuery.mobile.changePage('#modalDialog');
+                        return;
+                    }
+                    else if (r.resultcode === "MACHINE BRAND HAS NO FLAVORS") {
+                        console.log("[machineFlavorAdd redirecting to #machineFlavorsPage]");
+                        $('#modalDialogMessage').html('Please assign at least one flavor to this machine\'s brand before adding a flavor to the machine.');
+                        $('#modalDialogRedirect').attr('href','#machineFlavorsPage');
+                        jQuery.mobile.changePage('#modalDialog');
+                        return;
+                    }
+                    else if (r.resultcode === "ALL BRAND FLAVORS ASSIGNED TO MACHINE") {
+                        console.log("[machineFlavorAdd redirecting to #machineFlavorsPage]");
+                        $('#modalDialogMessage').html('All available flavors for this machine\'s brand have already been assigned to this machine.');
+                        $('#modalDialogRedirect').attr('href','#machineFlavorsPage');
+                        jQuery.mobile.changePage('#modalDialog');
+                        return;
+                    }
+                    else {
+                        // unrecognized error - forward to machineCupsPage
+                        console.log("[machineFlavorAdd redirecting to #machineCupsPage]");
+                        $('#modalDialogMessage').html(r.resultcode);
+                        $('#modalDialogRedirect').attr('href','#machineCupsPage');
+                        jQuery.mobile.changePage('#modalDialog');
+                        return;
 
-                    return;
+                    }
                 }
 
                 all = r.machineAvailableFlavors;
@@ -435,8 +471,138 @@ var app = {
                     output += '<option value="'+ fId +'">' + fName + '</option>';
                 });
 
+
+
                 //update dropdown
-                $("#flavorAddFlavor").html(output)
+                $("#flavorAddFlavor").html(output);
+
+                $("#flavorAddFlavor").selectmenu('refresh');
+
+
+            }
+            else {
+                console.log("[machineFlavorAdd ERROR]");
+                console.log("[machineFlavorAdd message:" + r.message + "]");
+                console.log("[Redirecting to login.]");
+                jQuery.mobile.changePage('#loginPage');
+            }
+
+        },
+        "machineFlavorAddSubmit": function(r) { 
+
+            console.log("[machineFlavorAddSubmit callback]");
+
+            if(r && r.code && r.code === "SUCCESS") {
+                console.log("[machineFlavorAddSubmit SUCCESS]");
+
+                // record no longer exists? - customize modal dialog and return
+                if (r.result === false) {
+
+                    console.log("[machineFlavorAddSubmit: " + r.resultcode + "]");
+
+                    if (r.resultcode === "MACHINE DOES NOT EXIST") {
+
+                        console.log("[machineFlavorAddSubmit redirecting to #machineCupsPage]");
+                        $('#modalDialogMessage').html('Machine no longer exists.');
+                        $('#modalDialogRedirect').attr('href','#machineCupsPage');
+                        jQuery.mobile.changePage('#modalDialog');
+                    }
+                    else if (r.resultcode === "FLAVOR DOES NOT EXIST") {
+
+                        // redraw form
+                        console.log("[machineFlavorAddSubmit redirecting to #machineFlavorEditPage]");
+                        $('#modalDialogMessage').html('Flavor no longer exists.');
+                        $('#modalDialogRedirect').attr('href','#machineFlavorEditPage');
+                        jQuery.mobile.changePage('#modalDialog');
+                    }
+                    else if (r.resultcode === "FLAVOR EXISTS FOR MACHINE") {
+
+                        // redraw form
+                        console.log("[machineFlavorAddSubmit redirecting to #machineFlavorEditPage]");
+                        $('#modalDialogMessage').html('Flavor is already assigned to machine.');
+                        $('#modalDialogRedirect').attr('href','#machineFlavorEditPage');
+                        jQuery.mobile.changePage('#modalDialog');
+                    }
+                    else {
+
+                        // unrecognized error - forward to machineCupsPage
+                        console.log("[machineFlavorAddSubmit redirecting to #machineCupsPage]");
+                        $('#modalDialogMessage').html(r.resultcode);
+                        $('#modalDialogRedirect').attr('href','#machineCupsPage');
+                        jQuery.mobile.changePage('#modalDialog');
+
+                    }
+                }
+
+                // flavor added to machine - show modal dialog and send to machineflavors page
+                console.log("[machineFlavorAddSubmit redirecting to #machineFlavorsPage]");
+                $('#modalDialogMessage').html('Flavor added to machine.');
+                $('#modalDialogRedirect').attr('href','#machineFlavorsPage');
+                $.mobile.changePage('#modalDialog');
+
+            }
+            else {
+                console.log("[machineFlavorAddSubmit ERROR]");
+                console.log("[machineFlavorAddSubmit message:" + r.message + "]");
+                console.log("[Redirecting to login.]");
+                jQuery.mobile.changePage('#loginPage');
+            }
+
+        },
+        "machineFlavorEdit": function(r) { 
+
+            console.log("[machineFlavorEdit callback]");
+
+            if(r && r.code && r.code === "SUCCESS") {
+                console.log("[machineFlavorEdit SUCCESS]");
+
+                // record no longer exists? - customize modal dialog and return
+                if (r.result === false) {
+
+                    if (r.resultcode === "MACHINE DOES NOT EXIST") {
+
+                        console.log("[machineFlavorAdd redirecting to #machineCupsPage]");
+                        $('#modalDialogMessage').html('This machine no longer exists.');
+                        $('#modalDialogRedirect').attr('href','#machineCupsPage');
+                        jQuery.mobile.changePage('#modalDialog');
+                        return;
+                    }
+                    else if (r.resultcode === "MACHINE FLAVOR DOES NOT EXIST") {
+                        console.log("[machineFlavorAdd redirecting to #machineFlavorsPage]");
+                        $('#modalDialogMessage').html('This flavor no longer exists.');
+                        $('#modalDialogRedirect').attr('href','#machineFlavorsPage');
+                        jQuery.mobile.changePage('#modalDialog');
+                        return;
+                    }
+                    else {
+
+                        // unrecognized error - forward to machineCupsPage
+                        console.log("[machineFlavorAdd redirecting to #machineCupsPage]");
+                        $('#modalDialogMessage').html(r.resultcode);
+                        $('#modalDialogRedirect').attr('href','#machineCupsPage');
+                        jQuery.mobile.changePage('#modalDialog');
+                        return;
+
+                    }
+                }
+
+
+                var machineId = r.machineId;
+                var machineFlavorId = r.machineFlavorId;
+                var machineType = r.machineType;
+                var brandId = r.brandId;
+                var flavorId = r.flavorId;
+                var flavorName = r.flavorName;
+                var flavorQuantity = r.flavorQuantity;
+
+                $("#flavorEditMachine").val(machineType + '-' + machineId);
+
+                //update flavor name
+                $("#flavorEditFlavorId").val(flavorId);
+                $("#flavorEditFlavorName").val(flavorName);
+                // update quantity
+                $("#flavorEditCount").val(flavorQuantity);
+
 
 
             }
@@ -448,7 +614,114 @@ var app = {
             }
 
         },
+        "machineFlavorUpdateSubmit": function(r) { 
+
+            console.log("[machineFlavorUpdateSubmit callback]");
+
+            if(r && r.code && r.code === "SUCCESS") {
+                console.log("[machineFlavorUpdateSubmit SUCCESS]");
+
+                // record no longer exists? - customize modal dialog and return
+                if (r.result === false) {
+
+                    console.log("[machineFlavorUpdateSubmit: " + r.resultcode + "]");
+
+                    if (r.resultcode === "MACHINE DOES NOT EXIST") {
+
+                        console.log("[machineFlavorUpdateSubmit redirecting to #machineCupsPage]");
+                        $('#modalDialogMessage').html('This machine no longer exists.');
+                        $('#modalDialogRedirect').attr('href','#machineCupsPage');
+                        jQuery.mobile.changePage('#modalDialog');
+                    }
+                    else if (r.resultcode === "MACHINE FLAVOR DOES NOT EXIST") {
+
+                        // redraw form
+                        console.log("[machineFlavorUpdateSubmit redirecting to #machineFlavorsPage]");
+                        $('#modalDialogMessage').html('This flavor no longer exists.');
+                        $('#modalDialogRedirect').attr('href','#machineFlavorsPage');
+                        jQuery.mobile.changePage('#modalDialog');
+                    }
+                    else {
+
+                        // unrecognized error - forward to machineCupsPage
+                        console.log("[machineFlavorUpdateSubmit redirecting to #machineCupsPage]");
+                        $('#modalDialogMessage').html(r.resultcode);
+                        $('#modalDialogRedirect').attr('href','#machineCupsPage');
+                        jQuery.mobile.changePage('#modalDialog');
+
+                    }
+                }
+
+                // flavor added to machine - show modal dialog and send to machineflavors page
+                console.log("[machineFlavorUpdateSubmit redirecting to #machineFlavorsPage]");
+                $('#modalDialogMessage').html('Flavor updated.');
+                $('#modalDialogRedirect').attr('href','#machineFlavorsPage');
+                $.mobile.changePage('#modalDialog');
+
+            }
+            else {
+                console.log("[machineFlavorUpdateSubmit ERROR]");
+                console.log("[machineFlavorUpdateSubmit message:" + r.message + "]");
+                console.log("[Redirecting to login.]");
+                jQuery.mobile.changePage('#loginPage');
+            }
+
+        },
+        "machineFlavorDeleteSubmit": function(r) { 
+
+            console.log("[machineFlavorDeleteSubmit callback]");
+
+            if(r && r.code && r.code === "SUCCESS") {
+                console.log("[machineFlavorDeleteSubmit SUCCESS]");
+
+                // record no longer exists? - customize modal dialog and return
+                if (r.result === false) {
+
+                    console.log("[machineFlavorDeleteSubmit: " + r.resultcode + "]");
+
+                    if (r.resultcode === "MACHINE DOES NOT EXIST") {
+
+                        console.log("[machineFlavorUpdateSubmit redirecting to #machineCupsPage]");
+                        $('#modalDialogMessage').html('There was nothing to remove because this machine no longer exists.');
+                        $('#modalDialogRedirect').attr('href','#machineCupsPage');
+                        jQuery.mobile.changePage('#modalDialog');
+                    }
+                    else if (r.resultcode === "MACHINE FLAVOR DOES NOT EXIST") {
+
+                        // redraw form
+                        console.log("[machineFlavorUpdateSubmit redirecting to #machineFlavorsPage]");
+                        $('#modalDialogMessage').html('There was nothing to remove because this flavor no longer exists.');
+                        $('#modalDialogRedirect').attr('href','#machineFlavorsPage');
+                        jQuery.mobile.changePage('#modalDialog');
+                    }
+                    else {
+
+                        // unrecognized error - forward to machineCupsPage
+                        console.log("[machineFlavorUpdateSubmit redirecting to #machineCupsPage]");
+                        $('#modalDialogMessage').html(r.resultcode);
+                        $('#modalDialogRedirect').attr('href','#machineCupsPage');
+                        jQuery.mobile.changePage('#modalDialog');
+
+                    }
+                }
+
+                // flavor deleted from machine - show modal dialog and send to machineflavors page
+                console.log("[machineFlavorDeleteSubmit redirecting to #machineFlavorsPage]");
+                $('#modalDialogMessage').html('Flavor deleted.');
+                $('#modalDialogRedirect').attr('href','#machineFlavorsPage');
+                $.mobile.changePage('#modalDialog');
+
+            }
+            else {
+                console.log("[machineFlavorDeleteSubmit ERROR]");
+                console.log("[machineFlavorDeleteSubmit message:" + r.message + "]");
+                console.log("[Redirecting to login.]");
+                jQuery.mobile.changePage('#loginPage');
+            }
+
+        },
     }, 
+
 
 
 };

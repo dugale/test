@@ -22,8 +22,10 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.3/jquery.mobile.min.js" type="text/javascript"></script>
 </head>
 
-<!-- fire after dom, images, scripts are loaded -->
+<!-- fires after dom, images, scripts are loaded -->
 <body onLoad="app.initialize();">
+
+
 
 
 <!-- splash screen -->
@@ -31,6 +33,24 @@
 <!--
 <img src="img/logo.png" style="display:block; margin-left:auto;margin-right:auto;">
 -->
+</div>
+
+<!-- modal dialog -->
+<div id="modalDialog" data-role="dialog" data-theme="a" data-close-btn="none">
+
+    <div data-role="header">
+    <h1> </h1>
+    </div>
+
+    <div data-role="content">   
+        <p id="modalDialogMessage"></p>
+        <a id="modalDialogRedirect" href="" data-role=button>OK</a>
+    </div>
+
+    <div data-role="footer">
+    </div>
+
+
 </div>
     
 <div id="loginPage" data-role="page" data-theme="a">
@@ -75,8 +95,6 @@
             <h1>U-Vend, Inc.</h1>
     </div>
 
-
-
     <div data-role="content">   
         <ul data-role="listview" data-inset="true">
         <li><a href="#machineCupsPage" data-transition="slide">Machine Cups</a></li>
@@ -107,7 +125,8 @@
     </div>
 
     <div data-role="header">
-        <a href="" data-rel="back" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
+    <!-- <a href="" data-rel="back" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>-->
+        <a href="#homePage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
         <h1>U-Vend, Inc.</h1>
         <a onclick="$('.mypanel:visible').panel('open');" data-icon="bars" data-iconpos="notext" class="ui-btn-right">Bars</a>
     </div>
@@ -116,11 +135,8 @@
     <div data-role="content">   
 
     <h1>Machine Cups</h1>
-    <!--
-        // gets populated with this...
-        <li>
-            <a href="#machineFlavorsPage">Machine 1<span class="ui-li-count">250</span></a>
-        </li>
+    <!-- // gets populated with...
+        <li> <a href="#machineFlavorsPage">Machine 1<span class="ui-li-count">250</span></a> </li>
     -->
     <ul id="machineCupsPageList" data-role="listview" data-inset="true">
     </ul>
@@ -148,7 +164,7 @@
     </div>
 
     <div data-role="header">
-        <a href="" data-rel="back" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
+        <a href="#machineCupsPage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
         <h1>U-Vend, Inc.</h1>
         <a onclick="$('.mypanel:visible').panel('open');" data-icon="bars" data-iconpos="notext" class="ui-btn-right">Bars</a>
     </div>
@@ -175,67 +191,11 @@
 
 </div>
 
-
-<div id="machineFlavorEditPage" data-role="page" data-theme="a">
-
-
-    <div data-role="header">
-        <a href="" data-rel="back" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
-        <h1>U-Vend, Inc.</h1>
-    </div>
-
-
-    <div data-role="content">   
-
-
-        <form id="flavorEditForm">
-        <ul data-role="listview" data-inset="true">
-
-            <li>
-            <div data-role="fieldcontain">
-            <label>Machine</label>
-            <input id="flavoredit-machine" type=text class="ui-disabled">
-            </div>
-            </li>
-
-
-            <li>
-            <div data-role="fieldcontain">
-            <label>Flavor</label>
-            <input id="flavoredit-flavor" type=text class="ui-disabled">
-            </div>
-            </li>
-
-            <li>
-            <div data-role="fieldcontain">
-            <label for="flavoredit-count">Cups</label>
-            <input id="flavoredit-count" name="flavoredit-count" id="cups-count" type="number" />
-            </div>
-            </li>
-
-            <li>
-                <input type="submit" value="Update Flavor" id="flavorEditUpdateSubmitButton">
-                <input type="submit" value="Delete Flavor" id="flavorEditDeleteSubmitButton">
-            </li>
-        </ul>
-        </form>
-
-    </div>
-
-    <div data-role="footer">
-        <h4>&copy; U-Vend, Inc.</h4>
-    </div>
-
-
-</div>
-
-
-
 <div id="machineFlavorAddPage" data-role="page" data-theme="a">
 
 
     <div data-role="header">
-        <a href="" data-rel="back" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
+        <a href="#machineFlavorsPage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
         <h1>U-Vend, Inc.</h1>
     </div>
 
@@ -252,7 +212,6 @@
             <input name="flavorAddMachine" id="flavorAddMachine" type=text class="ui-disabled">
             </div>
             </li>
-
 
             <li>
             <div data-role="fieldcontain">
@@ -285,6 +244,65 @@
 
 </div>
 
+
+<div id="machineFlavorEditPage" data-role="page" data-theme="a">
+
+    <div data-role="header">
+        <a href="#machineFlavorsPage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
+        <h1>U-Vend, Inc.</h1>
+    </div>
+
+    <div data-role="content">   
+
+        <form id="flavorEditForm">
+        <ul data-role="listview" data-inset="true">
+
+            <li>
+            <div data-role="fieldcontain">
+            <label for="flavorEditMachine">Machine</label>
+            <input id="flavorEditMachine" name="flavorEditMachine" type=text class="ui-disabled">
+            </div>
+            </li>
+
+            <li>
+            <div data-role="fieldcontain">
+            <label for="flavorEditFlavorName">Flavor</label>
+            <input id="flavorEditFlavorName" name="flavorEditFlavorName" type=text class="ui-disabled">
+            </div>
+            </li>
+
+
+            <li>
+            <div data-role="fieldcontain">
+            <label for="flavorEditCount">Cups</label>
+            <input id="flavorEditCount" name="flavorEditCount" type="number" />
+            </div>
+            </li>
+
+
+            <li>
+                <input type="submit" value="Update Flavor" id="flavorEditUpdateSubmitButton" onclick="$('#submitClicked').val('update')">
+                <input type="submit" value="Delete Flavor" id="flavorEditDeleteSubmitButton" onclick="$('#submitClicked').val('delete')">
+            </li>
+        </ul>
+
+            <input type="hidden" name="flavorEditFlavorId" id="flavorEditFlavorId" />
+            <input type="hidden" id="submitClicked" />
+
+        </form>
+
+    </div>
+
+    <div data-role="footer">
+        <h4>&copy; U-Vend, Inc.</h4>
+    </div>
+
+</div>
+
+
+
+
+
 <div id="rollsOfCoinPage" data-role="page" data-theme="a">
 
     <div data-role="panel" class="mypanel">
@@ -294,7 +312,7 @@
     </div>
 
     <div data-role="header">
-        <a href="" data-rel="back" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
+        <a href="#homePage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
         <h1>U-Vend, Inc.</h1>
         <a onclick="$('.mypanel:visible').panel('open');" data-icon="bars" data-iconpos="notext" class="ui-btn-right">Bars</a>
     </div>
@@ -347,7 +365,7 @@
 <div id="rollsOfCoinEditPage" data-role="page" data-theme="a">
 
     <div data-role="header">
-        <a href="" data-rel="back" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
+        <a href="#rollsOfCoinPage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
         <h1>U-Vend, Inc.</h1>
     </div>
 
@@ -403,22 +421,6 @@
 
 </div>
 
-<div id="modalDialogTest" data-role="dialog" data-theme="a">
-
-    <div data-role="header">
-    <h1> </h1>
-    </div>
-
-    <div data-role="content">   
-        <p id="modalDialogMessage"></p>
-        <a id="modalDialogRedirect" href="" data-role=button>OK</a>
-    </div>
-
-    <div data-role="footer">
-    </div>
-
-
-</div>
 
 </body>
 </html>
