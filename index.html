@@ -12,12 +12,11 @@
     <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.3/jquery.mobile.min.css" />
     <!-- <link rel="stylesheet" type="text/css" href="css/index.css" /> -->
 
-
     <script src="phonegap.js" type="text/javascript"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.min.js" type="text/javascript"></script>
     <script src="js/index.js" type="text/javascript"></script>
     <script src="js/sha1.js" type="text/javascript"></script>
-
+    <script src="js/jquery.validate.min.js" type="text/javascript"></script>
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.3/jquery.mobile.min.js" type="text/javascript"></script>
 </head>
@@ -68,14 +67,14 @@
         <li>
         <div data-role="fieldcontain" class="ui-hide-label">
             <label for="email">Email:</label>
-            <input type="text" name="email" id="email" value="" placeholder="Email" />
+            <input type="text" name="email" id="email" value="" placeholder="Email" required/>
         </div>
         </li>
 
         <li>
         <div data-role="fieldcontain" class="ui-hide-label">
             <label for="password">Password:</label>
-            <input type="password" name="password" id="password" value="" placeholder="Password" />
+            <input type="password" name="password" id="password" value="" placeholder="Password" required/>
         </div>
         </li>
         </ul>
@@ -97,9 +96,13 @@
 
     <div data-role="content">   
         <ul data-role="listview" data-inset="true">
-        <li><a href="#machineCupsPage" data-transition="slide">Machine Cups</a></li>
-        <li><a href="#rollsOfCoinPage" data-transition="slide">Rolls Of Coin</a></li>
-        <li><a href="" data-role="button" onclick="app.logout()">Log out</a></li>
+        <li><a href="#routeCupsRoutesPage" data-transition="slide">Route Schedule Cups</a></li>
+        <li><a href="#routeCoinsRoutesPage" data-transition="slide">Route Schedule Coins</a></li>
+        <li><a href="#vanCupsRoutesPage" data-transition="slide">Van Load Cups</a></li>
+        <li><a href="#vanCoinsRoutesPage" data-transition="slide">Van Load Coins</a></li>
+        <li><a href="#machineCupsRoutesPage" data-transition="slide">Machine Load Cups</a></li>
+        <li><a href="#machineCoinsRoutesPage" data-transition="slide">Machine Load Coins</a></li>
+        <li><a href="" data-role="button" onclick="app.logout()">Log Out</a></li>
         </ul>
 
     </div>
@@ -114,14 +117,566 @@
 
 
 
+<!-- route cups & coins -->
 
-
-<div id="machineCupsPage" data-role="page" data-theme="a">
+<div id="routeCupsRoutesPage" data-role="page" data-theme="a">
 
     <div data-role="panel" class="mypanel">
-        <p><a onclick="$('.mypanel:visible').panel('close');" data-role="button">Machine Cups</a></p>
-        <p><a href="#rollsOfCoinPage" data-role="button">Rolls Of Coin</a></p>
-        <p><a href="" data-role="button" onclick="app.logout()">Log out</a></p>
+        <p><a onclick="$('.mypanel:visible').panel('close');" data-role="button">Route Schedule Cups</a></p>
+        <!--<p><a href="#routeCupsPage" data-role="button">Route Schedule Cups</a></p>-->
+        <p><a href="#routeCoinsRoutesPage" data-role="button">Route Schedule Coins</a></p>
+        <p><a href="#vanCupsRoutesPage" data-role="button">Van Load Cups</a></p>
+        <p><a href="#vanCoinsRoutesPage" data-role="button">Van Load Coins</a></p>
+        <p><a href="#machineCupsRoutesPage" data-role="button">Machine Load Cups</a></p>
+        <p><a href="#machineCoinsRoutesPage" data-role="button">Machine Load Coins</a></p>
+        <p><a href="" data-role="button" onclick="app.logout()">Log Out</a></p>
+    </div>
+
+    <div data-role="header">
+        <a href="#homePage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
+        <h1>U-Vend, Inc.</h1>
+        <a onclick="$('.mypanel:visible').panel('open');" data-icon="bars" data-iconpos="notext" class="ui-btn-right">Bars</a>
+    </div>
+
+
+    <div data-role="content">   
+
+    <h1>Route Schedule Cups - Routes</h1>
+    <!-- // gets populated with...
+        <li> <a href="#machineFlavorsPage">Machine 1<span class="ui-li-count">250</span></a> </li>
+    -->
+    <ul id="routeCupsRoutesPageList" data-role="listview" data-inset="true">
+    </ul>
+
+    </div>
+
+    <div data-role="footer">
+        <h4>&copy; U-Vend, Inc.</h4>
+    </div>
+
+
+</div>
+
+
+<div id="routeCupsMachinesPage" data-role="page" data-theme="a">
+    <div data-role="panel" class="mypanel">
+        <p><a href="#routeCupsRoutesPage" data-role="button">Route Schedule Cups</a></p>
+        <p><a href="#routeCoinsRoutesPage" data-role="button">Route Schedule Coins</a></p>
+        <p><a href="#vanCupsRoutesPage" data-role="button">Van Load Cups</a></p>
+        <p><a href="#vanCoinsRoutesPage" data-role="button">Van Load Coins</a></p>
+        <p><a href="#machineCupsRoutesPage" data-role="button">Machine Load Cups</a></p>
+        <p><a href="#machineCoinsRoutesPage" data-role="button">Machine Load Coins</a></p>
+        <p><a href="" data-role="button" onclick="app.logout()">Log Out</a></p>
+
+    </div>
+
+    <div data-role="header">
+        <a href="#routeCupsRoutesPage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
+        <h1>U-Vend, Inc.</h1>
+        <a onclick="$('.mypanel:visible').panel('open');" data-icon="bars" data-iconpos="notext" class="ui-btn-right">Bars</a>
+    </div>
+
+
+    <div data-role="content">   
+
+    <h1>Route Schedule Cups - Machines</h1>
+    <p id="routeCupsMachinesDateHeader"></p>
+    <p id="routeCupsMachinesVanNameHeader"></p>
+
+    <!-- // gets populated with...
+        <li> <a href="#machineFlavorsPage">Machine 1<span class="ui-li-count">250</span></a> </li>
+    -->
+    <ul id="routeCupsMachinesPageList" data-role="listview" data-inset="true">
+    </ul>
+
+    </div>
+
+    <div data-role="footer">
+        <h4>&copy; U-Vend, Inc.</h4>
+    </div>
+</div>
+
+<div id="routeCupsFlavorsPage" data-role="page" data-theme="a">
+    <div data-role="panel" class="mypanel">
+        <p><a href="#routeCupsRoutesPage" data-role="button">Route Schedule Cups</a></p>
+        <p><a href="#routeCoinsRoutesPage" data-role="button">Route Schedule Coins</a></p>
+        <p><a href="#vanCupsRoutesPage" data-role="button">Van Load Cups</a></p>
+        <p><a href="#vanCoinsRoutesPage" data-role="button">Van Load Coins</a></p>
+        <p><a href="#machineCupsRoutesPage" data-role="button">Machine Load Cups</a></p>
+        <p><a href="#machineCoinsRoutesPage" data-role="button">Machine Load Coins</a></p>
+        <p><a href="" data-role="button" onclick="app.logout()">Log Out</a></p>
+
+    </div>
+
+    <div data-role="header">
+    <!-- <a href="" data-rel="back" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>-->
+        <a href="#routeCupsMachinesPage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
+        <h1>U-Vend, Inc.</h1>
+        <a onclick="$('.mypanel:visible').panel('open');" data-icon="bars" data-iconpos="notext" class="ui-btn-right">Bars</a>
+    </div>
+
+
+    <div data-role="content">   
+
+    <h1>Route Schedule Cups - Flavors</h1>
+    <p id="routeCupsFlavorsDateHeader"></p>
+    <p id="routeCupsFlavorsVanNameHeader"></p>
+    <p id="routeCupsFlavorsMachineNameHeader"></p>
+
+
+        <ul id="routeCupsFlavorsPageList" data-role="listview" data-inset="true">
+        </ul>
+
+        <ul data-role="listview" data-inset="true">
+        <li><a id="routeCupsFlavorAddLink" href="#routeCupsFlavorAddPage" data-transition="slide">Add Flavor</a></li>
+        </ul> 
+
+    </div>
+
+    <div data-role="footer">
+        <h4>&copy; U-Vend, Inc.</h4>
+    </div>
+</div>
+
+<div id="routeCupsFlavorAddPage" data-role="page" data-theme="a">
+
+    <div data-role="header">
+        <a href="#routeCupsFlavorsPage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
+        <h1>U-Vend, Inc.</h1>
+    </div>
+
+
+    <div data-role="content">   
+
+    <h1>Route Schedule Cups</h1>
+    <p id="routeCupsFlavorAddDateHeader"></p>
+    <p id="routeCupsFlavorAddVanNameHeader"></p>
+    <p id="routeCupsFlavorAddMachineNameHeader"></p>
+
+        <form id="routeCupsFlavorAddForm">
+        <ul data-role="listview" data-inset="true">
+
+            <li>
+            <div data-role="fieldcontain">
+            <label for="routeCupsFlavorAddFlavorName">Flavor</label>
+            <select name="routeCupsFlavorAddFlavorName" id="routeCupsFlavorAddFlavorName">
+            </select>
+            </div>
+            </li>
+
+
+            <li>
+            <div data-role="fieldcontain">
+            <label for="routeCupsFlavorAddCupsCount">Cups</label>
+            <input name="routeCupsFlavorAddCupsCount" id="routeCupsFlavorAddCupsCount" type="number" value="0" required digits/>
+            </div>
+            </li>
+        </ul>
+
+        <input type="submit" value="Add Flavor" id="routeCupsFlavorAddSubmitButton">
+
+        </form>
+
+
+    </div>
+
+    <div data-role="footer">
+        <h4>&copy; U-Vend, Inc.</h4>
+    </div>
+</div>
+
+<div id="routeCupsFlavorEditPage" data-role="page" data-theme="a">
+
+    <div data-role="header">
+        <a href="#routeCupsFlavorsPage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
+        <h1>U-Vend, Inc.</h1>
+    </div>
+
+
+    <div data-role="content">   
+
+    <h1>Route Schedule Cups</h1>
+    <p id="routeCupsFlavorEditDateHeader"></p>
+    <p id="routeCupsFlavorEditVanNameHeader"></p>
+    <p id="routeCupsFlavorEditMachineNameHeader"></p>
+
+        <form id="routeCupsFlavorEditForm">
+        <ul data-role="listview" data-inset="true">
+
+            <li>
+            <div data-role="fieldcontain">
+            <label for="routeCupsFlavorEditFlavorName">Flavor</label>
+            <input id="routeCupsFlavorEditFlavorName" name="routeCupsFlavorEditFlavorName" type="text" readonly/>
+            </div>
+            </li>
+
+            <li>
+            <div data-role="fieldcontain">
+            <label for="routeCupsFlavorEditFlavorQuantity">Cups</label>
+            <input id="routeCupsFlavorEditFlavorQuantity" name="routeCupsFlavorEditFlavorQuantity" type="number" required digits/>
+            </div>
+            </li>
+        </ul>
+
+
+        <input type="submit" value="Update Flavor" id="routeCupsFlavorEditUpdateSubmitButton" onclick="$('#routeCupsFlavorEditSubmitClicked').val('update')">
+        <input type="submit" value="Delete Flavor" id="routeCupsFlavorEditDeleteSubmitButton" onclick="$('#routeCupsFlavorEditSubmitClicked').val('delete')">
+
+        <input type="hidden" name="routeCupsFlavorEditFlavorId" id="routeCupsFlavorEditFlavorId" />
+        <input type="hidden" id="routeCupsFlavorEditSubmitClicked" />
+
+        </form>
+
+
+    </div>
+
+    <div data-role="footer">
+        <h4>&copy; U-Vend, Inc.</h4>
+    </div>
+</div>
+
+
+
+<div id="routeCoinsRoutesPage" data-role="page" data-theme="a">
+
+    <div data-role="panel" class="mypanel">
+        <p><a href="#routeCupsRoutesPage" data-role="button">Route Schedule Cups</a></p>
+        <p><a onclick="$('.mypanel:visible').panel('close');" data-role="button">Route Schedule Coins</a></p>
+        <!--<p><a href="#routeCoinsPage" data-role="button">Route Schedule Coins</a></p>-->
+        <p><a href="#vanCupsRoutesPage" data-role="button">Van Load Cups</a></p>
+        <p><a href="#vanCoinsRoutesPage" data-role="button">Van Load Coins</a></p>
+        <p><a href="#machineCupsRoutesPage" data-role="button">Machine Load Cups</a></p>
+        <p><a href="#machineCoinsRoutesPage" data-role="button">Machine Load Coins</a></p>
+        <p><a href="" data-role="button" onclick="app.logout()">Log Out</a></p>
+    </div>
+
+    <div data-role="header">
+        <a href="#homePage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
+        <h1>U-Vend, Inc.</h1>
+        <a onclick="$('.mypanel:visible').panel('open');" data-icon="bars" data-iconpos="notext" class="ui-btn-right">Bars</a>
+    </div>
+
+
+    <div data-role="content">   
+
+    <h1>Route Schedule Coins - Routes</h1>
+    <!-- // gets populated with...
+        <li> <a href="#machineFlavorsPage">Machine 1<span class="ui-li-count">250</span></a> </li>
+    -->
+    <ul id="routeCoinsRoutesPageList" data-role="listview" data-inset="true">
+    </ul>
+
+    </div>
+
+    <div data-role="footer">
+        <h4>&copy; U-Vend, Inc.</h4>
+    </div>
+
+
+</div>
+
+
+<div id="routeCoinsMachinesPage" data-role="page" data-theme="a">
+    <div data-role="panel" class="mypanel">
+        <p><a href="#routeCupsRoutesPage" data-role="button">Route Schedule Cups</a></p>
+        <p><a href="#routeCoinsRoutesPage" data-role="button">Route Schedule Coins</a></p>
+        <p><a href="#vanCupsRoutesPage" data-role="button">Van Load Cups</a></p>
+        <p><a href="#vanCoinsRoutesPage" data-role="button">Van Load Coins</a></p>
+        <p><a href="#machineCupsRoutesPage" data-role="button">Machine Load Cups</a></p>
+        <p><a href="#machineCoinsRoutesPage" data-role="button">Machine Load Coins</a></p>
+        <p><a href="" data-role="button" onclick="app.logout()">Log Out</a></p>
+
+    </div>
+
+    <div data-role="header">
+        <a href="#routeCoinsRoutesPage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
+        <h1>U-Vend, Inc.</h1>
+        <a onclick="$('.mypanel:visible').panel('open');" data-icon="bars" data-iconpos="notext" class="ui-btn-right">Bars</a>
+    </div>
+
+
+    <div data-role="content">   
+
+    <h1>Route Schedule Coins - Machines</h1>
+    <p id="routeCoinsMachinesDateHeader"></p>
+    <p id="routeCoinsMachinesVanNameHeader"></p>
+    <!-- // gets populated with...
+        <li> <a href="#machineFlavorsPage">Machine 1<span class="ui-li-count">250</span></a> </li>
+    -->
+    <ul id="routeCoinsMachinesPageList" data-role="listview" data-inset="true">
+    </ul>
+
+    </div>
+
+    <div data-role="footer">
+        <h4>&copy; U-Vend, Inc.</h4>
+    </div>
+</div>
+
+<div id="routeCoinsLoadPage" data-role="page" data-theme="a">
+    <div data-role="panel" class="mypanel">
+        <p><a href="#routeCupsRoutesPage" data-role="button">Route Schedule Cups</a></p>
+        <p><a href="#routeCoinsRoutesPage" data-role="button">Route Schedule Coins</a></p>
+        <p><a href="#vanCupsRoutesPage" data-role="button">Van Load Cups</a></p>
+        <p><a href="#vanCoinsRoutesPage" data-role="button">Van Load Coins</a></p>
+        <p><a href="#machineCupsRoutesPage" data-role="button">Machine Load Cups</a></p>
+        <p><a href="#machineCoinsRoutesPage" data-role="button">Machine Load Coins</a></p>
+        <p><a href="" data-role="button" onclick="app.logout()">Log Out</a></p>
+
+    </div>
+
+    <div data-role="header">
+        <a href="#routeCoinsMachinesPage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
+        <h1>U-Vend, Inc.</h1>
+    </div>
+
+
+    <div data-role="content">   
+
+    <h1>Route Schedule Coins - Load</h1>
+    <p id="routeCoinsLoadDateHeader"></p>
+    <p id="routeCoinsLoadVanNameHeader"></p>
+    <p id="routeCoinsLoadMachineNameHeader"></p>
+
+
+
+        <form id="routeCoinsLoadForm">
+
+            <ul id="routeCoinsLoadFormList" data-role="listview" data-inset="true">
+                    <li> 
+                    <label for="routeCoinsLoadQuarters">Quarters:</label>
+                    <input type="number" name="routeCoinsLoadQuarters" id="routeCoinsLoadQuarters" value="0" required digits/> 
+                    </li>
+                    <li> 
+                    <label for="routeCoinsLoadDimes">Dimes:</label>
+                    <input type="number" name="routeCoinsLoadDimes" id="routeCoinsLoadDimes" value="0" required digits/> 
+                    </li>
+                    <li> 
+                    <label for="routeCoinsLoadNickels">Nickels:</label>
+                    <input type="number" name="routeCoinsLoadNickels" id="routeCoinsLoadNickels" value="0" required digits/> 
+                    </li>
+                    <li> 
+                    <label for="routeCoinsLoadPennies">Pennies:</label>
+                    <input type="number" name="routeCoinsLoadPennies" id="routeCoinsLoadPennies" value="0" required digits/> 
+                    </li>
+            </ul>
+
+            <input type="submit" value="Update Coins" id="routeCoinsLoadFormSubmitButton">
+
+
+
+        </form>
+
+
+
+
+    </div>
+
+    <div data-role="footer">
+        <h4>&copy; U-Vend, Inc.</h4>
+    </div>
+</div>
+
+<!-- end route cups & coins -->
+
+
+
+
+<!-- van cups & coins -->
+
+
+<div id="vanCupsRoutesPage" data-role="page" data-theme="a">
+
+    <div data-role="panel" class="mypanel">
+        <p><a href="#routeCupsRoutesPage" data-role="button">Route Schedule Cups</a></p>
+        <p><a href="#routeCoinsRoutesPage" data-role="button">Route Schedule Coins</a></p>
+        <p><a onclick="$('.mypanel:visible').panel('close');" data-role="button">Van Load Cups</a></p>
+        <!--<p><a href="#vanCupsPage" data-role="button">Van Load Cups</a></p>-->
+        <p><a href="#vanCoinsRoutesPage" data-role="button">Van Load Coins</a></p>
+        <p><a href="#machineCupsRoutesPage" data-role="button">Machine Load Cups</a></p>
+        <p><a href="#machineCoinsRoutesPage" data-role="button">Machine Load Coins</a></p>
+        <p><a href="" data-role="button" onclick="app.logout()">Log Out</a></p>
+    </div>
+
+    <div data-role="header">
+        <a href="#homePage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
+        <h1>U-Vend, Inc.</h1>
+        <a onclick="$('.mypanel:visible').panel('open');" data-icon="bars" data-iconpos="notext" class="ui-btn-right">Bars</a>
+    </div>
+
+
+    <div data-role="content">   
+
+    <h1>Van Load Cups - Routes</h1>
+    <!-- // gets populated with...
+        <li> <a href="#machineFlavorsPage">Machine 1<span class="ui-li-count">250</span></a> </li>
+    -->
+    <ul id="vanCupsRoutesPageList" data-role="listview" data-inset="true">
+    </ul>
+
+    </div>
+
+    <div data-role="footer">
+        <h4>&copy; U-Vend, Inc.</h4>
+    </div>
+
+
+</div>
+
+<div id="vanCupsFlavorsPage" data-role="page" data-theme="a">
+
+    <div data-role="header">
+        <a href="#vanCupsRoutesPage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
+        <h1>U-Vend, Inc.</h1>
+    </div>
+
+
+    <div data-role="content">   
+
+    <h1>Van Load Cups - Flavors</h1>
+
+    <p id="vanCupsFlavorsDateHeader"></p>
+    <p id="vanCupsFlavorsVanNameHeader"></p>
+
+        <div>Van Loaded: <span id="vanCupsFlavorsVanLoadStatus"></span></div>
+        <div>Van Loaded Driver: <span id="vanCupsFlavorsVanLoadStatusDriver"></span></div>
+
+        <form id="vanCupsFlavorsForm">
+
+            <ul id="vanCupsFlavorsFormList" data-role="listview" data-inset="true">
+            </ul>
+
+            <input type="submit" value="Confirm Van Loaded" id="vanCupsFlavorsLoadConfirmSubmitButton" onclick="$('#vanCupsFlavorsSubmitClicked').val('confirm')">
+            <input type="submit" value="Driver Confirm Van Loaded" id="vanCupsFlavorsLoadDriverConfirmSubmitButton" onclick="$('#vanCupsFlavorsSubmitClicked').val('driverconfirm')">
+
+
+            <input type="hidden" id="vanCupsFlavorsSubmitClicked" />
+        </form>
+
+
+
+
+
+
+    </div>
+
+    <div data-role="footer">
+        <h4>&copy; U-Vend, Inc.</h4>
+    </div>
+</div>
+
+
+<div id="vanCoinsRoutesPage" data-role="page" data-theme="a">
+
+    <div data-role="panel" class="mypanel">
+        <p><a href="#routeCupsRoutesPage" data-role="button">Route Schedule Cups</a></p>
+        <p><a href="#routeCoinsRoutesPage" data-role="button">Route Schedule Coins</a></p>
+        <p><a href="#vanCupsRoutesPage" data-role="button">Van Load Cups</a></p>
+        <p><a onclick="$('.mypanel:visible').panel('close');" data-role="button">Van Load Coins</a></p>
+        <!--<p><a href="#vanCoinsPage" data-role="button">Van Load Coins</a></p>-->
+        <p><a href="#machineCupsRoutesPage" data-role="button">Machine Load Cups</a></p>
+        <p><a href="#machineCoinsRoutesPage" data-role="button">Machine Load Coins</a></p>
+        <p><a href="" data-role="button" onclick="app.logout()">Log Out</a></p>
+    </div>
+
+    <div data-role="header">
+        <a href="#homePage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
+        <h1>U-Vend, Inc.</h1>
+        <a onclick="$('.mypanel:visible').panel('open');" data-icon="bars" data-iconpos="notext" class="ui-btn-right">Bars</a>
+    </div>
+
+
+    <div data-role="content">   
+
+    <h1>Van Load Coins - Routes</h1>
+    <!-- // gets populated with...
+        <li> <a href="#machineFlavorsPage">Machine 1<span class="ui-li-count">250</span></a> </li>
+    -->
+    <ul id="vanCoinsRoutesPageList" data-role="listview" data-inset="true">
+    </ul>
+
+    </div>
+
+    <div data-role="footer">
+        <h4>&copy; U-Vend, Inc.</h4>
+    </div>
+
+
+</div>
+
+<div id="vanCoinsLoadPage" data-role="page" data-theme="a">
+
+    <div data-role="header">
+        <a href="#vanCoinsRoutesPage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
+        <h1>U-Vend, Inc.</h1>
+    </div>
+
+
+    <div data-role="content">   
+
+    <h1>Van Load Coins - Load</h1>
+    <p id="vanCoinsLoadDateHeader"></p>
+    <p id="vanCoinsLoadVanNameHeader"></p>
+
+        <div>Van Loaded: <span id="vanCoinsLoadVanLoadStatus"></span></div>
+        <div>Van Loaded Driver: <span id="vanCoinsLoadVanLoadStatusDriver"></span></div>
+
+        <form id="vanCoinsLoadForm">
+
+            <ul id="vanCoinsLoadFormList" data-role="listview" data-inset="true">
+                    <li> 
+                    <label for="vanCoinsLoadQuarters">Quarters:</label>
+                    <input type="number" name="vanCoinsLoadQuarters" id="vanCoinsLoadQuarters" value="0" required digits readonly/> 
+                    </li>
+                    <li> 
+                    <label for="vanCoinsLoadDimes">Dimes:</label>
+                    <input type="number" name="vanCoinsLoadDimes" id="vanCoinsLoadDimes" value="0" required digits readonly/> 
+                    </li>
+                    <li> 
+                    <label for="vanCoinsLoadNickels">Nickels:</label>
+                    <input type="number" name="vanCoinsLoadNickels" id="vanCoinsLoadNickels" value="0" required digits readonly/> 
+                    </li>
+                    <li> 
+                    <label for="vanCoinsLoadPennies">Pennies:</label>
+                    <input type="number" name="vanCoinsLoadPennies" id="vanCoinsLoadPennies" value="0" required digits readonly/> 
+                    </li>
+            </ul>
+
+            <input type="submit" value="Confirm Van Loaded" id="vanCoinsLoadConfirmSubmitButton" onclick="$('#vanCoinsLoadSubmitClicked').val('confirm')">
+            <input type="submit" value="Driver Confirm Van Loaded" id="vanCoinsLoadDriverConfirmSubmitButton" onclick="$('#vanCoinsLoadSubmitClicked').val('driverconfirm')">
+
+            <input type="hidden" id="vanCoinsLoadSubmitClicked" />
+
+        </form>
+
+
+
+    </div>
+
+    <div data-role="footer">
+        <h4>&copy; U-Vend, Inc.</h4>
+    </div>
+</div>
+
+
+<!-- end van cups & coins -->
+
+
+
+<!-- machine cups & coins -->
+
+
+<div id="machineCupsRoutesPage" data-role="page" data-theme="a">
+
+    <div data-role="panel" class="mypanel">
+        <p><a href="#routeCupsRoutesPage" data-role="button">Route Schedule Cups</a></p>
+        <p><a href="#routeCoinsRoutesPage" data-role="button">Route Schedule Coins</a></p>
+        <p><a href="#vanCupsRoutesPage" data-role="button">Van Load Cups</a></p>
+        <p><a href="#vanCoinsRoutesPage" data-role="button">Van Load Coins</a></p>
+        <p><a onclick="$('.mypanel:visible').panel('close');" data-role="button">Machine Load Cups</a></p>
+        <!--<p><a href="#machineCupsPage" data-role="button">Machine Load Cups</a></p>-->
+        <p><a href="#machineCoinsRoutesPage" data-role="button">Machine Load Coins</a></p>
+        <p><a href="" data-role="button" onclick="app.logout()">Log Out</a></p>
     </div>
 
     <div data-role="header">
@@ -134,11 +689,11 @@
 
     <div data-role="content">   
 
-    <h1>Machine Cups</h1>
+    <h1>Machine Load Cups - Routes</h1>
     <!-- // gets populated with...
         <li> <a href="#machineFlavorsPage">Machine 1<span class="ui-li-count">250</span></a> </li>
     -->
-    <ul id="machineCupsPageList" data-role="listview" data-inset="true">
+    <ul id="machineCupsRoutesPageList" data-role="listview" data-inset="true">
     </ul>
 
     </div>
@@ -152,19 +707,22 @@
 
 
 
-
-
-
-<div id="machineFlavorsPage" data-role="page" data-theme="a">
+<div id="machineCupsLocationsPage" data-role="page" data-theme="a">
 
     <div data-role="panel" class="mypanel">
-        <p><a href="#machineCupsPage" data-role="button">Machine Cups</a></p>
-        <p><a href="#rollsOfCoinPage" data-role="button">Rolls Of Coin</a></p>
-        <p><a href="" data-role="button" onclick="app.logout()">Log out</a></p>
+        <p><a href="#routeCupsRoutesPage" data-role="button">Route Schedule Cups</a></p>
+        <p><a href="#routeCoinsRoutesPage" data-role="button">Route Schedule Coins</a></p>
+        <p><a href="#vanCupsRoutesPage" data-role="button">Van Load Cups</a></p>
+        <p><a href="#vanCoinsRoutesPage" data-role="button">Van Load Coins</a></p>
+        <p><a href="#machineCupsRoutesPage" data-role="button">Machine Load Cups</a></p>
+        <p><a href="#machineCoinsRoutesPage" data-role="button">Machine Load Coins</a></p>
+        <p><a href="" data-role="button" onclick="app.logout()">Log Out</a></p>
+
     </div>
 
     <div data-role="header">
-        <a href="#machineCupsPage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
+    <!-- <a href="" data-rel="back" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>-->
+        <a href="#machineCupsRoutesPage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
         <h1>U-Vend, Inc.</h1>
         <a onclick="$('.mypanel:visible').panel('open');" data-icon="bars" data-iconpos="notext" class="ui-btn-right">Bars</a>
     </div>
@@ -172,68 +730,14 @@
 
     <div data-role="content">   
 
-        <h1>Machine Flavors</h1>
-        <!-- populated by js -->
-        <!-- <li> <a href="#machineFlavorEditPage">Swirl<span class="ui-li-count">18</span></a> </li> -->
-        <ul id="machineFlavorsPageList" data-role="listview" data-inset="true">
-        </ul>
-
-        <ul data-role="listview" data-inset="true">
-        <li><a id="machineFlavorAddLink" href="#machineFlavorAddPage" data-transition="slide">Add Flavor</a></li>
-        </ul>
-
-    </div>
-
-    <div data-role="footer">
-        <h4>&copy; U-Vend, Inc.</h4>
-    </div>
-
-
-</div>
-
-<div id="machineFlavorAddPage" data-role="page" data-theme="a">
-
-
-    <div data-role="header">
-        <a href="#machineFlavorsPage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
-        <h1>U-Vend, Inc.</h1>
-    </div>
-
-
-    <div data-role="content">   
-
-
-        <form id="flavorAddForm">
-        <ul data-role="listview" data-inset="true">
-
-            <li>
-            <div data-role="fieldcontain">
-            <label for="flavorAddMachine">Machine</label>
-            <input name="flavorAddMachine" id="flavorAddMachine" type=text class="ui-disabled">
-            </div>
-            </li>
-
-            <li>
-            <div data-role="fieldcontain">
-            <label for="flavorAddFlavor">Flavor</label>
-            <select name="flavorAddFlavor" id="flavorAddFlavor">
-            </select>
-            </div>
-            </li>
-
-
-            <li>
-            <div data-role="fieldcontain">
-            <label for="flavorAddCupsCount">Cups</label>
-            <input name="flavorAddCupsCount" id="flavorAddCupsCount" type="number" value="0" />
-            </div>
-            </li>
-
-            <li>
-                <input type="submit" value="Add Flavor" id="flavorAddSubmitButton">
-            </li>
-        </ul>
-        </form>
+    <h1>Machine Load Cups - Locations</h1>
+    <p id="machineCupsLocationDateHeader"></p>
+    <p id="machineCupsLocationVanNameHeader"></p>
+    <!-- // gets populated with...
+        <li> <a href="#machineFlavorsPage">Machine 1<span class="ui-li-count">250</span></a> </li>
+    -->
+    <ul id="machineCupsLocationsPageList" data-role="listview" data-inset="true">
+    </ul>
 
     </div>
 
@@ -245,49 +749,80 @@
 </div>
 
 
-<div id="machineFlavorEditPage" data-role="page" data-theme="a">
+<div id="machineCupsMachinesPage" data-role="page" data-theme="a">
+    <div data-role="panel" class="mypanel">
+        <p><a href="#routeCupsRoutesPage" data-role="button">Route Schedule Cups</a></p>
+        <p><a href="#routeCoinsRoutesPage" data-role="button">Route Schedule Coins</a></p>
+        <p><a href="#vanCupsRoutesPage" data-role="button">Van Load Cups</a></p>
+        <p><a href="#vanCoinsRoutesPage" data-role="button">Van Load Coins</a></p>
+        <p><a href="#machineCupsRoutesPage" data-role="button">Machine Load Cups</a></p>
+        <p><a href="#machineCoinsRoutesPage" data-role="button">Machine Load Coins</a></p>
+        <p><a href="" data-role="button" onclick="app.logout()">Log Out</a></p>
+
+    </div>
 
     <div data-role="header">
-        <a href="#machineFlavorsPage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
+    <!-- <a href="" data-rel="back" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>-->
+        <a href="#machineCupsLocationsPage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
         <h1>U-Vend, Inc.</h1>
+        <a onclick="$('.mypanel:visible').panel('open');" data-icon="bars" data-iconpos="notext" class="ui-btn-right">Bars</a>
     </div>
+
 
     <div data-role="content">   
 
-        <form id="flavorEditForm">
-        <ul data-role="listview" data-inset="true">
+    <h1>Machine Load Cups - Machines</h1>
+    <p id="machineCupsMachinesDateHeader"></p>
+    <p id="machineCupsMachinesVanNameHeader"></p>
+    <p id="machineCupsMachinesAddressAbbrevHeader"></p>
+    <!-- // gets populated with...
+        <li> <a href="#machineFlavorsPage">Machine 1<span class="ui-li-count">250</span></a> </li>
+    -->
+    <ul id="machineCupsMachinesPageList" data-role="listview" data-inset="true">
+    </ul>
 
-            <li>
-            <div data-role="fieldcontain">
-            <label for="flavorEditMachine">Machine</label>
-            <input id="flavorEditMachine" name="flavorEditMachine" type=text class="ui-disabled">
-            </div>
-            </li>
+    </div>
 
-            <li>
-            <div data-role="fieldcontain">
-            <label for="flavorEditFlavorName">Flavor</label>
-            <input id="flavorEditFlavorName" name="flavorEditFlavorName" type=text class="ui-disabled">
-            </div>
-            </li>
+    <div data-role="footer">
+        <h4>&copy; U-Vend, Inc.</h4>
+    </div>
+</div>
 
+<div id="machineCupsFlavorsPage" data-role="page" data-theme="a">
 
-            <li>
-            <div data-role="fieldcontain">
-            <label for="flavorEditCount">Cups</label>
-            <input id="flavorEditCount" name="flavorEditCount" type="number" />
-            </div>
-            </li>
+    <div data-role="header">
+    <!-- <a href="" data-rel="back" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>-->
+        <a href="#machineCupsMachinesPage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
+        <h1>U-Vend, Inc.</h1>
+    </div>
 
 
-            <li>
-                <input type="submit" value="Update Flavor" id="flavorEditUpdateSubmitButton" onclick="$('#submitClicked').val('update')">
-                <input type="submit" value="Delete Flavor" id="flavorEditDeleteSubmitButton" onclick="$('#submitClicked').val('delete')">
-            </li>
-        </ul>
+    <div data-role="content">   
 
-            <input type="hidden" name="flavorEditFlavorId" id="flavorEditFlavorId" />
-            <input type="hidden" id="submitClicked" />
+    <h1>Machine Load Cups - Flavors</h1>
+    <p id="machineCupsFlavorsDateHeader"></p>
+    <p id="machineCupsFlavorsVanNameHeader"></p>
+    <p id="machineCupsFlavorsAddressAbbrevHeader"></p>
+    <p id="machineCupsFlavorsMachineNameHeader"></p>
+
+        <div>Machine Load Status: <span id="machineCupsFlavorsMachineLoadStatus">Machine Not Loaded</span></div>
+
+        <!-- // gets populated with...
+        <li>
+        <div data-role="fieldcontain" class="ui-hide-label">
+            <label for="flavor1">Banana Split <span class="ui-li-count">250</span>:</label>
+            <input type="text" name="flavor1" id="flavor1" value=250 required/>
+        </div>
+        </li>
+        -->
+
+        <form id="machineCupsFlavorsForm">
+
+
+            <ul id="machineCupsFlavorsFormList" data-role="listview" data-inset="true">
+            </ul>
+
+            <input type="submit" value="Confirm Machine Loaded" id="machineCupsFlavorsConfirmSubmitButton" disabled>
 
         </form>
 
@@ -296,19 +831,21 @@
     <div data-role="footer">
         <h4>&copy; U-Vend, Inc.</h4>
     </div>
-
 </div>
 
 
 
-
-
-<div id="rollsOfCoinPage" data-role="page" data-theme="a">
+<div id="machineCoinsRoutesPage" data-role="page" data-theme="a">
 
     <div data-role="panel" class="mypanel">
-        <p><a href="#machineCupsPage" data-role="button">Machine Cups</a></p>
-        <p><a onclick="$('.mypanel:visible').panel('close');" data-role="button">Rolls Of Coin</a></p>
-        <p><a href="" data-role="button" onclick="app.logout()">Log out</a></p>
+        <p><a href="#routeCupsRoutesPage" data-role="button">Route Schedule Cups</a></p>
+        <p><a href="#routeCoinsRoutesPage" data-role="button">Route Schedule Coins</a></p>
+        <p><a href="#vanCupsRoutesPage" data-role="button">Van Load Cups</a></p>
+        <p><a href="#vanCoinsRoutesPage" data-role="button">Van Load Coins</a></p>
+        <p><a href="#machineCupsPage" data-role="button">Machine Load Cups</a></p>
+        <p><a onclick="$('.mypanel:visible').panel('close');" data-role="button">Machine Load Coins</a></p>
+        <!--<p><a href="#machineCoinsRoutesPage" data-role="button">Machine Load Coins</a></p>-->
+        <p><a href="" data-role="button" onclick="app.logout()">Log Out</a></p>
     </div>
 
     <div data-role="header">
@@ -317,40 +854,15 @@
         <a onclick="$('.mypanel:visible').panel('open');" data-icon="bars" data-iconpos="notext" class="ui-btn-right">Bars</a>
     </div>
 
+
     <div data-role="content">   
-    <h1>Rolls of Coin</h1>
 
-    <h2>8/23/2014</h2>
-
-        <ul data-role="listview" data-inset="true">
-
-            <li>
-                <a href="#rollsOfCoinEditPage" data-transition="slide">Van 15 - 111 W. Hampshire..., 50 Quarters, 30 Dimes, 15 Nickels, 0 Pennies</a>
-            </li>
-            <li>
-                <a href="#rollsOfCoinEditPage" data-transition="slide">Van 15 - 111 W. Hampshire..., 50 Quarters, 30 Dimes, 15 Nickels, 0 Pennies</a>
-            </li>
-            <li>
-                <a href="#rollsOfCoinEditPage" data-transition="slide">Van 15 - 111 W. Hampshire..., 50 Quarters, 30 Dimes, 15 Nickels, 0 Pennies</a>
-            </li>
-        </ul>
-
-    <h2>8/24/2014</h2>
-
-        <ul data-role="listview" data-inset="true">
-
-            <li>
-                Van 15 - 111 W. Hampshire..., 50 Quarters, 30 Dimes, 15 Nickels, 0 Pennies
-            </li>
-            <li>
-                Van 15 - 111 W. Hampshire..., 50 Quarters, 30 Dimes, 15 Nickels, 0 Pennies
-            </li>
-            <li>
-                Van 15 - 111 W. Hampshire..., 50 Quarters, 30 Dimes, 15 Nickels, 0 Pennies
-            </li>
-        </ul>
-
-
+    <h1>Machine Load Coins - Routes</h1>
+    <!-- // gets populated with...
+        <li> <a href="#machineFlavorsPage">Machine 1<span class="ui-li-count">250</span></a> </li>
+    -->
+    <ul id="machineCoinsRoutesPageList" data-role="listview" data-inset="true">
+    </ul>
 
     </div>
 
@@ -362,54 +874,178 @@
 </div>
 
 
-<div id="rollsOfCoinEditPage" data-role="page" data-theme="a">
+
+<div id="machineCoinsLocationsPage" data-role="page" data-theme="a">
+
+    <div data-role="panel" class="mypanel">
+        <p><a href="#routeCupsRoutesPage" data-role="button">Route Schedule Cups</a></p>
+        <p><a href="#routeCoinsRoutesPage" data-role="button">Route Schedule Coins</a></p>
+        <p><a href="#vanCupsRoutesPage" data-role="button">Van Load Cups</a></p>
+        <p><a href="#vanCoinsRoutesPage" data-role="button">Van Load Coins</a></p>
+        <p><a href="#machineCupsRoutesPage" data-role="button">Machine Load Cups</a></p>
+        <p><a href="#machineCoinsRoutesPage" data-role="button">Machine Load Coins</a></p>
+        <p><a href="" data-role="button" onclick="app.logout()">Log Out</a></p>
+
+    </div>
 
     <div data-role="header">
-        <a href="#rollsOfCoinPage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
+        <a href="#machineCoinsRoutesPage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
+        <h1>U-Vend, Inc.</h1>
+        <a onclick="$('.mypanel:visible').panel('open');" data-icon="bars" data-iconpos="notext" class="ui-btn-right">Bars</a>
+    </div>
+
+
+    <div data-role="content">   
+
+    <h1>Machine Load Coins - Locations</h1>
+    <p id="machineCoinsLocationDateHeader"></p>
+    <p id="machineCoinsLocationVanNameHeader"></p>
+    <!-- // gets populated with...
+        <li> <a href="#machineFlavorsPage">Machine 1<span class="ui-li-count">250</span></a> </li>
+    -->
+    <ul id="machineCoinsLocationsPageList" data-role="listview" data-inset="true">
+    </ul>
+
+    </div>
+
+    <div data-role="footer">
+        <h4>&copy; U-Vend, Inc.</h4>
+    </div>
+
+
+</div>
+
+
+<div id="machineCoinsMachinesPage" data-role="page" data-theme="a">
+    <div data-role="panel" class="mypanel">
+        <p><a href="#routeCupsRoutesPage" data-role="button">Route Schedule Cups</a></p>
+        <p><a href="#routeCoinsRoutesPage" data-role="button">Route Schedule Coins</a></p>
+        <p><a href="#vanCupsRoutesPage" data-role="button">Van Load Cups</a></p>
+        <p><a href="#vanCoinsRoutesPage" data-role="button">Van Load Coins</a></p>
+        <p><a href="#machineCupsRoutesPage" data-role="button">Machine Load Cups</a></p>
+        <p><a href="#machineCoinsRoutesPage" data-role="button">Machine Load Coins</a></p>
+        <p><a href="" data-role="button" onclick="app.logout()">Log Out</a></p>
+
+    </div>
+
+    <div data-role="header">
+        <a href="#machineCoinsLocationsPage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
+        <h1>U-Vend, Inc.</h1>
+        <a onclick="$('.mypanel:visible').panel('open');" data-icon="bars" data-iconpos="notext" class="ui-btn-right">Bars</a>
+    </div>
+
+
+    <div data-role="content">   
+
+    <h1>Machine Load Coins - Machines</h1>
+    <p id="machineCoinsMachinesDateHeader"></p>
+    <p id="machineCoinsMachinesVanNameHeader"></p>
+    <p id="machineCoinsMachinesAddressAbbrevHeader"></p>
+    <!-- // gets populated with...
+        <li> <a href="#machineFlavorsPage">Machine 1<span class="ui-li-count">250</span></a> </li>
+    -->
+    <ul id="machineCoinsMachinesPageList" data-role="listview" data-inset="true">
+    </ul>
+
+    </div>
+
+    <div data-role="footer">
+        <h4>&copy; U-Vend, Inc.</h4>
+    </div>
+</div>
+
+
+
+
+
+
+
+<div id="machineCoinsLoadPickupOptionsPage" data-role="page" data-theme="a">
+    <div data-role="panel" class="mypanel">
+        <p><a href="#routeCupsRoutesPage" data-role="button">Route Schedule Cups</a></p>
+        <p><a href="#routeCoinsRoutesPage" data-role="button">Route Schedule Coins</a></p>
+        <p><a href="#vanCupsRoutesPage" data-role="button">Van Load Cups</a></p>
+        <p><a href="#vanCoinsRoutesPage" data-role="button">Van Load Coins</a></p>
+        <p><a href="#machineCupsRoutesPage" data-role="button">Machine Load Cups</a></p>
+        <p><a href="#machineCoinsRoutesPage" data-role="button">Machine Load Coins</a></p>
+        <p><a href="" data-role="button" onclick="app.logout()">Log Out</a></p>
+
+    </div>
+
+    <div data-role="header">
+    <!-- <a href="" data-rel="back" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>-->
+        <a href="#machineCoinsMachinesPage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
+        <h1>U-Vend, Inc.</h1>
+        <a onclick="$('.mypanel:visible').panel('open');" data-icon="bars" data-iconpos="notext" class="ui-btn-right">Bars</a>
+    </div>
+
+
+    <div data-role="content">   
+
+    <h1>Machine Load Coins</h1>
+    <p id="machineCoinsLoadPickupOptionsDateHeader"></p>
+    <p id="machineCoinsLoadPickupOptionsVanNameHeader"></p>
+    <p id="machineCoinsLoadPickupOptionsAddressAbbrevHeader"></p>
+    <p id="machineCoinsLoadPickupOptionsMachineNameHeader"></p>
+    <!-- // gets populated with...
+        <li> <a href="#machineFlavorsPage">Machine 1<span class="ui-li-count">250</span></a> </li>
+    -->
+    <ul id="machineCoinsLoadPickupOptionsPageList" data-role="listview" data-inset="true">
+        <li> <a href="#machineCoinsLoadPage">Load Coins</a> </li>
+        <li> <a href="#machineCoinsPickupPage">Pick Up Coins</a> </li>
+    </ul>
+
+    </div>
+
+    <div data-role="footer">
+        <h4>&copy; U-Vend, Inc.</h4>
+    </div>
+</div>
+
+
+
+<div id="machineCoinsLoadPage" data-role="page" data-theme="a">
+
+    <div data-role="header">
+    <!-- <a href="" data-rel="back" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>-->
+        <a href="#machineCoinsLoadPickupOptionsPage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
         <h1>U-Vend, Inc.</h1>
     </div>
 
 
     <div data-role="content">   
 
-    <h2>8/23/2014</h2>
-    <h3>Van 15 - 111 W. Hampshire...</h3>
+    <h1>Machine Load Coins - Load</h1>
+    <p id="machineCoinsLoadDateHeader"></p>
+    <p id="machineCoinsLoadVanNameHeader"></p>
+    <p id="machineCoinsLoadAddressAbbrevHeader"></p>
+    <p id="machineCoinsLoadMachineNameHeader"></p>
 
-        <form id="coinEditForm">
-        <ul data-role="listview" data-inset="true">
-            <li>
-            <div data-role="fieldcontain">
-            <label for="quarters-count">Quarters</label>
-            <input name="quarters-count" id="quarters-count" type="number" value="75" />
-            </div>
-            </li>
+    <div>Machine Load Status: <span id="machineCoinsLoadMachineLoadStatus">Machine Not Loaded</span></div>
 
-            <li>
-            <div data-role="fieldcontain">
-            <label for="dimes-count">Dimes</label>
-            <input name="dimes-count" id="dimes-count" type="number" value="75" />
-            </div>
-            </li>
+        <form id="machineCoinsLoadForm">
 
-            <li>
-            <div data-role="fieldcontain">
-            <label for="nickels-count">Nickels</label>
-            <input name="nickels-count" id="nickels-count" type="number" value="75" />
-            </div>
-            </li>
+            <ul id="machineCoinsLoadFormList" data-role="listview" data-inset="true">
+                    <li> 
+                    <label for="machineCoinsLoadQuarters">Quarters (<span id="machineCoinsToLoadQuarters">0</span>):</label>
+                    <input type="number" name="machineCoinsLoadQuarters" id="machineCoinsLoadQuarters" value="0" required digits/> 
+                    </li>
+                    <li> 
+                    <label for="machineCoinsLoadDimes">Dimes (<span id="machineCoinsToLoadDimes">0</span>):</label>
+                    <input type="number" name="machineCoinsLoadDimes" id="machineCoinsLoadDimes" value="0" required digits/> 
+                    </li>
+                    <li> 
+                    <label for="machineCoinsLoadNickels">Nickels (<span id="machineCoinsToLoadNickels">0</span>):</label>
+                    <input type="number" name="machineCoinsLoadNickels" id="machineCoinsLoadNickels" value="0" required digits/> 
+                    </li>
+                    <li> 
+                    <label for="machineCoinsLoadPennies">Pennies (<span id="machineCoinsToLoadPennies">0</span>):</label>
+                    <input type="number" name="machineCoinsLoadPennies" id="machineCoinsLoadPennies" value="0" required digits/> 
+                    </li>
+            </ul>
 
+            <input type="submit" value="Confirm Machine Loaded" id="machineCoinsLoadConfirmSubmitButton" disabled>
 
-            <li>
-            <div data-role="fieldcontain">
-            <label for="pennies-count">Pennies</label>
-            <input name="pennies-count" id="pennies-count" type="number" value="75" />
-            </div>
-            </li>
-
-            <li>
-                <input type="submit" value="Update Coins" id="rollsOfCoinEditSubmitButton">
-            </li>
-        </ul>
         </form>
 
     </div>
@@ -417,9 +1053,74 @@
     <div data-role="footer">
         <h4>&copy; U-Vend, Inc.</h4>
     </div>
-
-
 </div>
+
+
+
+
+
+
+<div id="machineCoinsPickupPage" data-role="page" data-theme="a">
+
+    <div data-role="header">
+    <!-- <a href="" data-rel="back" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>-->
+        <a href="#machineCoinsLoadPickupOptionsPage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
+        <h1>U-Vend, Inc.</h1>
+    </div>
+
+
+    <div data-role="content">   
+
+    <h1>Machine Load Coins - Pick Up</h1>
+    <p id="machineCoinsPickupDateHeader"></p>
+    <p id="machineCoinsPickupVanNameHeader"></p>
+    <p id="machineCoinsPickupAddressAbbrevHeader"></p>
+    <p id="machineCoinsPickupMachineNameHeader"></p>
+
+    <div>Machine Pick Up Status: <span id="machineCoinsLoadMachinePickupStatus">No Pick Up</span></div>
+
+        <form id="machineCoinsPickupForm">
+
+            <ul id="machineCoinsPickupFormList" data-role="listview" data-inset="true">
+                    <li> 
+                    <label for="machineCoinsPickupQuarters">Quarters (<span id="machineCoinsToPickupQuarters">0</span>):</label>
+                    <input type="number" name="machineCoinsPickupQuarters" id="machineCoinsPickupQuarters" value="0" required digits/> 
+                    </li>
+                    <li> 
+                    <label for="machineCoinsPickupDimes">Dimes (<span id="machineCoinsToPickupDimes">0</span>):</label>
+                    <input type="number" name="machineCoinsPickupDimes" id="machineCoinsPickupDimes" value="0" required digits/> 
+                    </li>
+                    <li> 
+                    <label for="machineCoinsPickupNickels">Nickels (<span id="machineCoinsToPickupNickels">0</span>):</label>
+                    <input type="number" name="machineCoinsPickupNickels" id="machineCoinsPickupNickels" value="0" required digits/> 
+                    </li>
+                    <li> 
+                    <label for="machineCoinsPickupPennies">Pennies (<span id="machineCoinsToPickupPennies">0</span>):</label>
+                    <input type="number" name="machineCoinsPickupPennies" id="machineCoinsPickupPennies" value="0" required digits/> 
+                    </li>
+            </ul>
+
+            <input type="submit" value="Confirm Machine Pick Up" id="machineCoinsPickupConfirmSubmitButton">
+
+        </form>
+
+    </div>
+
+    <div data-role="footer">
+        <h4>&copy; U-Vend, Inc.</h4>
+    </div>
+</div>
+
+
+<!-- end machine cups & coins -->
+
+
+
+
+
+
+
+
 
 
 </body>
