@@ -47,14 +47,25 @@ var app = {
     receivedEvent: function(id) {
         console.log('[receivedEvent: ' +  id + ']');
 
-        jQuery.mobile.changePage('#loginPage');
+        /*
+        $(document).ajaxSend(function() {
+            //jQuery.mobile.loading( 'show');
+            //alert("start ajax");
+        });
+        $(document).ajaxComplete(function() {
+            //jQuery.mobile.loading( 'hide');
+            //alert("end ajax");
+        });
+        */
 
+        // redirect to login page
         $("#loginForm").on("submit",this.handleLogin);
-
+        jQuery.mobile.changePage('#loginPage');
 
         /* route cups */
         // bind the "on vclick" event listner only once during initial page
         $(document).on("pagecreate", "#routeCupsRoutesPage", app.routeCupsRoutesAttachClickListner);
+
         // populate list view every time page is visited 
         $(document).on("pagebeforeshow", "#routeCupsRoutesPage", app.fetchRouteCupsRoutes);
 
@@ -251,6 +262,12 @@ var app = {
                 "data": data,
                 "contentType": (type==="GET" ? "application/json" : "application/x-www-form-urlencoded"),
                 "success": callback,
+                "beforeSend": function(){
+                    $.mobile.loading( 'show');
+                },
+                "complete": function(){
+                    $.mobile.loading( 'hide');
+                },
                 "error": function (request, status, error) {
                     console.log("[ajax error:" + request.responseText + "]");
                 }
@@ -329,6 +346,7 @@ var app = {
     fetchRouteCupsRoutes: function() {
         
         console.log("[fetchRouteCupsRoutes]");
+
 
         app.servers.private.query('routes', {}, app.callbacks.fetchRouteCupsRoutes);
 
@@ -1345,7 +1363,6 @@ var app = {
                     // refresh listview so that jq mobile applies styles to added li elements
                     $(this).listview("refresh");
                 });
-
 
             }
             else {
