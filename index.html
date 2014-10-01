@@ -227,6 +227,7 @@
         <ul id="routeCupsFlavorsPageList" data-role="listview" data-inset="true">
         </ul>
 
+
         <ul data-role="listview" data-inset="true">
         <li><a id="routeCupsFlavorAddLink" href="#routeCupsFlavorAddPage" data-transition="slide">Add Flavor</a></li>
         </ul> 
@@ -443,19 +444,19 @@
         <form id="routeCoinsLoadForm">
 
             <ul id="routeCoinsLoadFormList" data-role="listview" data-inset="true">
-                    <li> 
+                    <li id="routeCoinsLoadQuartersListItem"> 
                     <label for="routeCoinsLoadQuarters">Quarters:</label>
                     <input type="number" name="routeCoinsLoadQuarters" id="routeCoinsLoadQuarters" value="0" required digits/> 
                     </li>
-                    <li> 
+                    <li id="routeCoinsLoadDimesListItem"> 
                     <label for="routeCoinsLoadDimes">Dimes:</label>
                     <input type="number" name="routeCoinsLoadDimes" id="routeCoinsLoadDimes" value="0" required digits/> 
                     </li>
-                    <li> 
+                    <li id="routeCoinsLoadNickelsListItem"> 
                     <label for="routeCoinsLoadNickels">Nickels:</label>
                     <input type="number" name="routeCoinsLoadNickels" id="routeCoinsLoadNickels" value="0" required digits/> 
                     </li>
-                    <li> 
+                    <li id="routeCoinsLoadPenniesListItem"> 
                     <label for="routeCoinsLoadPennies">Pennies:</label>
                     <input type="number" name="routeCoinsLoadPennies" id="routeCoinsLoadPennies" value="0" required digits/> 
                     </li>
@@ -624,19 +625,19 @@
         <form id="vanCoinsLoadForm">
 
             <ul id="vanCoinsLoadFormList" data-role="listview" data-inset="true">
-                    <li> 
+                    <li id="vanCoinsLoadQuartersListItem"> 
                     <label for="vanCoinsLoadQuarters">Quarters:</label>
                     <input type="number" name="vanCoinsLoadQuarters" id="vanCoinsLoadQuarters" value="0" required digits readonly/> 
                     </li>
-                    <li> 
+                    <li id="vanCoinsLoadDimesListItem"> 
                     <label for="vanCoinsLoadDimes">Dimes:</label>
                     <input type="number" name="vanCoinsLoadDimes" id="vanCoinsLoadDimes" value="0" required digits readonly/> 
                     </li>
-                    <li> 
+                    <li id="vanCoinsLoadNickelsListItem"> 
                     <label for="vanCoinsLoadNickels">Nickels:</label>
                     <input type="number" name="vanCoinsLoadNickels" id="vanCoinsLoadNickels" value="0" required digits readonly/> 
                     </li>
-                    <li> 
+                    <li id="vanCoinsLoadPenniesListItem"> 
                     <label for="vanCoinsLoadPennies">Pennies:</label>
                     <input type="number" name="vanCoinsLoadPennies" id="vanCoinsLoadPennies" value="0" required digits readonly/> 
                     </li>
@@ -674,7 +675,7 @@
         <p><a href="#vanCupsRoutesPage" data-role="button">Van Load Cups</a></p>
         <p><a href="#vanCoinsRoutesPage" data-role="button">Van Load Coins</a></p>
         <p><a onclick="$('.mypanel:visible').panel('close');" data-role="button">Machine Load Cups</a></p>
-        <!--<p><a href="#machineCupsPage" data-role="button">Machine Load Cups</a></p>-->
+        <!--<p><a href="#machineCupsRoutesPage" data-role="button">Machine Load Cups</a></p>-->
         <p><a href="#machineCoinsRoutesPage" data-role="button">Machine Load Coins</a></p>
         <p><a href="" data-role="button" onclick="app.logout()">Log Out</a></p>
     </div>
@@ -842,7 +843,7 @@
         <p><a href="#routeCoinsRoutesPage" data-role="button">Route Schedule Coins</a></p>
         <p><a href="#vanCupsRoutesPage" data-role="button">Van Load Cups</a></p>
         <p><a href="#vanCoinsRoutesPage" data-role="button">Van Load Coins</a></p>
-        <p><a href="#machineCupsPage" data-role="button">Machine Load Cups</a></p>
+        <p><a href="#machineCupsRoutesPage" data-role="button">Machine Load Cups</a></p>
         <p><a onclick="$('.mypanel:visible').panel('close');" data-role="button">Machine Load Coins</a></p>
         <!--<p><a href="#machineCoinsRoutesPage" data-role="button">Machine Load Coins</a></p>-->
         <p><a href="" data-role="button" onclick="app.logout()">Log Out</a></p>
@@ -1026,19 +1027,19 @@
         <form id="machineCoinsLoadForm">
 
             <ul id="machineCoinsLoadFormList" data-role="listview" data-inset="true">
-                    <li> 
+                    <li id="machineCoinsLoadQuartersListItem"> 
                     <label for="machineCoinsLoadQuarters">Quarters (<span id="machineCoinsToLoadQuarters">0</span>):</label>
                     <input type="number" name="machineCoinsLoadQuarters" id="machineCoinsLoadQuarters" value="0" required digits/> 
                     </li>
-                    <li> 
+                    <li id="machineCoinsLoadDimesListItem"> 
                     <label for="machineCoinsLoadDimes">Dimes (<span id="machineCoinsToLoadDimes">0</span>):</label>
                     <input type="number" name="machineCoinsLoadDimes" id="machineCoinsLoadDimes" value="0" required digits/> 
                     </li>
-                    <li> 
+                    <li id="machineCoinsLoadNickelsListItem"> 
                     <label for="machineCoinsLoadNickels">Nickels (<span id="machineCoinsToLoadNickels">0</span>):</label>
                     <input type="number" name="machineCoinsLoadNickels" id="machineCoinsLoadNickels" value="0" required digits/> 
                     </li>
-                    <li> 
+                    <li id="machineCoinsLoadPenniesListItem"> 
                     <label for="machineCoinsLoadPennies">Pennies (<span id="machineCoinsToLoadPennies">0</span>):</label>
                     <input type="number" name="machineCoinsLoadPennies" id="machineCoinsLoadPennies" value="0" required digits/> 
                     </li>

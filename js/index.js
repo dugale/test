@@ -76,6 +76,7 @@ var app = {
         // bind the "on vclick" event listner only once during initial page 
         $(document).on("pagecreate", "#routeCupsFlavorsPage", app.routeCupsFlavorsAttachClickListner);
 
+
         // populate list view every time page is visited 
         $(document).on("pagebeforeshow", "#routeCupsFlavorAddPage", app.fetchRouteCupsFlavorAdd);
 
@@ -398,6 +399,7 @@ var app = {
         app.servers.private.query('routecupsflavors', {routeId:routeCupsRouteId,machineId:routeCupsMachineId}, app.callbacks.fetchRouteCupsFlavors);
 
     },
+
     fetchRouteCupsFlavorsBreadcrumbs: function() {
         
         // retrieve route date, vanName, machineType and brandName for breadcrumbs 
@@ -410,17 +412,18 @@ var app = {
 
     routeCupsFlavorsAttachClickListner: function() {
 
-        console.log("[routeCupsFlavorsAttachClickListner]");
+        console.log("[routeCupsMachinesAttachClickListner]");
 
         // attach "on vclick" event listener to all list items
         $("#routeCupsFlavorsPageList").on("vclick", "li", function (e) {
             // override default event action
             e.preventDefault();
 
+            // pass the id along to the next screen
             localStorage["routeCupsMachineFlavorLoadId"] = this.id;
 
             // redirect
-            console.log("[routeCupsFlavorsAttachClickListner forwarding to routeCupsFlavorEditPage]");
+            console.log("[routeCupsFlavorsList forwarding to routeCupsFlavorEditPage]");
             $.mobile.changePage("#routeCupsFlavorEditPage", {transition: "slide"});
         });
 
@@ -1499,6 +1502,8 @@ var app = {
                     }
                 }
 
+                var vanLoadStatus = r.vanLoadStatus;
+
                 var inputIds = [];
                 var output = '';
                 $.each(r.machineFlavors, function(index, value){                   
@@ -1509,14 +1514,33 @@ var app = {
                     var flavorQuantity = value.flavorQuantity;
                     var flavorQuantityLoaded = value.flavorQuantityLoaded;
 
-                    output += '<li id="'+machineFlavorLoadId+'"><a href="#routeCupsFlavorEditPage">' + flavorName + '<span class="ui-li-count">' + flavorQuantity + '</span></a></li>';
+                    if (vanLoadStatus == "Hold") {
+                        // edit is link active while route has a van load status of "hold"
+                        output += '<li id="'+machineFlavorLoadId+'"><a href="#routeCupsFlavorEditPage" data-transition="slide">' + flavorName + '<span class="ui-li-count">' + flavorQuantity + '</span></a></li>';
+                    } 
+                    else {
+                        // any other status, add ui-disabled class to li
+                        output += '<li id="'+machineFlavorLoadId+'" class="ui-disabled"><a href="#routeCupsFlavorEditPage" data-transition="slide">' + flavorName + '<span class="ui-li-count">' + flavorQuantity + '</span></a></li>';
+                    }
+
                 });
 
-                //append list to ul
+                // this ul has an onclick event listner that writes the machineFlavorLoadId to local storage
                 $("#routeCupsFlavorsPageList").html(output).promise().done(function () {
                     // refresh listview so that jq mobile applies styles to added li elements
                     $(this).listview("refresh");
                 });
+
+
+
+
+                // flavor add link is active while route has a van load status of "hold" only
+                if (vanLoadStatus != "Hold") {
+                    $('#routeCupsFlavorAddLink').prop('disabled',true).addClass('ui-disabled');
+                }
+                else {
+                    $('#routeCupsFlavorAddLink').prop('disabled',false).removeClass('ui-disabled');
+                }
 
 
 
@@ -1529,6 +1553,7 @@ var app = {
             }
 
         },
+
 
        "fetchRouteCupsFlavorsBreadcrumbs": function(r) { 
 
@@ -1582,6 +1607,7 @@ var app = {
             }
 
         },
+
 
        "fetchRouteCupsFlavorAdd": function(r) { 
 
@@ -1659,6 +1685,16 @@ var app = {
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
+                    // first check if the route is editable
+                    if (r.resultcode === "ROUTE IS LOCKED") {
+
+                        console.log("[fetchRouteCupsFlavorAddSubmit redirecting to #routeCupsFlavorsPage]");
+                        $('#modalDialogMessage').html('Route is locked - no changes can be made.');
+                        $('#modalDialogRedirect').attr('href','#routeCupsFlavorsPage');
+                        jQuery.mobile.changePage('#modalDialog');
+                        return;
+                    } 
+
                     if (r.resultcode === "ROUTE DOES NOT EXIST") {
 
                         console.log("[fetchRouteCupsFlavorAddSubmit redirecting to #routeCupsRoutesPage]");
@@ -1691,6 +1727,7 @@ var app = {
                         jQuery.mobile.changePage('#modalDialog');
                         return;
                     } 
+
                     else {
                         // unrecognized error - 
                         console.log("[fetchRouteCupsFlavorAddSubmit redirecting to #routeCupsFlavorsPage]");
@@ -1748,7 +1785,7 @@ var app = {
                     else if (r.resultcode === "FLAVOR NO LONGER ASSIGNED TO MACHINE") {
 
                         console.log("[fetchRouteCupsFlavorEdit redirecting to #routeCupsFlavorsPage]");
-                        $('#modalDialogMessage').html('Machine no longer exists.');
+                        $('#modalDialogMessage').html('Flavor no longer assigned to machine.');
                         $('#modalDialogRedirect').attr('href','#routeCupsFlavorsPage');
                         jQuery.mobile.changePage('#modalDialog');
                         return;
@@ -1791,6 +1828,17 @@ var app = {
 
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
+
+                    // first check if the route is editable
+                    if (r.resultcode === "ROUTE IS LOCKED") {
+
+                        console.log("[fetchRouteCupsFlavorUpdateSubmit redirecting to #routeCupsFlavorsPage]");
+                        $('#modalDialogMessage').html('Route is locked - no changes can be made.');
+                        $('#modalDialogRedirect').attr('href','#routeCupsFlavorsPage');
+                        jQuery.mobile.changePage('#modalDialog');
+                        return;
+                    } 
+
 
                     if (r.resultcode === "ROUTE DOES NOT EXIST") {
 
@@ -1853,6 +1901,16 @@ var app = {
 
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
+
+                    // first check if the route is editable
+                    if (r.resultcode === "ROUTE IS LOCKED") {
+
+                        console.log("[fetchRouteCupsFlavorUpdateSubmit redirecting to #routeCupsFlavorsPage]");
+                        $('#modalDialogMessage').html('Route is locked - no changes can be made.');
+                        $('#modalDialogRedirect').attr('href','#routeCupsFlavorsPage');
+                        jQuery.mobile.changePage('#modalDialog');
+                        return;
+                    } 
 
                     if (r.resultcode === "ROUTE DOES NOT EXIST") {
 
@@ -2025,10 +2083,11 @@ var app = {
 
                     var rId = value.routeId;
                     var vanName = value.vanName;
-                    var status = value.status;
+                    var coinsStatus = value.coinsStatus;
                     var date = value.date;
 
-                    output += '<li id="'+ rId +'"><a href="#routeCoinsMachinesPage">' +  date + ' - ' + vanName + ' (' +status + ')</a></li>';
+                    output += '<li id="'+ rId +'"><a href="#routeCoinsMachinesPage">' +  date + ' - ' + vanName + ' (' +coinsStatus + ')</a></li>';
+
                 });
 
                 //append list to ul
@@ -2085,10 +2144,14 @@ var app = {
                     }
                 }
 
+                var vanLoadCoinsStatus = r.vanLoadCoinsStatus;
+
                 var inputIds = [];
                 var output = '';
 
                 var rollTypes = ['quarters','dimes','nickels','pennies'];
+
+                console.log("[fetchRouteCoinsLoad vanLoadCoinsStatus:"+vanLoadCoinsStatus+"]");
 
                 $.each(rollTypes, function(index,value){
                     if (value in r.machineCoins) {
@@ -2096,8 +2159,26 @@ var app = {
                         var rollQuantity = r.machineCoins[value].rollQuantity;
                         valueFirstLetterUppercased = value.charAt(0).toUpperCase() + value.slice(1);
                         $('#routeCoinsLoad' + valueFirstLetterUppercased ).val(rollQuantity);
+
+                        // disable list item based on machine load status
+                        if (vanLoadCoinsStatus == "Hold") {
+                            $('#routeCoinsLoad' + valueFirstLetterUppercased + 'ListItem').prop('disabled',false).removeClass('ui-disabled');
+                        }
+                        else {
+                            $('#routeCoinsLoad' + valueFirstLetterUppercased + 'ListItem').prop('disabled',true).addClass('ui-disabled');
+                        }
                     }
                 });
+
+                // toggle update button based on van load status
+                if(vanLoadCoinsStatus=="Hold") {
+                    $("#routeCoinsLoadFormSubmitButton").button("enable");
+                } 
+                else {
+                    $("#routeCoinsLoadFormSubmitButton").button("disable");
+                }
+
+
 
             }
             else {
@@ -2237,7 +2318,10 @@ var app = {
                     var date = value.date;
 
                     // don't list hold status routes
-                    if(status != 'Hold') {
+                    if(status == 'Hold') {
+                        output += '<li id="'+ rId +'" class="ui-disabled"><a href="#vanCupsFlavorsPage">' +  date + ' - ' + vanName + ' (' +status + ')</a></li>';
+                    }
+                    else {
                         output += '<li id="'+ rId +'"><a href="#vanCupsFlavorsPage">' +  date + ' - ' + vanName + ' (' +status + ')</a></li>';
                     }
 
@@ -2290,6 +2374,8 @@ var app = {
                     }
                 }
 
+                var vanLoadStatus = r.vanLoadStatus;
+
                 var inputIds = [];
                 var output = '';
                 $.each(r.vanFlavors, function(index, value){                   
@@ -2299,9 +2385,18 @@ var app = {
                     var flavorQuantity = value.flavorQuantity;
                     var brandName = value.brandName;
 
-                    output += '<li> <label for="flavor' + flavorId + '">' + brandName + ' - ' + flavorName + ':</label>' +
-                                '<input type="number" name="flavor' + flavorId + '" id="flavor' + flavorId + '" value="' +
-                                flavorQuantity + '" required digits readonly/> </li>';
+                    if (vanLoadStatus == "Van Load Requested") {
+                        // this field should never be editable, but at least make the list item active
+                        output += '<li> <label for="flavor' + flavorId + '">' + brandName + ' - ' + flavorName + ':</label>' +
+                                        '<input class="ui-disabled" type="number" name="flavor' + flavorId + '" id="flavor' + flavorId + '" value="' +
+                                        flavorQuantity + '" required digits readonly/> </li>';
+                    }
+                    else {
+                        // disable the entire list element based on van load status
+                        output += '<li class="ui-disabled"> <label for="flavor' + flavorId + '">' + brandName + ' - ' + flavorName + ':</label>' +
+                                        '<input type="number" name="flavor' + flavorId + '" id="flavor' + flavorId + '" value="' +
+                                        flavorQuantity + '" required digits readonly/> </li>';
+                    }
 
                     // loop over these later to refresh jquery mobile text box styling
                     inputIds.push( "flavor" + flavorId );
@@ -2581,8 +2676,11 @@ var app = {
                     var coinsStatus = value.coinsStatus;
                     var date = value.date;
 
-                    // don't list routes with 'hold' status
-                    if(coinsStatus != 'Hold') {
+                    // disable link if the route is "hold" status
+                    if(coinsStatus == 'Hold') {
+                        output += '<li class="ui-disabled" id="'+ rId +'"><a href="#vanCoinsLoadPage">' +  date + ' - ' + vanName + ' (' +coinsStatus + ')</a></li>';
+                    }
+                    else {
                         output += '<li id="'+ rId +'"><a href="#vanCoinsLoadPage">' +  date + ' - ' + vanName + ' (' +coinsStatus + ')</a></li>';
                     }
                 });
@@ -2633,6 +2731,9 @@ var app = {
                     }
                 }
 
+                // toggle form field visibility based on van load status
+                var vanLoadCoinsStatus = r.vanLoadCoinsStatus;
+
                 var inputIds = [];
                 var output = '';
 
@@ -2643,7 +2744,18 @@ var app = {
                         console.log("[fetchVanCoinsLoad:"+value+"]");
                         var rollQuantity = r.vanCoins[value].rollQuantity;
                         valueFirstLetterUppercased = value.charAt(0).toUpperCase() + value.slice(1);
+
                         $('#vanCoinsLoad' + valueFirstLetterUppercased ).val(rollQuantity);
+
+                        // disable list items based on van load status
+                        if(vanLoadCoinsStatus=="Van Load Requested") {
+                            $('#vanCoinsLoad' + valueFirstLetterUppercased + 'ListItem' ).prop('disabled',false).removeClass('ui-disabled');
+                            // input field for van load ui is read only
+                             $('#vanCoinsLoad' + valueFirstLetterUppercased ).prop('disabled',true).addClass('ui-disabled');
+                        }
+                        else {
+                            $('#vanCoinsLoad' + valueFirstLetterUppercased + 'ListItem' ).prop('disabled',true).addClass('ui-disabled');
+                        }
                     }
                 });
 
@@ -2911,7 +3023,13 @@ var app = {
                     var status = value.status;
                     var date = value.date;
 
-                    output += '<li id="'+ rId +'"><a href="#machineCupsLocationsPage">' +  date + ' - ' + vanName + ' (' +status + ')</a></li>';
+                    // disable viewing and editing of routes that are in status hold
+                    if (status=="Hold") {
+                        output += '<li class="ui-disabled" id="'+ rId +'"><a href="#machineCupsLocationsPage">' +  date + ' - ' + vanName + ' (' +status + ')</a></li>';
+                    }
+                    else {
+                        output += '<li id="'+ rId +'"><a href="#machineCupsLocationsPage">' +  date + ' - ' + vanName + ' (' +status + ')</a></li>';
+                    }
                 });
 
                 //append list to ul
@@ -2961,12 +3079,20 @@ var app = {
                 }
 
                 var output = '';
+                var vanLoadStatus = r.vanLoadStatus;
                 $.each(r.routeLocations, function(index, value){                   
 
                     var routeLocationId = value.routeLocationId;
                     var addressAbbrev = value.addressAbbrev;
 
-                    output += '<li id="'+ routeLocationId +'"><a href="#machineCupsMachinesPage">' + addressAbbrev + '</a></li>';
+                    // disable viewing/editing machine info if van load has not been verified
+                    if(vanLoadStatus == "Van Load Verified") {
+                        output += '<li id="'+ routeLocationId +'"><a href="#machineCupsMachinesPage">' + addressAbbrev + '</a></li>';
+                    }
+                    else {
+                        output += '<li class="ui-disabled" id="'+ routeLocationId +'"><a href="#machineCupsMachinesPage">' + addressAbbrev + '</a></li>';
+                    }
+
                 });
 
                 //append list to ul
@@ -3186,6 +3312,9 @@ var app = {
                     }
                 }
 
+                // value determines whether form fields are editable or not
+                var machineFlavorsLoadStatus = r.machineFlavorsLoadStatus;
+
                 var inputIds = [];
                 var output = '';
                 $.each(r.machineFlavors, function(index, value){                   
@@ -3196,9 +3325,18 @@ var app = {
                     var flavorQuantity = value.flavorQuantity;
                     var flavorQuantityLoaded = value.flavorQuantityLoaded;
 
-                    output += '<li> <label for="flavor' + flavorId + '">' + flavorName + ' ('+flavorQuantity+'):</label>' +
-                                '<input type="number" name="flavor' + flavorId + '" id="flavor' + flavorId + '" value="' +
-                                flavorQuantityLoaded + '" required digits/> </li>';
+                    // lock form inputs
+                    if (machineFlavorsLoadStatus == "Machine Load Complete") {
+                        output += '<li class="ui-disabled"> <label for="flavor' + flavorId + '">' + flavorName + ' ('+flavorQuantity+'):</label>' +
+                                    '<input type="number" name="flavor' + flavorId + '" id="flavor' + flavorId + '" value="' +
+                                    flavorQuantityLoaded + '" required digits/> </li>';
+                    }
+                    // don't lock them
+                    else {
+                        output += '<li> <label for="flavor' + flavorId + '">' + flavorName + ' ('+flavorQuantity+'):</label>' +
+                                    '<input type="number" name="flavor' + flavorId + '" id="flavor' + flavorId + '" value="' +
+                                    flavorQuantityLoaded + '" required digits/> </li>';
+                    }
 
                     // loop over these later to refresh jquery mobile text box styling
                     inputIds.push( "flavor" + flavorId );
@@ -3207,13 +3345,14 @@ var app = {
 
                 //append list to ul
                 $("#machineCupsFlavorsFormList").html(output).promise().done(function () {
-                    // refresh listview so that jq mobile applies styles to added li elements
-                    $(this).listview("refresh");
 
                     // jquery refresh each form input
                     for ( i=0;i<inputIds.length;++i ) {
                         $('#'+inputIds[i]).textinput();
                     }
+
+                    // refresh listview so that jq mobile applies styles to added li elements
+                    $(this).listview("refresh");
 
                 });
 
@@ -3406,10 +3545,16 @@ var app = {
 
                     var rId = value.routeId;
                     var vanName = value.vanName;
-                    var status = value.status;
+                    var coinsStatus = value.coinsStatus;
                     var date = value.date;
 
-                    output += '<li id="'+ rId +'"><a href="#machineCoinsLocationsPage">' +  date + ' - ' + vanName + ' (' +status + ')</a></li>';
+                    // disable viewing and editing of any route with "van load coins status" of hold
+                    if (coinsStatus=="Hold") {
+                        output += '<li class="ui-disabled" id="'+ rId +'"><a href="#machineCoinsLocationsPage">' +  date + ' - ' + vanName + ' (' +coinsStatus + ')</a></li>';
+                    }
+                    else {
+                        output += '<li id="'+ rId +'"><a href="#machineCoinsLocationsPage">' +  date + ' - ' + vanName + ' (' +coinsStatus + ')</a></li>';
+                    }
                 });
 
                 //append list to ul
@@ -3458,13 +3603,22 @@ var app = {
                     }
                 }
 
+                // use this to turn route viewing/editing on or off
+                var vanLoadStatus = r.vanLoadStatus;
+
                 var output = '';
                 $.each(r.routeLocations, function(index, value){                   
 
                     var routeLocationId = value.routeLocationId;
                     var addressAbbrev = value.addressAbbrev;
 
-                    output += '<li id="'+ routeLocationId +'"><a href="#machineCoinsMachinesPage">' + addressAbbrev + '</a></li>';
+                    // use this to turn route viewing/editing on or off 
+                    if(vanLoadStatus == "Van Load Verified") {
+                        output += '<li id="'+ routeLocationId +'"><a href="#machineCoinsMachinesPage">' + addressAbbrev + '</a></li>';
+                    }
+                    else {
+                        output += '<li class="ui-disabled" id="'+ routeLocationId +'"><a href="#machineCoinsMachinesPage">' + addressAbbrev + '</a></li>';
+                    }
                 });
 
                 //append list to ul
@@ -3738,12 +3892,13 @@ var app = {
                     }
                 }
 
+                var machineCoinsLoadStatus = r.machineCoinsLoadStatus;
+
                 var inputIds = [];
                 var output = '';
 
                 var rollTypes = ['quarters','dimes','nickels','pennies'];
 
-                // PADDED DATA IN DB AND LEFT OFF HERE........................
                 $.each(rollTypes, function(index,value){
                     if (value in r.machineCoins) {
                         console.log("[fetchMachineCoinsLoad:"+value+"]");
@@ -3752,6 +3907,15 @@ var app = {
                         valueFirstLetterUppercased = value.charAt(0).toUpperCase() + value.slice(1);
                         $('#machineCoinsToLoad' + valueFirstLetterUppercased ).html(rollQuantity);
                         $('#machineCoinsLoad' + valueFirstLetterUppercased ).val(rollQuantityLoaded);
+
+                        // disable list item based on machine load status
+                        if(machineCoinsLoadStatus=="Machine Load Complete") {
+                            $('#machineCoinsLoad' + valueFirstLetterUppercased + 'ListItem' ).prop('disabled',true).addClass('ui-disabled');
+                        }
+                        else {
+                            $('#machineCoinsLoad' + valueFirstLetterUppercased + 'ListItem' ).prop('disabled',false).removeClass('ui-disabled');
+                        }
+
                     }
                 });
 
