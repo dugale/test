@@ -47,17 +47,6 @@ var app = {
     receivedEvent: function(id) {
         console.log('[receivedEvent: ' +  id + ']');
 
-        /*
-        $(document).ajaxSend(function() {
-            //jQuery.mobile.loading( 'show');
-            //alert("start ajax");
-        });
-        $(document).ajaxComplete(function() {
-            //jQuery.mobile.loading( 'hide');
-            //alert("end ajax");
-        });
-        */
-
         // redirect to login page
         $("#loginForm").on("submit",this.handleLogin);
         jQuery.mobile.changePage('#loginPage');
@@ -263,10 +252,18 @@ var app = {
                 "contentType": (type==="GET" ? "application/json" : "application/x-www-form-urlencoded"),
                 "success": callback,
                 "beforeSend": function(){
-                    $.mobile.loading( 'show');
+                    // display spinner during ajax call
+                    // have to wrap it in setInterval for it to work
+                    var interval = setInterval(function(){
+                        $.mobile.loading('show');
+                        clearInterval(interval);
+                    },1);   
                 },
                 "complete": function(){
-                    $.mobile.loading( 'hide');
+                    var interval = setInterval(function(){
+                        $.mobile.loading('hide');
+                        clearInterval(interval);
+                    },1);   
                 },
                 "error": function (request, status, error) {
                     console.log("[ajax error:" + request.responseText + "]");
