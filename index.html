@@ -14,15 +14,33 @@
 
     <script src="phonegap.js" type="text/javascript"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.min.js" type="text/javascript"></script>
+
+    <!-- hide global modal dialog div when dom is ready (before page is rendered) - this is our only hook into dom ready event -->
+    <script type="text/javascript">
+    $(document).ready(function(){
+        // initialize global popupDialog page
+        $('#modalDialog').enhanceWithin().popup();
+        $('#modalDialog').popup({positionTo:"window"});
+        $('#modalDialogBack').enhanceWithin().popup();
+        $('#modalDialogBack').popup({positionTo:"window"});
+        $('#modalDialogCancel').enhanceWithin().popup();
+        $('#modalDialogCancel').popup({positionTo:"window"}); 
+    });
+    </script>
+
     <script src="js/index.js" type="text/javascript"></script>
     <script src="js/sha1.js" type="text/javascript"></script>
     <script src="js/jquery.validate.min.js" type="text/javascript"></script>
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.3/jquery.mobile.min.js" type="text/javascript"></script>
+
 </head>
 
 <!-- fires after dom, images, scripts are loaded -->
 <body onLoad="app.initialize();">
+
+
+
 
 
 
@@ -34,23 +52,62 @@
 -->
 </div>
 
-<!-- modal dialog -->
-<div id="modalDialog" data-role="dialog" data-theme="a" data-close-btn="none">
+
+
+
+<!-- have to define this as direct child of body element in order for it to be globally accessible -->
+
+<!--  with programatically assigned href - used to prompt and redirect after form submission -->
+<div id="modalDialog" data-overlay-theme="a" data-theme="a" data-dismissible="true" style="max-width:400px;">
 
     <div data-role="header" data-position="fixed">
     <h1> </h1>
     </div>
 
-    <div data-role="content">   
+    <div role="main" class="ui-content">   
         <p id="modalDialogMessage"></p>
-        <a id="modalDialogRedirect" href="" data-role=button>OK</a>
+        <a id="modalDialogRedirect" href="#" data-role="button">OK</a>
     </div>
 
     <div data-role="footer" data-position="fixed">
     </div>
 
+</div>
+
+<!--  with ok button set to data-rel=back - used for info popups -->
+<div id="modalDialogBack" data-overlay-theme="a" data-theme="a" data-dismissible="true" style="max-width:400px;">
+
+    <div data-role="header" data-position="fixed">
+    <h1> </h1>
+    </div>
+
+    <div role="main" class="ui-content">   
+        <p id="modalDialogBackMessage"></p>
+        <a id="modalDialogBackRedirect" href="#" data-role="button" data-rel="back">OK</a>
+    </div>
+
+    <div data-role="footer" data-position="fixed">
+    </div>
 
 </div>
+
+
+<!-- with cancel button - used to confirm form submission -->
+<div id="modalDialogCancel" data-overlay-theme="a" data-theme="a" data-dismissible="false" style="max-width:400px;">
+
+    <div data-role="header" data-theme="a">
+    <h1>Confirm</h1>
+    </div>
+
+    <div data-role="content">
+        <!--<h3 class="ui-title">Info</h3>-->
+        <p id="modalDialogCancelMessage"></p>
+        <a id="modalDialogCancelRedirect" href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">OK</a>
+        <a id="modalDialogCancelCancel" href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back" data-transition="flow">Delete</a>
+    </div>
+
+</div>
+<!-- end popup dialogs -->
     
 <div id="loginPage" data-role="page" data-theme="a">
 
@@ -87,6 +144,9 @@
         <h4>&copy; U-Vend, Inc.</h4>
     </div>
 </div>
+
+
+
 
 <div id="homePage" data-role="page" data-theme="a">
 
@@ -140,6 +200,8 @@
 
 
     <div data-role="content">   
+
+
 
     <h1>Route Schedule Cups - Routes</h1>
     <!-- // gets populated with...

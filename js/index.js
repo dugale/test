@@ -47,6 +47,9 @@ var app = {
     receivedEvent: function(id) {
         console.log('[receivedEvent: ' +  id + ']');
 
+
+
+
         // redirect to login page
         $("#loginForm").on("submit",this.handleLogin);
         jQuery.mobile.changePage('#loginPage');
@@ -757,6 +760,7 @@ var app = {
         var vanCupsRouteId = localStorage.getItem("vanCupsRouteId");
 
         if (formType === "confirm") {
+
             console.log("[Submitting van cups load confirm.]");
             app.servers.private.query('vancupsflavorsconfirmsubmit', {routeId:vanCupsRouteId}, app.callbacks.fetchVanCupsFlavorsConfirmSubmit);
         }
@@ -1331,7 +1335,7 @@ var app = {
 
                 $('#modalDialogMessage').html('Incorrect login.');
                 $('#modalDialogRedirect').attr('href','#loginPage');
-                jQuery.mobile.changePage('#modalDialog');
+                $('#modalDialog').popup("open");
 
                 return;
             }
@@ -1343,6 +1347,13 @@ var app = {
 
             if(r && r.code && r.code === "SUCCESS") {
                 console.log("[fetchRouteCupsRoutes SUCCESS]");
+
+                console.log("[fetchRouteCupsRoutes routes length:" + r.routes.length + "]");
+
+                if (r.routes.length == 0) {
+                    $('#modalDialogBackMessage').html("No routes available to display.");
+                    $('#modalDialogBack').popup("open");
+                }
 
                 var output = '';
                 $.each(r.routes, function(index, value){                   
@@ -1386,7 +1397,7 @@ var app = {
                         console.log("[fetchRouteCupsMachines redirecting to #routeCupsRoutesPage]");
                         $('#modalDialogMessage').html('Route no longer exists.');
                         $('#modalDialogRedirect').attr('href','#routeCupsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else {
@@ -1394,10 +1405,15 @@ var app = {
                         console.log("[fetchRouteCupsMachines redirecting to #routeCupsRoutesPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#routeCupsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
+                }
+
+                if (r.routeMachines.length == 0) {
+                    $('#modalDialogBackMessage').html("No machines available to display.");
+                    $('#modalDialogBack').popup("open");
                 }
 
                 var output = '';
@@ -1445,7 +1461,7 @@ var app = {
                         console.log("[fetchRouteCupsMachinesBreadcrumbs redirecting to #routeCupsRoutesPage]");
                         $('#modalDialogMessage').html('Route Location no longer exists.');
                         $('#modalDialogRedirect').attr('href','#routeCupsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else {
@@ -1453,7 +1469,7 @@ var app = {
                         console.log("[fetchRouteCupsMachinesBreadcrumbs redirecting to #routeCupsRoutesPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#routeCupsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -1494,7 +1510,7 @@ var app = {
                         console.log("[fetchRouteCupsFlavors redirecting to #routeCupsRoutesPage]");
                         $('#modalDialogMessage').html('Route no longer exists.');
                         $('#modalDialogRedirect').attr('href','#routeCupsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else if (r.resultcode === "MACHINE DOES NOT EXIST") {
@@ -1502,7 +1518,7 @@ var app = {
                         console.log("[fetchRouteCupsFlavors redirecting to #routeCupsMachinesPage]");
                         $('#modalDialogMessage').html('Machine no longer exists.');
                         $('#modalDialogRedirect').attr('href','#routeCupsMachinesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     } 
                     else {
@@ -1510,10 +1526,15 @@ var app = {
                         console.log("[fetchRouteCupsFlavors redirecting to #routeCupsRoutesPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#routeCupsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
+                }
+
+                if (r.machineFlavors.length == 0) {
+                    $('#modalDialogBackMessage').html("No flavors available to display.");
+                    $('#modalDialogBack').popup("open");
                 }
 
                 var vanLoadStatus = r.vanLoadStatus;
@@ -1585,7 +1606,7 @@ var app = {
                         console.log("[fetchRouteCupsFlavorsBreadcrumbs redirecting to #routeCupsMachinesPage]");
                         $('#modalDialogMessage').html('Machine no longer exists.');
                         $('#modalDialogRedirect').attr('href','#routeCupsMachinesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else {
@@ -1593,7 +1614,7 @@ var app = {
                         console.log("[fetchRouteCupsFlavorsBreadcrumbs redirecting to #routeCupsMachinesPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#routeCupsMachinesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -1638,7 +1659,7 @@ var app = {
                         console.log("[fetchRouteCupsFlavorAdd redirecting to #routeCupsRoutesPage]");
                         $('#modalDialogMessage').html('Route Location no longer exists.');
                         $('#modalDialogRedirect').attr('href','#routeCupsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else if (r.resultcode === "MACHINE DOES NOT EXIST") {
@@ -1646,7 +1667,7 @@ var app = {
                         console.log("[fetchRouteCupsFlavorAdd redirecting to #routeCupsMachinesPage]");
                         $('#modalDialogMessage').html('Machine no longer exists.');
                         $('#modalDialogRedirect').attr('href','#routeCupsMachinesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     } 
                     else {
@@ -1654,7 +1675,7 @@ var app = {
                         console.log("[fetchRouteCupsFlavorAdd redirecting to #routeCupsFlavorsPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#routeCupsFlavorsPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -1705,7 +1726,7 @@ var app = {
                         console.log("[fetchRouteCupsFlavorAddSubmit redirecting to #routeCupsFlavorsPage]");
                         $('#modalDialogMessage').html('Route is locked - no changes can be made.');
                         $('#modalDialogRedirect').attr('href','#routeCupsFlavorsPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     } 
 
@@ -1714,7 +1735,7 @@ var app = {
                         console.log("[fetchRouteCupsFlavorAddSubmit redirecting to #routeCupsRoutesPage]");
                         $('#modalDialogMessage').html('Route no longer exists.');
                         $('#modalDialogRedirect').attr('href','#routeCupsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else if (r.resultcode === "MACHINE DOES NOT EXIST") {
@@ -1722,7 +1743,7 @@ var app = {
                         console.log("[fetchRouteCupsFlavorAddSubmit redirecting to #routeCupsMachinesPage]");
                         $('#modalDialogMessage').html('Machine no longer exists.');
                         $('#modalDialogRedirect').attr('href','#routeCupsMachinesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     } 
                     else if (r.resultcode === "FLAVOR DOES NOT EXIST") {
@@ -1730,7 +1751,7 @@ var app = {
                         console.log("[fetchRouteCupsFlavorAddSubmit redirecting to #routeCupsFlavorsPage]");
                         $('#modalDialogMessage').html('Flavor no longer exists.');
                         $('#modalDialogRedirect').attr('href','#routeCupsFlavorsPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     } 
                     else if (r.resultcode === "FLAVOR EXISTS FOR ROUTE MACHINE") {
@@ -1738,7 +1759,7 @@ var app = {
                         console.log("[fetchRouteCupsFlavorAddSubmit redirecting to #routeCupsFlavorAddPage]");
                         $('#modalDialogMessage').html('Flavor no longer exists.');
                         $('#modalDialogRedirect').attr('href','#routeCupsFlavorAddPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     } 
 
@@ -1747,7 +1768,7 @@ var app = {
                         console.log("[fetchRouteCupsFlavorAddSubmit redirecting to #routeCupsFlavorsPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#routeCupsFlavorsPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -1758,7 +1779,7 @@ var app = {
                 console.log("[fetchRouteCupsFlavorAddSubmit redirecting to #routeCupsFlavorsPage]");
                 $('#modalDialogMessage').html('Flavor added.');
                 $('#modalDialogRedirect').attr('href','#routeCupsFlavorsPage');
-                $.mobile.changePage('#modalDialog');
+                $('#modalDialog').popup("open");
 
             }
             else {
@@ -1785,7 +1806,7 @@ var app = {
                         console.log("[fetchRouteCupsFlavorEdit redirecting to #routeCupsRoutesPage]");
                         $('#modalDialogMessage').html('Route Location no longer exists.');
                         $('#modalDialogRedirect').attr('href','#routeCupsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else if (r.resultcode === "MACHINE DOES NOT EXIST") {
@@ -1793,7 +1814,7 @@ var app = {
                         console.log("[fetchRouteCupsFlavorEdit redirecting to #routeCupsMachinesPage]");
                         $('#modalDialogMessage').html('Machine no longer exists.');
                         $('#modalDialogRedirect').attr('href','#routeCupsMachinesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     } 
                     else if (r.resultcode === "FLAVOR NO LONGER ASSIGNED TO MACHINE") {
@@ -1801,7 +1822,7 @@ var app = {
                         console.log("[fetchRouteCupsFlavorEdit redirecting to #routeCupsFlavorsPage]");
                         $('#modalDialogMessage').html('Flavor no longer assigned to machine.');
                         $('#modalDialogRedirect').attr('href','#routeCupsFlavorsPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     } 
                     else {
@@ -1809,7 +1830,7 @@ var app = {
                         console.log("[fetchRouteCupsFlavorEdit redirecting to #routeCupsFlavorsPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#routeCupsFlavorsPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -1849,7 +1870,7 @@ var app = {
                         console.log("[fetchRouteCupsFlavorUpdateSubmit redirecting to #routeCupsFlavorsPage]");
                         $('#modalDialogMessage').html('Route is locked - no changes can be made.');
                         $('#modalDialogRedirect').attr('href','#routeCupsFlavorsPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     } 
 
@@ -1859,7 +1880,7 @@ var app = {
                         console.log("[fetchRouteCupsFlavorUpdateSubmit redirecting to #routeCupsRoutesPage]");
                         $('#modalDialogMessage').html('Route no longer exists.');
                         $('#modalDialogRedirect').attr('href','#routeCupsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else if (r.resultcode === "MACHINE DOES NOT EXIST") {
@@ -1867,7 +1888,7 @@ var app = {
                         console.log("[fetchRouteCupsFlavorUpdateSubmit redirecting to #routeCupsMachinesPage]");
                         $('#modalDialogMessage').html('Machine no longer exists.');
                         $('#modalDialogRedirect').attr('href','#routeCupsMachinesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     } 
                     else if (r.resultcode === "FLAVOR NO LONGER ASSIGNED TO MACHINE") {
@@ -1875,7 +1896,7 @@ var app = {
                         console.log("[fetchRouteCupsFlavorUpdateSubmit redirecting to #routeCupsFlavorsPage]");
                         $('#modalDialogMessage').html('Machine no longer exists.');
                         $('#modalDialogRedirect').attr('href','#machineCupsMachinesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     } 
                     else {
@@ -1883,7 +1904,7 @@ var app = {
                         console.log("[fetchRouteCupsFlavorUpdateSubmit redirecting to #routeCupsFlavorsPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#routeCupsFlavorsPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -1894,7 +1915,7 @@ var app = {
                 console.log("[fetchRouteCupsFlavorUpdateSubmit redirecting to #routeCupsFlavorsPage]");
                 $('#modalDialogMessage').html('Flavor updated.');
                 $('#modalDialogRedirect').attr('href','#routeCupsFlavorsPage');
-                $.mobile.changePage('#modalDialog');
+                $('#modalDialog').popup("open");
 
             }
             else {
@@ -1922,7 +1943,7 @@ var app = {
                         console.log("[fetchRouteCupsFlavorUpdateSubmit redirecting to #routeCupsFlavorsPage]");
                         $('#modalDialogMessage').html('Route is locked - no changes can be made.');
                         $('#modalDialogRedirect').attr('href','#routeCupsFlavorsPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     } 
 
@@ -1931,7 +1952,7 @@ var app = {
                         console.log("[fetchRouteCupsFlavorDeleteSubmit redirecting to #routeCupsRoutesPage]");
                         $('#modalDialogMessage').html('Route no longer exists.');
                         $('#modalDialogRedirect').attr('href','#routeCupsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else if (r.resultcode === "MACHINE DOES NOT EXIST") {
@@ -1939,7 +1960,7 @@ var app = {
                         console.log("[fetchRouteCupsFlavorDeleteSubmit redirecting to #routeCupsMachinesPage]");
                         $('#modalDialogMessage').html('Machine no longer exists.');
                         $('#modalDialogRedirect').attr('href','#routeCupsMachinesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     } 
                     else if (r.resultcode === "FLAVOR NO LONGER ASSIGNED TO MACHINE") {
@@ -1947,7 +1968,7 @@ var app = {
                         console.log("[fetchRouteCupsFlavorDeleteSubmit redirecting to #routeCupsFlavorsPage]");
                         $('#modalDialogMessage').html('Machine no longer exists.');
                         $('#modalDialogRedirect').attr('href','#machineCupsMachinesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     } 
                     else {
@@ -1955,7 +1976,7 @@ var app = {
                         console.log("[fetchRouteCupsFlavorDeleteSubmit redirecting to #routeCupsFlavorsPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#routeCupsFlavorsPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -1966,7 +1987,7 @@ var app = {
                 console.log("[fetchRouteCupsFlavorDeleteSubmit redirecting to #routeCupsFlavorsPage]");
                 $('#modalDialogMessage').html('Flavor deleted.');
                 $('#modalDialogRedirect').attr('href','#routeCupsFlavorsPage');
-                $.mobile.changePage('#modalDialog');
+                $('#modalDialog').popup("open");
 
             }
             else {
@@ -1994,7 +2015,7 @@ var app = {
                         console.log("[fetchRouteCoinsMachines redirecting to #routeCoinsRoutesPage]");
                         $('#modalDialogMessage').html('Route no longer exists.');
                         $('#modalDialogRedirect').attr('href','#routeCoinsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else {
@@ -2002,10 +2023,15 @@ var app = {
                         console.log("[fetchRouteCoinsMachines redirecting to #routeCoinsRoutesPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#routeCoinsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
+                }
+
+                if (r.routeMachines.length == 0) {
+                    $('#modalDialogBackMessage').html("No machines available to display.");
+                    $('#modalDialogBack').popup("open");
                 }
 
                 var output = '';
@@ -2053,7 +2079,7 @@ var app = {
                         console.log("[fetchRouteCoinsMachinesBreadcrumbs redirecting to #routeCoinsRoutesPage]");
                         $('#modalDialogMessage').html('Route Location no longer exists.');
                         $('#modalDialogRedirect').attr('href','#routeCoinsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else {
@@ -2061,7 +2087,7 @@ var app = {
                         console.log("[fetchRouteCoinsMachinesBreadcrumbs redirecting to #routeCoinsRoutesPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#routeCoinsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -2091,6 +2117,11 @@ var app = {
 
             if(r && r.code && r.code === "SUCCESS") {
                 console.log("[fetchRouteCoinsRoutes SUCCESS]");
+
+                if (r.routes.length == 0) {
+                    $('#modalDialogBackMessage').html("No routes available to display.");
+                    $('#modalDialogBack').popup("open");
+                }
 
                 var output = '';
                 $.each(r.routes, function(index, value){                   
@@ -2136,7 +2167,7 @@ var app = {
                         console.log("[fetchRouteCoinsLoad redirecting to #routeCoinsRoutesPage]");
                         $('#modalDialogMessage').html('Route no longer exists.');
                         $('#modalDialogRedirect').attr('href','#routeCoinsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else if (r.resultcode === "MACHINE DOES NOT EXIST") {
@@ -2144,7 +2175,7 @@ var app = {
                         console.log("[fetchRouteCoinsLoad redirecting to #routeCoinsMachinesPage]");
                         $('#modalDialogMessage').html('Machine no longer exists.');
                         $('#modalDialogRedirect').attr('href','#routeCoinsMachinesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     } 
                     else {
@@ -2152,7 +2183,7 @@ var app = {
                         console.log("[fetchRouteCoinsLoad redirecting to #routeCoinsMachinesPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#routeCoinsMachinesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -2220,7 +2251,7 @@ var app = {
                         console.log("[fetchRouteCoinsLoadBreadcrumbs redirecting to #routeCoinsMachinesPage]");
                         $('#modalDialogMessage').html('Machine no longer exists.');
                         $('#modalDialogRedirect').attr('href','#routeCoinsMachinesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else {
@@ -2228,7 +2259,7 @@ var app = {
                         console.log("[fetchRouteCoinsLoadBreadcrumbs redirecting to #routeCoinsMachinesPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#routeCoinsMachinesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -2272,7 +2303,7 @@ var app = {
                         console.log("[fetchRouteCoinsLoadSubmit redirecting to #routeCoinsRoutesPage]");
                         $('#modalDialogMessage').html('Route no longer exists.');
                         $('#modalDialogRedirect').attr('href','#routeCoinsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else if (r.resultcode === "MACHINE DOES NOT EXIST") {
@@ -2280,7 +2311,7 @@ var app = {
                         console.log("[fetchRouteCoinsLoadSubmit redirecting to #routeCoinsMachinesPage]");
                         $('#modalDialogMessage').html('Machine no longer exists.');
                         $('#modalDialogRedirect').attr('href','#routeCoinsMachinesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     } 
                     else {
@@ -2288,7 +2319,7 @@ var app = {
                         console.log("[fetchRouteCoinsLoadSubmit redirecting to #routeCoinsLoadPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#routeCoinsLoadPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -2302,7 +2333,7 @@ var app = {
                 console.log("[fetchRouteCoinsLoadSubmit redirecting to #routeCoinsMachinesPage]");
                 $('#modalDialogMessage').html('Coin Load updated.');
                 $('#modalDialogRedirect').attr('href','#routeCoinsMachinesPage');
-                $.mobile.changePage('#modalDialog');
+                $('#modalDialog').popup("open");
 
             }
             else {
@@ -2322,6 +2353,11 @@ var app = {
 
             if(r && r.code && r.code === "SUCCESS") {
                 console.log("[fetchVanCupsRoutes SUCCESS]");
+
+                if (r.routes.length == 0) {
+                    $('#modalDialogBackMessage').html("No routes available to display.");
+                    $('#modalDialogBack').popup("open");
+                }
 
                 var output = '';
                 $.each(r.routes, function(index, value){                   
@@ -2374,7 +2410,7 @@ var app = {
                         console.log("[fetchVanCupsFlavors redirecting to #vanCupsRoutesPage]");
                         $('#modalDialogMessage').html('Route no longer exists.');
                         $('#modalDialogRedirect').attr('href','#vanCupsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else {
@@ -2382,10 +2418,15 @@ var app = {
                         console.log("[fetchVanCupsFlavors redirecting to #vanCupsRoutesPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#vanCupsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
+                }
+
+                if (r.vanFlavors.length == 0) {
+                    $('#modalDialogBackMessage').html("No flavors available to display.");
+                    $('#modalDialogBack').popup("open");
                 }
 
                 var vanLoadStatus = r.vanLoadStatus;
@@ -2457,7 +2498,7 @@ var app = {
                         console.log("[fetchVanCupsFlavorsBreadcrumbs redirecting to #vanCupsRoutesPage]");
                         $('#modalDialogMessage').html('Route no longer exists.');
                         $('#modalDialogRedirect').attr('href','#vanCupsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else {
@@ -2465,7 +2506,7 @@ var app = {
                         console.log("[fetchVanCupsFlavorsBreadcrumbs redirecting to #vanCupsRoutesPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#vanCupsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -2503,7 +2544,7 @@ var app = {
                         console.log("[fetchVanCupsFlavorsUnlockConfirmButton redirecting to #vanCupsRoutesPage]");
                         $('#modalDialogMessage').html('Route no longer exists.');
                         $('#modalDialogRedirect').attr('href','#vanCupsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else {
@@ -2511,7 +2552,7 @@ var app = {
                         console.log("[fetchVanCupsFlavorsUnlockConfirmButton redirecting to #vanCupsRoutesPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#vanCupsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -2597,7 +2638,7 @@ var app = {
                         console.log("[fetchVanCupsFlavorsConfirmSubmit redirecting to #machineCupsRoutesPage]");
                         $('#modalDialogMessage').html('Route Location no longer exists.');
                         $('#modalDialogRedirect').attr('href','#machineCupsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else {
@@ -2605,7 +2646,7 @@ var app = {
                         console.log("[fetchVanCupsFlavorsConfirmSubmit redirecting to #vanCupsFlavorsPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#vanCupsFlavorsPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -2616,7 +2657,11 @@ var app = {
                 console.log("[fetchVanCupsFlavorsConfirmSubmit redirecting to #vanCupsFlavorsPage]");
                 $('#modalDialogMessage').html('Van Load confirmed.');
                 $('#modalDialogRedirect').attr('href','#vanCupsFlavorsPage');
-                $.mobile.changePage('#modalDialog');
+                $('#modalDialog').popup("open");
+
+                // update status div and re-enable driver confirm button
+                $('#vanCupsFlavorsVanLoadStatus').html('Confirmed');
+                $("#vanCupsFlavorsLoadDriverConfirmSubmitButton").button("enable");
 
             }
             else {
@@ -2643,7 +2688,7 @@ var app = {
                         console.log("[fetchVanCupsFlavorsDriverConfirmSubmit redirecting to #machineCupsRoutesPage]");
                         $('#modalDialogMessage').html('Route Location no longer exists.');
                         $('#modalDialogRedirect').attr('href','#machineCupsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else {
@@ -2651,7 +2696,7 @@ var app = {
                         console.log("[fetchVanCupsFlavorsDriverConfirmSubmit redirecting to #vanCupsFlavorsPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#vanCupsFlavorsPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -2662,7 +2707,10 @@ var app = {
                 console.log("[fetchVanCupsFlavorsDriverConfirmSubmit redirecting to #vanCupsFlavorsPage]");
                 $('#modalDialogMessage').html('Driver Confirm Van Load Complete.');
                 $('#modalDialogRedirect').attr('href','#vanCupsFlavorsPage');
-                $.mobile.changePage('#modalDialog');
+                $('#modalDialog').popup("open");
+
+                // update flash message status
+                $('#vanCupsFlavorsVanLoadStatusDriver').html('Confirmed');
 
             }
             else {
@@ -2681,6 +2729,11 @@ var app = {
 
             if(r && r.code && r.code === "SUCCESS") {
                 console.log("[fetchVanCoinsRoutes SUCCESS]");
+
+                if (r.routes.length == 0) {
+                    $('#modalDialogBackMessage').html("No routes available to display.");
+                    $('#modalDialogBack').popup("open");
+                }
 
                 var output = '';
                 $.each(r.routes, function(index, value){                   
@@ -2731,7 +2784,7 @@ var app = {
                         console.log("[fetchVanCoinsLoad redirecting to #vanCoinsRoutesPage]");
                         $('#modalDialogMessage').html('Route Location no longer exists.');
                         $('#modalDialogRedirect').attr('href','#vanCoinsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else {
@@ -2739,7 +2792,7 @@ var app = {
                         console.log("[fetchVanCoinsLoad redirecting to #vanCoinsRoutesPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#vanCoinsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -2803,7 +2856,7 @@ var app = {
                         console.log("[fetchVanCoinsLoadBreadcrumbs redirecting to #vanCoinsRoutesPage]");
                         $('#modalDialogMessage').html('Route no longer exists.');
                         $('#modalDialogRedirect').attr('href','#vanCoinsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else {
@@ -2811,7 +2864,7 @@ var app = {
                         console.log("[fetchVanCoinsLoadBreadcrumbs redirecting to #vanCoinsRoutesPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#vanCoinsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -2849,7 +2902,7 @@ var app = {
                         console.log("[fetchVanCoinsLoadUnlockConfirmButton redirecting to #vanCoinsRoutesPage]");
                         $('#modalDialogMessage').html('Route no longer exists.');
                         $('#modalDialogRedirect').attr('href','#vanCoinsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else {
@@ -2857,7 +2910,7 @@ var app = {
                         console.log("[fetchVanCoinsLoadUnlockConfirmButton redirecting to #vanCoinsRoutesPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#vanCoinsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -2943,7 +2996,7 @@ var app = {
                         console.log("[fetchVanCoinsLoadConfirmSubmit redirecting to #vanCoinsRoutesPage]");
                         $('#modalDialogMessage').html('Route Location no longer exists.');
                         $('#modalDialogRedirect').attr('href','#vanCoinsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else {
@@ -2951,7 +3004,7 @@ var app = {
                         console.log("[fetchVanCoinsLoadConfirmSubmit redirecting to #vanCoinsLoadPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#vanCoinsLoadPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -2962,7 +3015,12 @@ var app = {
                 console.log("[fetchVanCoinsLoadConfirmSubmit redirecting to #vanCoinsLoadPage]");
                 $('#modalDialogMessage').html('Van Load confirmed.');
                 $('#modalDialogRedirect').attr('href','#vanCoinsLoadPage');
-                $.mobile.changePage('#modalDialog');
+                $('#modalDialog').popup("open");
+
+                // update flash message and enable driver confirm submit button
+                $('#vanCoinsLoadVanLoadStatus').html('Confirmed');
+                $("#vanCoinsLoadDriverConfirmSubmitButton").button("enable");
+
 
             }
             else {
@@ -2989,7 +3047,7 @@ var app = {
                         console.log("[fetchVanCoinsLoadDriverConfirmSubmit redirecting to #vanCoinsRoutesPage]");
                         $('#modalDialogMessage').html('Route Location no longer exists.');
                         $('#modalDialogRedirect').attr('href','#vanCoinsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else {
@@ -2997,7 +3055,7 @@ var app = {
                         console.log("[fetchVanCoinsLoadDriverConfirmSubmit redirecting to #vanCoinsLoadPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#vanCoinsLoadPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -3008,7 +3066,11 @@ var app = {
                 console.log("[fetchVanCoinsLoadDriverConfirmSubmit redirecting to #vanCoinsLoadPage]");
                 $('#modalDialogMessage').html('Driver Confirm Van Load Complete.');
                 $('#modalDialogRedirect').attr('href','#vanCoinsLoadPage');
-                $.mobile.changePage('#modalDialog');
+                $('#modalDialog').popup("open");
+
+                // update flash message and disable driver confirm button
+                $('#vanCoinsLoadVanLoadStatusDriver').html('Confirmed');
+                $("#vanCoinsLoadDriverConfirmSubmitButton").button("disable");
 
             }
             else {
@@ -3028,6 +3090,11 @@ var app = {
 
             if(r && r.code && r.code === "SUCCESS") {
                 console.log("[fetchMachineCupsRoutes SUCCESS]");
+
+                if (r.routes.length == 0) {
+                    $('#modalDialogBackMessage').html("No routes available to display.");
+                    $('#modalDialogBack').popup("open");
+                }
 
                 var output = '';
                 $.each(r.routes, function(index, value){                   
@@ -3078,7 +3145,7 @@ var app = {
                         console.log("[fetchMachineCupsLocations redirecting to #machineCupsRoutesPage]");
                         $('#modalDialogMessage').html('Route no longer exists.');
                         $('#modalDialogRedirect').attr('href','#machineCupsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else {
@@ -3086,10 +3153,15 @@ var app = {
                         console.log("[fetchMachineCupsLocations redirecting to #machineCupsRoutesPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#machineCupsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
+                }
+
+                if (r.routeLocations.length == 0) {
+                    $('#modalDialogBackMessage').html("No locations available to display.");
+                    $('#modalDialogBack').popup("open");
                 }
 
                 var output = '';
@@ -3143,7 +3215,7 @@ var app = {
                         console.log("[fetchMachineCupsLocationsBreadcrumbs redirecting to #machineCupsRoutesPage]");
                         $('#modalDialogMessage').html('Route no longer exists.');
                         $('#modalDialogRedirect').attr('href','#machineCupsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else {
@@ -3151,7 +3223,7 @@ var app = {
                         console.log("[fetchMachineCupsLocationsBreadcrumbs redirecting to #machineCupsRoutesPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#machineCupsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -3192,7 +3264,7 @@ var app = {
                         console.log("[fetchMachineCupsMachines redirecting to #machineCupsLocationsPage]");
                         $('#modalDialogMessage').html('Route Location no longer exists.');
                         $('#modalDialogRedirect').attr('href','#machineCupsLocationsPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else {
@@ -3200,10 +3272,15 @@ var app = {
                         console.log("[fetchMachineCupsMachines redirecting to #machineCupsLocationsPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#machineCupsLocationsPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
+                }
+
+                if (r.routeMachines.length == 0) {
+                    $('#modalDialogBackMessage').html("No machines available to display.");
+                    $('#modalDialogBack').popup("open");
                 }
 
                 var output = '';
@@ -3251,7 +3328,7 @@ var app = {
                         console.log("[fetchMachineCupsMachinesBreadcrumbs redirecting to #machineCupsRouteLocationsPage]");
                         $('#modalDialogMessage').html('Route Location no longer exists.');
                         $('#modalDialogRedirect').attr('href','#machineCupsRouteLocationsPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else {
@@ -3259,7 +3336,7 @@ var app = {
                         console.log("[fetchMachineCupsMachinesBreadcrumbs redirecting to #machineCupsRouteLocationsPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#machineCupsRouteLocationsPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -3304,7 +3381,7 @@ var app = {
                         console.log("[fetchMachineCupsFlavors redirecting to #machineCupsRoutesPage]");
                         $('#modalDialogMessage').html('Route Location no longer exists.');
                         $('#modalDialogRedirect').attr('href','#machineCupsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else if (r.resultcode === "MACHINE DOES NOT EXIST") {
@@ -3312,7 +3389,7 @@ var app = {
                         console.log("[fetchMachineCupsFlavors redirecting to #machineCupsMachinesPage]");
                         $('#modalDialogMessage').html('Machine no longer exists.');
                         $('#modalDialogRedirect').attr('href','#machineCupsMachinesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     } 
                     else {
@@ -3320,10 +3397,15 @@ var app = {
                         console.log("[fetchMachineCupsFlavors redirecting to #machineCupsLocationsPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#machineCupsLocationsPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
+                }
+
+                if (r.machineFlavors.length == 0) {
+                    $('#modalDialogBackMessage').html("No flavors available to display.");
+                    $('#modalDialogBack').popup("open");
                 }
 
                 // value determines whether form fields are editable or not
@@ -3398,7 +3480,7 @@ var app = {
                         console.log("[fetchMachineCupsFlavorsBreadcrumbs redirecting to #machineCupsMachinesPage]");
                         $('#modalDialogMessage').html('Machine no longer exists.');
                         $('#modalDialogRedirect').attr('href','#machineCupsMachinesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else {
@@ -3406,7 +3488,7 @@ var app = {
                         console.log("[fetchMachineCupsFlavorsBreadcrumbs redirecting to #machineCupsMachinesPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#machineCupsMachinesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -3453,7 +3535,7 @@ var app = {
                         console.log("[fetchMachineCupsFlavorsUnlockConfirmButton redirecting to #machineCupsMachinesPage]");
                         $('#modalDialogMessage').html('Machine no longer exists.');
                         $('#modalDialogRedirect').attr('href','#machineCupsMachinesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else {
@@ -3461,7 +3543,7 @@ var app = {
                         console.log("[fetchMachineCupsFlavorsUnlockConfirmButton redirecting to #machineCupsMachinesPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#machineCupsMachinesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -3508,7 +3590,7 @@ var app = {
                         console.log("[fetchMachineCupsFlavorsConfirmSubmit redirecting to #machineCupsRoutesPage]");
                         $('#modalDialogMessage').html('Route Location no longer exists.');
                         $('#modalDialogRedirect').attr('href','#machineCupsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else if (r.resultcode === "MACHINE DOES NOT EXIST") {
@@ -3516,7 +3598,7 @@ var app = {
                         console.log("[fetchMachineCupsFlavorsConfirmSubmit redirecting to #machineCupsMachinesPage]");
                         $('#modalDialogMessage').html('Machine no longer exists.');
                         $('#modalDialogRedirect').attr('href','#machineCupsMachinesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     } 
                     else {
@@ -3524,7 +3606,7 @@ var app = {
                         console.log("[fetchMachineCupsFlavorsConfirmSubmit redirecting to #machineCupsFlavorsPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#machineCupsFlavorsPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -3535,7 +3617,10 @@ var app = {
                 console.log("[fetchMachineCupsFlavorsConfirmSubmit redirecting to #machineCupsFlavorsPage]");
                 $('#modalDialogMessage').html('Flavor Load confirmed.');
                 $('#modalDialogRedirect').attr('href','#machineCupsFlavorsPage');
-                $.mobile.changePage('#modalDialog');
+                $('#modalDialog').popup("open");
+
+                // update flash message
+                $('#machineCupsFlavorsMachineLoadStatus').html('Machine Load Complete');
 
             }
             else {
@@ -3553,6 +3638,11 @@ var app = {
 
             if(r && r.code && r.code === "SUCCESS") {
                 console.log("[fetchMachineCoinsRoutes SUCCESS]");
+
+                if (r.routes.length == 0) {
+                    $('#modalDialogBackMessage').html("No routes available to display.");
+                    $('#modalDialogBack').popup("open");
+                }
 
                 var output = '';
                 $.each(r.routes, function(index, value){                   
@@ -3603,7 +3693,7 @@ var app = {
                         console.log("[fetchMachineCoinsLocations redirecting to #machineCoinsRoutesPage]");
                         $('#modalDialogMessage').html('Route no longer exists.');
                         $('#modalDialogRedirect').attr('href','#machineCoinsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else {
@@ -3611,10 +3701,15 @@ var app = {
                         console.log("[fetchMachineCoinsLocations redirecting to #machineCoinsRoutesPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#machineCoinsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
+                }
+
+                if (r.routeLocations.length == 0) {
+                    $('#modalDialogBackMessage').html("No locations available to display.");
+                    $('#modalDialogBack').popup("open");
                 }
 
                 // use this to turn route viewing/editing on or off
@@ -3669,7 +3764,7 @@ var app = {
                         console.log("[fetchMachineCoinsLocationsBreadcrumbs redirecting to #machineCoinsRoutesPage]");
                         $('#modalDialogMessage').html('Route no longer exists.');
                         $('#modalDialogRedirect').attr('href','#machineCoinsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else {
@@ -3677,7 +3772,7 @@ var app = {
                         console.log("[fetchMachineCoinsLocationsBreadcrumbs redirecting to #machineCoinsRoutesPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#machineCoinsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -3718,7 +3813,7 @@ var app = {
                         console.log("[fetchMachineCoinsMachines redirecting to #machineCoinsLocationsPage]");
                         $('#modalDialogMessage').html('Route Location no longer exists.');
                         $('#modalDialogRedirect').attr('href','#machineCoinsLocationsPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else {
@@ -3726,10 +3821,15 @@ var app = {
                         console.log("[fetchMachineCoinsMachines redirecting to #machineCoinsLocationsPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#machineCoinsLocationsPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
+                }
+
+                if (r.routeMachines.length == 0) {
+                    $('#modalDialogBackMessage').html("No machines available to display.");
+                    $('#modalDialogBack').popup("open");
                 }
 
                 var output = '';
@@ -3776,7 +3876,7 @@ var app = {
                         console.log("[fetchMachineCoinsMachinesBreadcrumbs redirecting to #machineCoinsRouteLocationsPage]");
                         $('#modalDialogMessage').html('Route Location no longer exists.');
                         $('#modalDialogRedirect').attr('href','#machineCoinsRouteLocationsPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else {
@@ -3784,7 +3884,7 @@ var app = {
                         console.log("[fetchMachineCoinsMachinesBreadcrumbs redirecting to #machineCoinsRouteLocationsPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#machineCoinsRouteLocationsPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -3830,7 +3930,7 @@ var app = {
                         console.log("[fetchMachineCoinsLoadPickupOptionsBreadcrumbs redirecting to #machineCoinsMachinesPage]");
                         $('#modalDialogMessage').html('Machine no longer exists.');
                         $('#modalDialogRedirect').attr('href','#machineCoinsMachinesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else {
@@ -3838,7 +3938,7 @@ var app = {
                         console.log("[fetchMachineCoinsLoadPickupOptionsBreadcrumbs redirecting to #machineCoinsMachinesPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#machineCoinsMachinesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -3884,7 +3984,7 @@ var app = {
                         console.log("[fetchMachineCoinsLoad redirecting to #machineCoinsRoutesPage]");
                         $('#modalDialogMessage').html('Route Location no longer exists.');
                         $('#modalDialogRedirect').attr('href','#machineCoinsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else if (r.resultcode === "MACHINE DOES NOT EXIST") {
@@ -3892,7 +3992,7 @@ var app = {
                         console.log("[fetchMachineCoinsLoad redirecting to #machineCoinsMachinesPage]");
                         $('#modalDialogMessage').html('Machine no longer exists.');
                         $('#modalDialogRedirect').attr('href','#machineCoinsMachinesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     } 
                     else {
@@ -3900,7 +4000,7 @@ var app = {
                         console.log("[fetchMachineCoinsLoad redirecting to #machineCoinsLocationsPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#machineCoinsLocationsPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -3962,7 +4062,7 @@ var app = {
                         console.log("[fetchMachineCoinsLoadConfirmSubmit redirecting to #machineCoinsRoutesPage]");
                         $('#modalDialogMessage').html('Route Location no longer exists.');
                         $('#modalDialogRedirect').attr('href','#machineCoinsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else if (r.resultcode === "MACHINE DOES NOT EXIST") {
@@ -3970,7 +4070,7 @@ var app = {
                         console.log("[fetchMachineCoinsLoadConfirmSubmit redirecting to #machineCoinsMachinesPage]");
                         $('#modalDialogMessage').html('Machine no longer exists.');
                         $('#modalDialogRedirect').attr('href','#machineCoinsMachinesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     } 
                     else {
@@ -3978,18 +4078,21 @@ var app = {
                         console.log("[fetchMachineCoinsLoadConfirmSubmit redirecting to #machineCoinsLoadPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#machineCoinsLoadPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
 
                 }
 
-                // flavors added to machine - show modal dialog and send to machines page
+                // machine coins load confirmed - show modal dialog 
                 console.log("[fetchMachineCoinsLoadConfirmSubmit redirecting to #machineCoinsLoadPage]");
                 $('#modalDialogMessage').html('Coin Load confirmed.');
                 $('#modalDialogRedirect').attr('href','#machineCoinsLoadPage');
-                $.mobile.changePage('#modalDialog');
+                $('#modalDialog').popup("open");
+
+                // update flash message
+                $('#machineCoinsLoadMachineLoadStatus').html('Machine Load Complete');
 
             }
             else {
@@ -4019,7 +4122,7 @@ var app = {
                         console.log("[fetchMachineCoinsLoadUnlockConfirmButton redirecting to #machineCoinsMachinesPage]");
                         $('#modalDialogMessage').html('Machine no longer exists.');
                         $('#modalDialogRedirect').attr('href','#machineCoinsMachinesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else {
@@ -4027,7 +4130,7 @@ var app = {
                         console.log("[fetchMachineCoinsLoadUnlockConfirmButton redirecting to #machineCoinsMachinesPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#machineCoinsMachinesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -4043,12 +4146,6 @@ var app = {
                     // make sure button is disabled
                     $("#machineCoinsLoadConfirmSubmitButton").button("disable");
 
-                    /*
-                    $("#machineCoinsLoadQuarters").button('disable');
-                    $("#machineCoinsLoadDimes").button('disable');
-                    $("#machineCoinsLoadNickels").button('disable');
-                    $("#machineCoinsLoadPennies").button('disable');
-                    */
                     return;
                 }
 
@@ -4057,12 +4154,6 @@ var app = {
                 console.log('[fetchMachineCoinsLoadUnlockConfirmButton - unlocking submit button]');
 
                 $("#machineCoinsLoadConfirmSubmitButton").button('enable');
-                /*
-                $("#machineCoinsLoadQuarters").button('enable');
-                $("#machineCoinsLoadDimes").button('enable');
-                $("#machineCoinsLoadNickels").button('enable');
-                $("#machineCoinsLoadPennies").button('enable');
-                */
 
             }
             else {
@@ -4089,7 +4180,7 @@ var app = {
                         console.log("[fetchMachineCoinsPickup redirecting to #machineCoinsRoutesPage]");
                         $('#modalDialogMessage').html('Route Location no longer exists.');
                         $('#modalDialogRedirect').attr('href','#machineCoinsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else if (r.resultcode === "MACHINE DOES NOT EXIST") {
@@ -4097,7 +4188,7 @@ var app = {
                         console.log("[fetchMachineCoinsPickup redirecting to #machineCoinsMachinesPage]");
                         $('#modalDialogMessage').html('Machine no longer exists.');
                         $('#modalDialogRedirect').attr('href','#machineCoinsMachinesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     } 
                     else {
@@ -4105,7 +4196,7 @@ var app = {
                         console.log("[fetchMachineCoinsPickup redirecting to #machineCoinsLocationsPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#machineCoinsLocationsPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -4156,7 +4247,7 @@ var app = {
                         console.log("[fetchMachineCoinsPickupConfirmSubmit redirecting to #machineCoinsRoutesPage]");
                         $('#modalDialogMessage').html('Route Location no longer exists.');
                         $('#modalDialogRedirect').attr('href','#machineCoinsRoutesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else if (r.resultcode === "MACHINE DOES NOT EXIST") {
@@ -4164,7 +4255,7 @@ var app = {
                         console.log("[fetchMachineCoinsPickupConfirmSubmit redirecting to #machineCoinsMachinesPage]");
                         $('#modalDialogMessage').html('Machine no longer exists.');
                         $('#modalDialogRedirect').attr('href','#machineCoinsMachinesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     } 
                     else {
@@ -4172,7 +4263,7 @@ var app = {
                         console.log("[fetchMachineCoinsPickupConfirmSubmit redirecting to #machineCoinsPickupPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#machineCoinsPickupPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
@@ -4183,7 +4274,7 @@ var app = {
                 console.log("[fetchMachineCoinsPickupConfirmSubmit redirecting to #machineCoinsPickupPage]");
                 $('#modalDialogMessage').html('Coin Pick Up confirmed.');
                 $('#modalDialogRedirect').attr('href','#machineCoinsPickupPage');
-                $.mobile.changePage('#modalDialog');
+                $('#modalDialog').popup("open");
 
             }
             else {
@@ -4211,7 +4302,7 @@ var app = {
                         console.log("[fetchMachineCoinsPickupUnlockConfirmButton redirecting to #machineCoinsMachinesPage]");
                         $('#modalDialogMessage').html('Machine no longer exists.');
                         $('#modalDialogRedirect').attr('href','#machineCoinsMachinesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
                     }
                     else {
@@ -4219,7 +4310,7 @@ var app = {
                         console.log("[fetchMachineCoinsPickupUnlockConfirmButton redirecting to #machineCoinsMachinesPage]");
                         $('#modalDialogMessage').html(r.resultcode);
                         $('#modalDialogRedirect').attr('href','#machineCoinsMachinesPage');
-                        jQuery.mobile.changePage('#modalDialog');
+                        $('#modalDialog').popup("open");
                         return;
 
                     }
