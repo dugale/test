@@ -1326,7 +1326,7 @@ var app = {
 
             } else {
                 console.log("[handleLogin - Login failed.]");
-                $("#submitButton").removeAttr("disabled");
+                $("#submitButton").button("enable");
                 $("#password").val('');
 
                 $('#modalDialogMessage').html('Incorrect login.');
