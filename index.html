@@ -95,15 +95,17 @@
 <!-- with cancel button - used to confirm form submission -->
 <div id="modalDialogCancel" data-overlay-theme="a" data-theme="a" data-dismissible="false" style="max-width:400px;">
 
-    <div data-role="header" data-theme="a">
-    <h1>Confirm</h1>
+    <div data-role="header" data-position="fixed">
+    <h1> </h1>
     </div>
 
-    <div data-role="content">
-        <!--<h3 class="ui-title">Info</h3>-->
+    <div role="main" class="ui-content">   
         <p id="modalDialogCancelMessage"></p>
-        <a id="modalDialogCancelRedirect" href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">OK</a>
-        <a id="modalDialogCancelCancel" href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back" data-transition="flow">Delete</a>
+        <a id="modalDialogCancelRedirect" href="#" data-role="button">OK</a>
+        <a id="modalDialogCancelCancel" href="#" data-role="button" data-rel="back" transition="flow">Cancel</a>
+    </div>
+
+    <div data-role="footer" data-position="fixed">
     </div>
 
 </div>
@@ -248,8 +250,12 @@
     <!-- // gets populated with...
         <li> <a href="#machineFlavorsPage">Machine 1<span class="ui-li-count">250</span></a> </li>
     -->
-    <ul id="routeCupsMachinesPageList" data-role="listview" data-inset="true">
-    </ul>
+    <h2 id="routeCupsMachinesPageHoldListHeader"></h2>
+    <ul id="routeCupsMachinesPageHoldList" data-role="listview" data-inset="true"></ul>
+    
+    <h2 id="routeCupsMachinesPageVanReadyListHeader"></h2>
+    <ul id="routeCupsMachinesPageVanReadyList" data-role="listview" data-inset="true"></ul>
+
 
     </div>
 
@@ -582,7 +588,15 @@
     <!-- // gets populated with...
         <li> <a href="#machineFlavorsPage">Machine 1<span class="ui-li-count">250</span></a> </li>
     -->
-    <ul id="vanCupsRoutesPageList" data-role="listview" data-inset="true">
+
+    <h2 id="vanCupsRoutesPageConfirmationListHeader"></h2>
+    <ul id="vanCupsRoutesPageConfirmationList" data-role="listview" data-inset="true">
+    </ul>
+    <h2 id="vanCupsRoutesPageVerificationListHeader"></h2>
+    <ul id="vanCupsRoutesPageVerificationList" data-role="listview" data-inset="true">
+    </ul>
+    <h2 id="vanCupsRoutesPageVerifiedListHeader"></h2>
+    <ul id="vanCupsRoutesPageVerifiedList" data-role="listview" data-inset="true">
     </ul>
 
     </div>
@@ -617,8 +631,8 @@
             <ul id="vanCupsFlavorsFormList" data-role="listview" data-inset="true">
             </ul>
 
-            <input type="submit" value="Confirm Van Loaded" id="vanCupsFlavorsLoadConfirmSubmitButton" onclick="$('#vanCupsFlavorsSubmitClicked').val('confirm')">
-            <input type="submit" value="Driver Confirm Van Loaded" id="vanCupsFlavorsLoadDriverConfirmSubmitButton" onclick="$('#vanCupsFlavorsSubmitClicked').val('driverconfirm')">
+            <input type="submit" value="Confirm Van Loaded" id="vanCupsFlavorsLoadConfirmSubmitButton">
+            <input type="submit" value="Driver Confirm Van Loaded" id="vanCupsFlavorsLoadDriverConfirmSubmitButton">
 
 
             <input type="hidden" id="vanCupsFlavorsSubmitClicked" />
@@ -721,8 +735,8 @@
                     </li>
             </ul>
 
-            <input type="submit" value="Confirm Van Loaded" id="vanCoinsLoadConfirmSubmitButton" onclick="$('#vanCoinsLoadSubmitClicked').val('confirm')">
-            <input type="submit" value="Driver Confirm Van Loaded" id="vanCoinsLoadDriverConfirmSubmitButton" onclick="$('#vanCoinsLoadSubmitClicked').val('driverconfirm')">
+            <input type="submit" value="Confirm Van Loaded" id="vanCoinsLoadConfirmSubmitButton">
+            <input type="submit" value="Driver Confirm Van Loaded" id="vanCoinsLoadDriverConfirmSubmitButton">
 
             <input type="hidden" id="vanCoinsLoadSubmitClicked" />
 

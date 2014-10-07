@@ -121,6 +121,7 @@ var app = {
         // default form action
         $("#routeCoinsLoadForm").on("submit",this.fetchRouteCoinsLoadSubmit);
 
+
         /* route coins end */
 
         /* van cups */
@@ -137,6 +138,35 @@ var app = {
         $(document).on("pagebeforeshow", "#vanCupsFlavorsPage", app.fetchVanCupsFlavorsUnlockConfirmButton);
         // default form action
         $("#vanCupsFlavorsForm").on("submit",this.fetchVanCupsFlavorsConfirmSubmit);
+
+        // confirm load popup
+        $('#vanCupsFlavorsLoadConfirmSubmitButton').on('click', function(e){
+            e.preventDefault();
+            // do this to distinguish between two different form submit buttons
+            $('#vanCupsFlavorsSubmitClicked').val('confirm');
+            $('#modalDialogCancelMessage').html('Are you sure?');
+            // off removes previously assigned click events
+            $('#modalDialogCancelRedirect').off("click").click( function(e){
+                $('#modalDialogCancel').popup('close');
+                $('#vanCupsFlavorsForm').submit();
+            });
+            $('#modalDialogCancel').popup('open');
+        });
+
+        // confirm driver load popup
+        $('#vanCupsFlavorsLoadDriverConfirmSubmitButton').on('click', function(e){
+            e.preventDefault();
+            // do this to distinguish between two different form submit buttons
+            $('#vanCupsFlavorsSubmitClicked').val('driverconfirm')
+            $('#modalDialogCancelMessage').html('Are you sure?');
+            // off removes previously assigned click events
+            $('#modalDialogCancelRedirect').off("click").click( function(e){
+                $('#modalDialogCancel').popup('close');
+                $('#vanCupsFlavorsForm').submit();
+            });
+            $('#modalDialogCancel').popup('open');
+        });
+
         /* van cups end */
 
 
@@ -159,6 +189,34 @@ var app = {
 
         // default form action
         $("#vanCoinsLoadForm").on("submit",this.fetchVanCoinsLoadConfirmSubmit);
+
+        // confirm load popup
+        $('#vanCoinsLoadConfirmSubmitButton').on('click', function(e){
+            e.preventDefault();
+            // do this to distinguish between two different form submit buttons
+            $('#vanCoinsLoadSubmitClicked').val('confirm');
+            $('#modalDialogCancelMessage').html('Are you sure?');
+            // off removes previously assigned click events
+            $('#modalDialogCancelRedirect').off("click").click( function(e){
+                $('#modalDialogCancel').popup('close');
+                $('#vanCoinsLoadForm').submit();
+            });
+            $('#modalDialogCancel').popup('open');
+        });
+
+        // confirm driver load popup
+        $('#vanCoinsLoadDriverConfirmSubmitButton').on('click', function(e){
+            e.preventDefault();
+            // do this to distinguish between two different form submit buttons
+            $('#vanCoinsLoadSubmitClicked').val('driverconfirm')
+            $('#modalDialogCancelMessage').html('Are you sure?');
+            // off removes previously assigned click events
+            $('#modalDialogCancelRedirect').off("click").click( function(e){
+                $('#modalDialogCancel').popup('close');
+                $('#vanCoinsLoadForm').submit();
+            });
+            $('#modalDialogCancel').popup('open');
+        });
         /* van coins end */
 
 
@@ -191,8 +249,19 @@ var app = {
         // unlock confirm button if machine load status is not 'Machine Load Complete'
         $(document).on("pagebeforeshow", "#machineCupsFlavorsPage", app.fetchMachineCupsFlavorsUnlockConfirmButton);
 
-        // default form action
         $("#machineCupsFlavorsForm").on("submit",this.fetchMachineCupsFlavorsConfirmSubmit);
+
+        // confirm popup
+        $('#machineCupsFlavorsConfirmSubmitButton').on('click', function(e){
+            e.preventDefault();
+            $('#modalDialogCancelMessage').html('Are you sure, sir?');
+            // off removes previously assigned click events
+            $('#modalDialogCancelRedirect').off("click").click( function(e){
+                $('#modalDialogCancel').popup('close');
+                $('#machineCupsFlavorsForm').submit();
+            });
+            $('#modalDialogCancel').popup('open');
+        });
         /* machine cups end */
 
 
@@ -229,6 +298,18 @@ var app = {
         // default form action
         $("#machineCoinsLoadForm").on("submit",this.fetchMachineCoinsLoadConfirmSubmit);
 
+        // confirm popup
+        $('#machineCoinsLoadConfirmSubmitButton').on('click', function(e){
+            e.preventDefault();
+            $('#modalDialogCancelMessage').html('Are you sure?');
+            // off removes previously assigned click events
+            $('#modalDialogCancelRedirect').off("click").click( function(e){
+                $('#modalDialogCancel').popup('close');
+                $('#machineCoinsLoadForm').submit();
+            });
+            $('#modalDialogCancel').popup('open');
+        });
+
         // populate list view every time page is visited 
         $(document).on("pagebeforeshow", "#machineCoinsPickupPage", app.fetchMachineCoinsPickup);
         // populate breadcrumbs
@@ -237,6 +318,18 @@ var app = {
         $(document).on("pagebeforeshow", "#machineCoinsPickupPage", app.fetchMachineCoinsPickupUnlockConfirmButton);
         // default form action
         $("#machineCoinsPickupForm").on("submit",this.fetchMachineCoinsPickupConfirmSubmit);
+
+        // confirm popup
+        $('#machineCoinsPickupConfirmSubmitButton').on('click', function(e){
+            e.preventDefault();
+            $('#modalDialogCancelMessage').html('Are you sure?');
+            // off removes previously assigned click events
+            $('#modalDialogCancelRedirect').off("click").click( function(e){
+                $('#modalDialogCancel').popup('close');
+                $('#machineCoinsPickupForm').submit();
+            });
+            $('#modalDialogCancel').popup('open');
+        });
         /* machine coins end */
 
 
@@ -393,16 +486,22 @@ var app = {
 
         console.log("[routeCupsMachinesAttachClickListner]");
 
-        // attach "on vclick" event listener to all list items
-        $("#routeCupsMachinesPageList").on("vclick", "li", function (e) {
-            // override default event action
-            e.preventDefault();
+        listViews = ['routeCupsMachinesPageHoldList', 'routeCupsMachinesPageVanReadyList'];
 
-            localStorage["routeCupsMachineId"] = this.id;
+        // attach click handler for each list on the page
+        $.each(listViews, function(index,value){
 
-            // redirect
-            console.log("[routeCupsMachinesList forwarding to routeCupsFlavorsPage]");
-            $.mobile.changePage("#routeCupsFlavorsPage", {transition: "slide"});
+            // attach "on vclick" event listener to all list items
+            $("#" + value ).on("vclick", "li", function (e) {
+                // override default event action
+                e.preventDefault();
+
+                localStorage["routeCupsMachineId"] = this.id;
+
+                // redirect
+                console.log("["+ value +" forwarding to routeCupsFlavorsPage]");
+                $.mobile.changePage("#routeCupsFlavorsPage", {transition: "slide"});
+            });
         });
 
     },
@@ -694,17 +793,24 @@ var app = {
 
         console.log("[vanCupsRoutesAttachClickListner]");
 
-        // attach "on vclick" event listener to all list items
-        $("#vanCupsRoutesPageList").on("vclick", "li", function (e) {
-            // override default event action
-            e.preventDefault();
+        var listViews = ['vanCupsRoutesPageConfirmationList', 'vanCupsRoutesPageVerificationList', 'vanCupsRoutesPageVerifiedList' ];
 
-            localStorage["vanCupsRouteId"] = this.id;
+        // attach click handler for each list on the page
+        $.each(listViews, function(index,value){
 
-            // redirect
-            console.log("[vanCupsRoutesList forwarding to vanCupsFlavorsPage]");
-            $.mobile.changePage("#vanCupsFlavorsPage", {transition: "slide"});
+            // attach "on vclick" event listener to all list items
+            $("#"+ value ).on("vclick", "li", function (e) {
+                // override default event action
+                e.preventDefault();
+
+                localStorage["vanCupsRouteId"] = this.id;
+
+                // redirect
+                console.log("["+ value +" forwarding to vanCupsFlavorsPage]");
+                $.mobile.changePage("#vanCupsFlavorsPage", {transition: "slide"});
+            });
         });
+
 
     },
 
@@ -745,6 +851,8 @@ var app = {
     },
 
 
+
+
     fetchVanCupsFlavorsConfirmSubmit: function() {
 
         console.log('[fetchVanCupsFlavorsConfirmSubmit]');
@@ -760,6 +868,11 @@ var app = {
         var vanCupsRouteId = localStorage.getItem("vanCupsRouteId");
 
         if (formType === "confirm") {
+
+            console.log("[test test test.]");
+            $('#modalDialogMessage').html('Are you sure?.');
+            $('#modalDialogRedirect').attr('href','#vanCupsFlavorsPage');
+            $('#modalDialog').popup("open");
 
             console.log("[Submitting van cups load confirm.]");
             app.servers.private.query('vancupsflavorsconfirmsubmit', {routeId:vanCupsRouteId}, app.callbacks.fetchVanCupsFlavorsConfirmSubmit);
@@ -1016,7 +1129,7 @@ var app = {
         var machineCupsMachineId = localStorage.getItem("machineCupsMachineId");
         var machineCupsRouteLocationId = localStorage.getItem("machineCupsRouteLocationId");
 
-        flavorsLoaded = []; 
+        var flavorsLoaded = new Array(); 
         $("#machineCupsFlavorsForm input[type=number]").each(function() {
                 var flavorId = this.id.match(/flavor([0-9]+)/);
                 var flavorQuantity = this.value;
@@ -1355,7 +1468,8 @@ var app = {
                     $('#modalDialogBack').popup("open");
                 }
 
-                var output = '';
+                var holdOutput = '';
+                var vanReadyOutput = '';
                 $.each(r.routes, function(index, value){                   
 
                     var rId = value.routeId;
@@ -1363,14 +1477,34 @@ var app = {
                     var status = value.status;
                     var date = value.date;
 
-                    output += '<li id="'+ rId +'"><a href="#routeCupsMachinesPage">' +  date + ' - ' + vanName + ' (' +status + ')</a></li>';
+                    if (status=="Hold") {
+                        holdOutput += '<li id="'+ rId +'"><a href="#routeCupsMachinesPage">' +  date + ' - ' + vanName + ' (' +status + ')</a></li>';
+                    }
+                    else {
+                        vanReadyOutput += '<li id="'+ rId +'"><a href="#routeCupsMachinesPage">' +  date + ' - ' + vanName + ' (' +status + ')</a></li>';
+                    }
                 });
 
+
+
                 //append list to ul
-                $("#routeCupsRoutesPageList").html(output).promise().done(function () {
-                    // refresh listview so that jq mobile applies styles to added li elements
-                    $(this).listview("refresh");
-                });
+                if (holdOutput) {
+                    $('#routeCupsMachinesPageHoldListHeader').html("Not Sent for Van Load:");
+                    $("#routeCupsMachinesPageHoldList").html(holdOutput).promise().done(function () {
+                        // refresh listview so that jq mobile applies styles to added li elements
+                        $(this).listview("refresh");
+                    });
+                }
+
+                if (vanReadyOutput) {
+                    $('#routeCupsMachinesPageVanReadyListHeader').html("Sent for Van Load:");
+                    $("#routeCupsMachinesPageVanReadyList").html(vanReadyOutput).promise().done(function () {
+                        // refresh listview so that jq mobile applies styles to added li elements
+                        $(this).listview("refresh");
+                    });
+                }
+
+
 
             }
             else {
@@ -1680,6 +1814,17 @@ var app = {
 
                     }
                 }
+
+                console.log("machine available flavors:" + r.machineAvailableFlavors.flavors.length);
+
+                if (r.machineAvailableFlavors.flavors.length == 0) {
+                    $('#modalDialogMessage').html('No flavors left to add.');
+                    $('#modalDialogRedirect').attr('href','#routeCupsFlavorsPage');
+                    $('#modalDialog').popup("open");
+                    return;
+                }
+
+
 
                 all = r.machineAvailableFlavors;
                 var flavors = all.flavors;
@@ -2359,29 +2504,58 @@ var app = {
                     $('#modalDialogBack').popup("open");
                 }
 
-                var output = '';
+                var confirmationOutput = '';
+                var verificationOutput = '';
+                var verifiedOutput = '';
                 $.each(r.routes, function(index, value){                   
 
                     var rId = value.routeId;
                     var vanName = value.vanName;
                     var status = value.status;
                     var date = value.date;
+                    console.log("[status:"+status +"]");
 
                     // don't list hold status routes
-                    if(status == 'Hold') {
-                        output += '<li id="'+ rId +'" class="ui-disabled"><a href="#vanCupsFlavorsPage">' +  date + ' - ' + vanName + ' (' +status + ')</a></li>';
+                    if(status == "Hold") {
+                        // don't show it
+                    }
+                    else if(status == "Van Load Requested") {
+                        confirmationOutput += '<li id="'+ rId +'"><a href="#vanCupsFlavorsPage">' +  date + ' - ' + vanName + '</a></li>';
+                    }
+                    else if (status == "Van Load Complete") {
+                        verificationOutput += '<li id="'+ rId +'"><a href="#vanCupsFlavorsPage">' +  date + ' - ' + vanName + '</a></li>';
                     }
                     else {
-                        output += '<li id="'+ rId +'"><a href="#vanCupsFlavorsPage">' +  date + ' - ' + vanName + ' (' +status + ')</a></li>';
+                        verifiedOutput += '<li id="'+ rId +'"><a href="#vanCupsFlavorsPage">' +  date + ' - ' + vanName + '</a></li>';
                     }
-
                 });
+
+                
 
                 //append list to ul
-                $("#vanCupsRoutesPageList").html(output).promise().done(function () {
-                    // refresh listview so that jq mobile applies styles to added li elements
-                    $(this).listview("refresh");
-                });
+                if (confirmationOutput) {
+                    $('#vanCupsRoutesPageConfirmationListHeader').html("Confirmation Requested:");
+                    $("#vanCupsRoutesPageConfirmationList").html(confirmationOutput).promise().done(function () {
+                        // refresh listview so that jq mobile applies styles to added li elements
+                        $(this).listview("refresh");
+                    });
+                }
+                //append list to ul
+                if (verificationOutput) {
+                    $('#vanCupsRoutesPageVerifictionListHeader').html("Verification Requested:");
+                    $("#vanCupsRoutesPageVerificationList").html(verificationOutput).promise().done(function () {
+                        // refresh listview so that jq mobile applies styles to added li elements
+                        $(this).listview("refresh");
+                    });
+                }
+                //append list to ul
+                if (verifiedOutput) {
+                    $('#vanCupsRoutesPageVerifiedListHeader').html("Confirmed & Verified:");
+                    $("#vanCupsRoutesPageVerifiedList").html(verifiedOutput).promise().done(function () {
+                        // refresh listview so that jq mobile applies styles to added li elements
+                        $(this).listview("refresh");
+                    });
+                }
 
 
             }
@@ -2581,7 +2755,7 @@ var app = {
                     $('#vanCupsFlavorsVanLoadStatusDriver').html('Not Confirmed');
                     // enable button
                     $("#vanCupsFlavorsLoadConfirmSubmitButton").button("enable");
-                    $("#vanCupsFlavorsLoadDriverConfirmSubmitButton").button("enable");
+                    $("#vanCupsFlavorsLoadDriverConfirmSubmitButton").button("disable");
                     return;
                 }
                 // unlock one button
@@ -2939,7 +3113,7 @@ var app = {
                     $('#vanCoinsLoadVanLoadStatusDriver').html('Not Confirmed');
                     // enable button
                     $("#vanCoinsLoadConfirmSubmitButton").button("enable");
-                    $("#vanCoinsLoadDriverConfirmSubmitButton").button("enable");
+                    $("#vanCoinsLoadDriverConfirmSubmitButton").button("disable");
                     return;
                 }
                 // unlock one button
