@@ -1570,6 +1570,7 @@ var app = {
 
                 var output = '';
                 $.each(r.routeMachinesByLocation, function(index, value){                   
+
                     var routeMachines = value.routeMachines;
                     output += '<div data-role="collapsible">';
                     output += '<h3>' + value.addressLine1 + '<br>';
@@ -1608,7 +1609,7 @@ var app = {
                 $("#routeCupsMachinesPageOuterList").html(output).promise().done(function () {
                     // refresh listview so that jq mobile applies styles to added li elements
                     //$(this).listview("refresh");
-                    $("ul").listview();
+                    //$("ul").listview();
                     $('[data-role=collapsible-set]').collapsibleset().trigger('create');
                 });
 
