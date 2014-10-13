@@ -492,17 +492,19 @@ var app = {
 
         console.log("[routeCupsMachinesAttachClickListner]");
 
+        /*
         // attach "on vclick" event listener to all list items
         $("#routeCupsMachinesPageList" ).on("vclick", "li", function (e) {
             // override default event action
             e.preventDefault();
 
-            localStorage["routeCupsMachineId"] = this.id;
+            localStorage["routeCupsRouteMachineId"] = this.id;
 
             // redirect
             console.log("[routeCupsMachinesPageList forwarding to routeCupsFlavorsPage]");
             $.mobile.changePage("#routeCupsFlavorsPage", {transition: "slide"});
         });
+*/
 
     },
 
@@ -1561,26 +1563,53 @@ var app = {
                     }
                 }
 
-                if (r.routeMachines.length == 0) {
-                    $('#modalDialogBackMessage').html("No machines available to display.");
+                if (r.routeMachinesByLocation.length == 0) {
+                    $('#modalDialogBackMessage').html("No locations available to display.");
                     $('#modalDialogBack').popup("open");
                 }
 
                 var output = '';
-                $.each(r.routeMachines, function(index, value){                   
+                $.each(r.routeMachinesByLocation, function(index, value){                   
+                    var routeMachines = value.routeMachines;
+                    output += '<div data-role="collapsible">';
+                    output += '<h3>' + value.addressLine1 + '<br>';
+                    if(value.addressLine2) {
+                        output += value.addressLine2 + '<br>';
+                    }
+                    output += value.city + ', ' + value.state + ' ' + value.zip + '</h3>';
+                    output += '<ul data-role="listview" data-inset="true" data-split-icon="delete">';
+                    $.each(routeMachines, function(indexInner, valueInner){                   
 
-                    var machineId = value.machineId;
-                    var type = value.type;
-                    var brandName = value.brandName;
-                    var flavorQuantityTotal = value.flavorQuantityTotal;
+                        var routeMachineId = valueInner.routeMachineId;
+                        var type = valueInner.type;
+                        var brandName = valueInner.brandName;
+                        var flavorQuantityTotal = valueInner.flavorQuantityTotal;
 
-                    output += '<li id="'+ machineId +'"><a href="#routeCupsFlavorsPage">' + type + ' - ' + brandName + '<span class="ui-li-count">' + flavorQuantityTotal + '</span></a></li>';
+                        output += '<li id="'+ routeMachineId +'"><a href="#routeCupsFlavorsPage">' + type + ' - ' + brandName + '<span class="ui-li-count">' + flavorQuantityTotal + '</span></a><a href="#"></a></li>';
+                    });
+
+                    output += '</ul>';
+
+                    output += '<ul data-role="listview" data-inset="true">';
+                    output += '<li><a href="#">Add Machine</a></li>';
+                    output += '</ul>';
+                    
+                    output += '</div>';
                 });
 
+        /*
+        <ul data-role="listview" data-inset="true">
+        <li><a id="routeCupsFlavorAddLink" href="#routeCupsFlavorAddPage" data-transition="slide">Add Flavor</a></li>
+        </ul> 
+        */
+
+
                 //append list to ul
-                $("#routeCupsMachinesPageList").html(output).promise().done(function () {
+                $("#routeCupsMachinesPageOuterList").html(output).promise().done(function () {
                     // refresh listview so that jq mobile applies styles to added li elements
-                    $(this).listview("refresh");
+                    //$(this).listview("refresh");
+                    $("ul").listview();
+                    $('[data-role=collapsible-set]').collapsibleset().trigger('create');
                 });
 
 
