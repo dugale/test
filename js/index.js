@@ -1608,9 +1608,9 @@ var app = {
                 //append list to ul
                 $("#routeCupsMachinesPageOuterList").html(output).promise().done(function () {
                     // refresh listview so that jq mobile applies styles to added li elements
-                    //$(this).listview("refresh");
-                    //$("ul").listview();
-                    $('[data-role=collapsible-set]').collapsibleset().trigger('create');
+                    $("ul").listview();
+                    //$('[data-role=collapsible-set]').collapsibleset().trigger('create');
+                    $('[data-role=collapsible-set]').collapsibleset();
                 });
 
 
