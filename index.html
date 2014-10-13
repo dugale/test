@@ -16,6 +16,7 @@
     <script src="http://code.jquery.com/jquery-1.11.1.min.js" type="text/javascript"></script>
 
     <!-- hide global modal dialog div when dom is ready (before page is rendered) - this is our only hook into dom ready event -->
+    <!--
     <script type="text/javascript">
     $(document).ready(function(){
         // initialize global popupDialog page
@@ -27,6 +28,7 @@
         $('#modalDialogCancel').popup({positionTo:"window"}); 
     });
     </script>
+    -->
 
     <script src="js/index.js" type="text/javascript"></script>
     <script src="js/sha1.js" type="text/javascript"></script>
@@ -58,6 +60,7 @@
 <!-- have to define this as direct child of body element in order for it to be globally accessible -->
 
 <!--  with programatically assigned href - used to prompt and redirect after form submission -->
+<!--
 <div id="modalDialog" data-overlay-theme="a" data-theme="a" data-dismissible="true" style="max-width:400px;">
 
     <div data-role="header" data-position="fixed">
@@ -73,8 +76,10 @@
     </div>
 
 </div>
+-->
 
 <!--  with ok button set to data-rel=back - used for info popups -->
+<!--
 <div id="modalDialogBack" data-overlay-theme="a" data-theme="a" data-dismissible="true" style="max-width:400px;">
 
     <div data-role="header" data-position="fixed">
@@ -90,9 +95,11 @@
     </div>
 
 </div>
+-->
 
 
 <!-- with cancel button - used to confirm form submission -->
+<!--
 <div id="modalDialogCancel" data-overlay-theme="a" data-theme="a" data-dismissible="true" style="max-width:400px;">
 
     <div data-role="header" data-position="fixed">
@@ -109,6 +116,7 @@
     </div>
 
 </div>
+-->
 <!-- end popup dialogs -->
     
 <div id="loginPage" data-role="page" data-theme="a">
