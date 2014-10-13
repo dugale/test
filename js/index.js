@@ -55,6 +55,7 @@ var app = {
         jQuery.mobile.changePage('#loginPage');
 
         /* route cups */
+        /*
         // bind the "on vclick" event listner only once during initial page
         $(document).on("pagecreate", "#routeCupsRoutesPage", app.routeCupsRoutesAttachClickListner);
 
@@ -69,6 +70,7 @@ var app = {
 
         // populate breadcrumbs
         $(document).on("pagebeforeshow", "#routeCupsMachinesPage", app.fetchRouteCupsMachinesBreadcrumbs);
+        */
 
 
 
