@@ -15,26 +15,13 @@
     <script src="phonegap.js" type="text/javascript"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.min.js" type="text/javascript"></script>
 
-    <!-- hide global modal dialog div when dom is ready (before page is rendered) - this is our only hook into dom ready event -->
-    <!--
-    <script type="text/javascript">
-    $(document).ready(function(){
-        // initialize global popupDialog page
-        $('#modalDialog').enhanceWithin().popup();
-        $('#modalDialog').popup({positionTo:"window"});
-        $('#modalDialogBack').enhanceWithin().popup();
-        $('#modalDialogBack').popup({positionTo:"window"});
-        $('#modalDialogCancel').enhanceWithin().popup();
-        $('#modalDialogCancel').popup({positionTo:"window"}); 
-    });
-    </script>
-    -->
-
     <script src="js/index.js" type="text/javascript"></script>
     <script src="js/sha1.js" type="text/javascript"></script>
     <script src="js/jquery.validate.min.js" type="text/javascript"></script>
 
+    <!--
     <script src="http://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.3/jquery.mobile.min.js" type="text/javascript"></script>
+    -->
 
 </head>
 
@@ -166,10 +153,9 @@
 
     <div data-role="content">   
         <ul data-role="listview" data-inset="true">
-        <li><a href="#routeCupsRoutesPage" data-transition="pop">Route Schedule Cups</a></li>
+        <li><a href="#routeCupsRoutesPage" data-transition="slide">Route Schedule Cups</a></li>
         <li><a href="" data-role="button" onclick="app.logout()">Log Out</a></li>
         </ul>
-
     </div>
 
     <div data-role="footer">
@@ -189,11 +175,13 @@
     <div data-role="panel" class="mypanel">
         <p><a onclick="$('.mypanel:visible').panel('close');" data-role="button">Route Schedule Cups</a></p>
         <!--<p><a href="#routeCupsPage" data-role="button">Route Schedule Cups</a></p>-->
+        <!--
         <p><a href="#routeCoinsRoutesPage" data-role="button">Route Schedule Coins</a></p>
         <p><a href="#vanCupsRoutesPage" data-role="button">Van Load Cups</a></p>
         <p><a href="#vanCoinsRoutesPage" data-role="button">Van Load Coins</a></p>
         <p><a href="#machineCupsRoutesPage" data-role="button">Machine Load Cups</a></p>
         <p><a href="#machineCoinsRoutesPage" data-role="button">Machine Load Coins</a></p>
+        -->
         <p><a href="" data-role="button" onclick="app.logout()">Log Out</a></p>
     </div>
 
@@ -209,54 +197,21 @@
 
 
     <h1>Route Schedule Cups - Routes</h1>
-    <!-- // gets populated with...
-        <li> <a href="#machineFlavorsPage">Machine 1<span class="ui-li-count">250</span></a> </li>
-    -->
+    <!--
     <ul id="routeCupsRoutesPageList" data-role="listview" data-inset="true">
     </ul>
-
-    </div>
-
-    <div data-role="footer">
-        <h4>&copy; U-Vend, Inc.</h4>
-    </div>
-
-
-</div>
-
-
-<div id="routeCupsMachinesPage" data-role="page" data-theme="a">
-    <div data-role="panel" class="mypanel">
-        <p><a href="#routeCupsRoutesPage" data-role="button">Route Schedule Cups</a></p
-        <p><a href="" data-role="button" onclick="app.logout()">Log Out</a></p>
-
-    </div>
-
-    <div data-role="header" data-position="fixed">
-        <a href="#routeCupsRoutesPage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
-        <h1>U-Vend, Inc.</h1>
-        <a onclick="$('.mypanel:visible').panel('open');" data-icon="bars" data-iconpos="notext" class="ui-btn-right">Bars</a>
-    </div>
-
-
-    <div data-role="content">   
-
-    <h1>Route Schedule Cups - Machines</h1>
-    <p id="routeCupsMachinesDateHeader"></p>
-    <p id="routeCupsMachinesVanNameHeader"></p>
-
-    <!-- // gets populated with...
-        <li> <a href="#machineFlavorsPage">Machine 1<span class="ui-li-count">250</span></a> </li>
     -->
-    <ul id="routeCupsMachinesPageList" data-role="listview" data-inset="true">
-    </ul>
 
     </div>
 
     <div data-role="footer">
         <h4>&copy; U-Vend, Inc.</h4>
     </div>
+
+
 </div>
+
+
 
 
 

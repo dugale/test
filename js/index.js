@@ -181,6 +181,7 @@ var app = {
     // bound to events - any function that starts with "fetch" does an ajax call and has at least one callback
     */
 
+    /*
     fetchRouteCupsRoutes: function() {
         
         console.log("[fetchRouteCupsRoutes]");
@@ -244,6 +245,7 @@ var app = {
         });
 
     },
+    */
 
 
 
@@ -280,6 +282,7 @@ var app = {
             }
         },
 
+        /*
         "fetchRouteCupsRoutes": function(r) { 
 
             console.log("[fetchRouteCupsRoutes callback]");
@@ -433,6 +436,7 @@ var app = {
             }
 
         },
+        */
 
 
 
