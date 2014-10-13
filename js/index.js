@@ -350,20 +350,16 @@ var app = {
                 "beforeSend": function(){
                     // display spinner during ajax call
                     // have to wrap it in setInterval for it to work
-                    /*
                     var interval = setInterval(function(){
                         $.mobile.loading('show');
                         clearInterval(interval);
                     },1);   
-                    */
                 },
                 "complete": function(){
-                    /*
                     var interval = setInterval(function(){
                         $.mobile.loading('hide');
                         clearInterval(interval);
                     },1);   
-                    */
                 },
                 "error": function (request, status, error) {
                     console.log("[ajax error:" + request.responseText + "]");
