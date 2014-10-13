@@ -200,7 +200,7 @@ var app = {
 
             // redirect
             console.log("[routeCupsRoutesList forwarding to routeCupsMachinesPage]");
-            $.mobile.changePage("#routeCupsMachinesPage", {transition: "slide"});
+            $.mobile.changePage("#routeCupsMachinesPage", {transition: "pop"});
         });
 
     },
