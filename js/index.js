@@ -1608,9 +1608,18 @@ var app = {
                 //append list to ul
                 $("#routeCupsMachinesPageOuterList").html(output).promise().done(function () {
                     // refresh listview so that jq mobile applies styles to added li elements
-                    $("ul").listview();
+                    /*
+                    $("#routeCupsMachinesPageOuterList ul").each(function(i) {
+                        $(this).listview(); 
+                    });
+                    */
                     //$('[data-role=collapsible-set]').collapsibleset().trigger('create');
                     $('[data-role=collapsible-set]').collapsibleset("refresh");
+                    
+                    $("ul").listview();
+
+
+
                 });
 
 
