@@ -1605,7 +1605,7 @@ var app = {
         */
 
 
-                $("#routeCupsMachinesPageOuterList").append(output).collapsibleset().trigger('create');
+                $("#routeCupsMachinesPageOuterList").html(output).collapsibleset().trigger('create');
 
                 //append list to ul
                 /*
