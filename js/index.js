@@ -1605,22 +1605,21 @@ var app = {
         */
 
 
+                $("#routeCupsMachinesPageOuterList").append(output).collapsibleset().trigger('create');
+
                 //append list to ul
+                /*
                 $("#routeCupsMachinesPageOuterList").html(output).promise().done(function () {
                     // refresh listview so that jq mobile applies styles to added li elements
-                    /*
                     $("#routeCupsMachinesPageOuterList ul").each(function(i) {
                         $(this).listview(); 
                     });
-                    */
                     //$('[data-role=collapsible-set]').collapsibleset().trigger('create');
-                    $('[data-role=collapsible-set]').collapsibleset("refresh");
-                    
+                    //$('[data-role=collapsible-set]').collapsibleset("refresh");
+
                     $("ul").listview();
-
-
-
                 });
+                */
 
 
 
