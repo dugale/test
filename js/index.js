@@ -1797,7 +1797,7 @@ var app = {
                     }
                     output += value.city + ', ' + value.state + ' ' + value.zip;
                     output += '</div>';
-                    output += '<span style="float:right; vertical-align:top"> <div data-role="controlgroup" data-type="horizontal">';
+                    output += '<span style="float:right; vertical-align:top"> <div data-role="controlgroup" data-type="horizontal" data-mini="true">';
                     output += '<a class="routeCupsMachinesLocationUp" href="#" id="' + value.routeLocationId + '" data-role="button" data-iconpos="notext" data-icon="arrow-u"><span class="ui-btn-inner ui-corner-left"><span class="ui-btn-text">Up</span></span></a>';
                     output += '<a class="routeCupsMachinesLocationDown" href="#" id="' + value.routeLocationId + '" data-role="button" data-iconpos="notext" data-icon="arrow-d"><span class="ui-btn-inner"><span class="ui-btn-text">Up</span></span></a>';
                     output += '<a class="routeCupsMachinesLocationDelete" href="#" id="' + value.routeLocationId + '" data-role="button" data-iconpos="notext" data-icon="delete"><span class="ui-btn-inner ui-corner-right ui-controlgroup-last"><span class="ui-btn-text">Up</span></span></a>';
@@ -1850,7 +1850,8 @@ var app = {
                 });
 
                 // add output and refresh jquery mobile
-                $("#routeCupsMachinesPageOuterList").html(output).collapsibleset().trigger('create');
+                //$("#routeCupsMachinesPageOuterList").html(output).collapsibleset().trigger('create');
+                $("#routeCupsMachinesPageOuterList").html(output).collapsibleset();
 
 
 
