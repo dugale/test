@@ -62,7 +62,7 @@ var app = {
         $(document).on("pagebeforeshow", "#routeCupsRoutesPage", app.fetchRouteCupsRoutes);
 
         // bind the "on vclick" event listner only once during initial page 
-        $(document).on("pagecreate", "#routeCupsMachinesPage", app.routeCupsMachinesAttachClickListner);
+        //$(document).on("pagecreate", "#routeCupsMachinesPage", app.routeCupsMachinesAttachClickListner);
 
         // populate list view every time page is visited 
         $(document).on("pagebeforeshow", "#routeCupsMachinesPage", app.fetchRouteCupsMachines);
@@ -1806,7 +1806,7 @@ var app = {
 
                     $.each(routeMachines, function(indexInner, valueInner){                   
 
-                    /* begin listview */
+                    // begin listview 
                     output += '<ul data-role="listview" data-inset="true">';
 
                         var routeMachineId = valueInner.routeMachineId;
@@ -1819,7 +1819,7 @@ var app = {
                         output += '<li id="'+ routeMachineId +'"><a href="#routeCoinsLoadPage" data-transition="slide">Coins</a></li>';
                         output += '</ul>';
                     });
-                    /* end listview */
+                    // end listview 
 
 
                     // begin add machine form
@@ -1850,12 +1850,7 @@ var app = {
                 });
 
                 // add output and refresh jquery mobile
-                //$("#routeCupsMachinesPageOuterList").html(output).collapsibleset().trigger('create');
-                $("#routeCupsMachinesPageOuterList").html(output).collapsibleset();
-
-
-
-
+                $("#routeCupsMachinesPageOuterList").html(output).collapsibleset().trigger('create');
 
                 // add location form begin
                 var availableRouteLocations = r.availableRouteLocations;
