@@ -70,6 +70,8 @@ var app = {
         // populate breadcrumbs
         $(document).on("pagebeforeshow", "#routeCupsMachinesPage", app.fetchRouteCupsMachinesBreadcrumbs);
 
+
+
         // populate list view every time page is visited 
         $(document).on("pagebeforeshow", "#routeCupsFlavorsPage", app.fetchRouteCupsFlavors);
 
@@ -98,19 +100,6 @@ var app = {
         // default form action
         $("#routeCupsFlavorEditForm").on("submit",this.fetchRouteCupsFlavorEditSubmit);
         /* route cups end */
-
-        /* route coins */
-        // bind the "on vclick" event listner only once during initial page
-        $(document).on("pagecreate", "#routeCoinsRoutesPage", app.routeCoinsRoutesAttachClickListner);
-        // populate list view every time page is visited 
-        $(document).on("pagebeforeshow", "#routeCoinsRoutesPage", app.fetchRouteCoinsRoutes);
-
-        // bind the "on vclick" event listner only once during initial page
-        $(document).on("pagecreate", "#routeCoinsMachinesPage", app.routeCoinsMachinesAttachClickListner);
-        // populate list view every time page is visited 
-        $(document).on("pagebeforeshow", "#routeCoinsMachinesPage", app.fetchRouteCoinsMachines);
-        // populate breadcrumbs
-        $(document).on("pagebeforeshow", "#routeCoinsMachinesPage", app.fetchRouteCoinsMachinesBreadcrumbs);
 
         // populate list view every time page is visited 
         $(document).on("pagebeforeshow", "#routeCoinsLoadPage", app.fetchRouteCoinsLoad);
@@ -356,6 +345,7 @@ var app = {
                     },1);   
                 },
                 "complete": function(){
+                    // hide spinner
                     var interval = setInterval(function(){
                         $.mobile.loading('hide');
                         clearInterval(interval);
@@ -492,30 +482,317 @@ var app = {
 
         console.log("[routeCupsMachinesAttachClickListner]");
 
-        /*
-        // attach "on vclick" event listener to all list items
-        $("#routeCupsMachinesPageList" ).on("vclick", "li", function (e) {
-            // override default event action
-            e.preventDefault();
 
+        // attach "on vclick" event listener to all list items
+        $("#routeCupsMachinesPageOuterList" ).on("vclick", "li", function (e) {
+            // override default event action
+            //e.preventDefault();
+
+            console.log("[routeCupsMachinesPageList clicking on this id:"+this.id+"]");
             localStorage["routeCupsRouteMachineId"] = this.id;
 
             // redirect
-            console.log("[routeCupsMachinesPageList forwarding to routeCupsFlavorsPage]");
-            $.mobile.changePage("#routeCupsFlavorsPage", {transition: "slide"});
+            //console.log("[routeCupsMachinesPageList forwarding to routeCupsFlavorsPage]");
+            //$.mobile.changePage("#routeCupsFlavorsPage", {transition: "slide"});
         });
-*/
+
+        // attach "on vclick" event listener to all list items
+        $("#routeCupsMachinesPageOuterList" ).on("vclick", ".routeMachinesLocationDiv ", function (e) {
+            // override default event action
+            //e.preventDefault();
+
+            console.log("[routeCupsMachinesPageList clicking on a collapsible:"+this.id+"]");
+            localStorage["routeCupsRouteLocationId"] = this.id;
+
+            // redirect
+            //console.log("[routeCupsMachinesPageList forwarding to routeCupsFlavorsPage]");
+            //$.mobile.changePage("#routeCupsFlavorsPage", {transition: "slide"});
+        });
+
+        // add machine add form (select pulldown)
+        $("#routeCupsMachinesPageOuterList").on("change", ".routeCupsMachinesAddMachineSelect", app.fetchRouteCupsMachinesAddMachineSubmit);
+
+        // add location add form (select pulldown)
+        $("#routeCupsMachinesPage").on("change", "#routeCupsMachinesAddLocationSelect", app.fetchRouteCupsMachinesAddLocationSubmit);
+
+        // move location up in order (button)
+        $("#routeCupsMachinesPage").on("vclick", ".routeCupsMachinesLocationUp", app.fetchRouteCupsMachinesLocationUpSubmit);
+
+        // move location down in order (button)
+        $("#routeCupsMachinesPage").on("vclick", ".routeCupsMachinesLocationDown", app.fetchRouteCupsMachinesLocationDownSubmit);
+
+        // move location down in order (button)
+        $("#routeCupsMachinesPage").on("vclick", ".routeCupsMachinesLocationDelete", app.fetchRouteCupsMachinesLocationDeleteSubmit);
+
+
 
     },
+
+    fetchRouteCupsMachinesAddMachineSubmit: function() {
+
+        console.log('[fetchRouteCupsMachinesAddMachineSubmit value: ' +this.value+']');
+
+        // selected option
+        var machineId = this.value;
+        var rId = localStorage.getItem("routeCupsRouteId");
+
+        // get routeLocationId from hidden input field
+        var selectMenu = this;
+        var addForm = this.form;
+        var routeLocationId = $( $(addForm).find('#routeCupsMachinesRouteLocationId') ).val(); 
+
+        //disable the button so we can't resubmit while we wait
+        $(this).selectmenu('disable'); // jquery mobile non native select menu
+
+        console.log("[Submitting route machine add.]");
+
+        app.servers.private.query('routecupsmachinesaddmachinesubmit', {routeId:rId,routeLocationId:routeLocationId,machineId:machineId}, function(r){
+
+            closureCallback(r, selectMenu);
+            // ajax callback
+            function closureCallback(r, selectMenu) {
+
+                var routeMachineId = r.routeMachineId;
+                var type = r.type;
+                var brandName = r.brandName;
+                var flavorQuantityTotal = r.flavorQuantityTotal;
+
+                var output = '<ul data-role="listview" data-inset="true">';
+                output += '<li id="'+ routeMachineId +'" data-role="list-divider">'+ type + ' - ' + brandName + '</li>';
+                output += '<li id="'+ routeMachineId +'"><a href="#routeCupsFlavorsPage" data-transition="slide">Cups<span class="ui-li-count">' + flavorQuantityTotal + '</span></a></li>';
+                output += '<li id="'+ routeMachineId +'"><a href="#routeCoinsLoadPage" data-transition="slide">Coins</a></li>';
+                output += '</ul>';
+
+                var addForm = selectMenu.form;
+                var formParent = $(addForm).parent();
+                $(formParent).prepend(output);
+                $(formParent).find("ul").listview().listview("refresh");
+
+                $(selectMenu).empty(); // jquery mobile non native select menu
+
+                var option = $('<option></option>').text("Add Machine");
+                $(selectMenu).append(option); // jquery mobile non native select menu
+
+                $.each(r.availableRouteMachines, function(index,value){
+                    var option = $('<option></option>').attr("value", index).text(value);
+                    $(selectMenu).append(option); // jquery mobile non native select menu
+                });
+
+                $(selectMenu).selectmenu("refresh"); // jquery mobile non native select menu
+
+                if(r.availableRouteMachines.length != 0) {
+                    $(selectMenu).selectmenu('enable'); // jquery mobile non native select menu
+                }
+
+
+            }
+
+        });
+
+
+
+        return false;
+    },  
+
+    fetchRouteCupsMachinesAddLocationSubmit: function() {
+
+        console.log('[fetchRouteCupsMachinesAddLocationSubmit value: ' +this.value+']');
+
+        // selected option
+        var locationId = this.value;
+        var rId = localStorage.getItem("routeCupsRouteId");
+
+        // get routeLocationId from hidden input field
+        var selectMenu = this;
+
+        //disable the button so we can't resubmit while we wait
+        $(this).selectmenu('disable'); // jquery mobile non native select menu
+
+        console.log("[Submitting route location add.]");
+
+        app.servers.private.query('routecupsmachinesaddlocationsubmit', {routeId:rId,locationId:locationId}, function(r){
+
+
+            closureCallback(r, selectMenu);
+            // ajax callback
+            function closureCallback(r, selectMenu) {
+
+                var routeLocationId = r.routeLocationId;
+                var addressLine1 = r.addressLine1;
+                var addressLine2 = r.addressLine2;
+                var city = r.city;
+                var state = r.state;
+                var zip = r.zip;
+                var availableRouteLocations = r.availableRouteLocations;
+                var availableRouteMachines = r.availableRouteMachines;
+
+                /*
+                */
+
+
+                // begin location collapsible
+                var output = "";
+                output += '<div class="routeMachinesLocationDiv" id="' +routeLocationId+'" data-role="collapsible">';
+
+                output += '<h3><div style="display:inline-block;">' + addressLine1 + '<br>';
+                if(addressLine2) {
+                    output += addressLine2 + '<br>';
+                }
+                output += city + ', ' + state + ' ' + zip;
+                output += '</div>';
+                output += '<span style="float:right; vertical-align:top"> <div data-role="controlgroup" data-type="horizontal">';
+                output += '<a class="routeCupsMachinesLocationUp" href="#" id="' + routeLocationId + '" data-role="button" data-iconpos="notext" data-icon="arrow-u"><span class="ui-btn-inner ui-corner-left"><span class="ui-btn-text">Up</span></span></a>';
+                output += '<a class="routeCupsMachinesLocationDown" href="#" id="' + routeLocationId + '" data-role="button" data-iconpos="notext" data-icon="arrow-d"><span class="ui-btn-inner"><span class="ui-btn-text">Up</span></span></a>';
+                output += '<a class="routeCupsMachinesLocationDelete" href="#" id="' + routeLocationId + '" data-role="button" data-iconpos="notext" data-icon="delete"><span class="ui-btn-inner ui-corner-right ui-controlgroup-last"><span class="ui-btn-text">Up</span></span></a>';
+                output += '</div></span>';
+                output += '</h3>';
+
+
+
+
+                // begin add machine form
+                output += '<form id="routeCupsMachinesAddMachineForm">';
+                output += '<input type=hidden id="routeCupsMachinesRouteLocationId" value="' + routeLocationId +'">';
+                if(availableRouteMachines.length != 0) {
+                    output += '<select class="routeCupsMachinesAddMachineSelect" data-native-menu="false" data-icon="false">';
+                    output += '<option>Add Machine</option>';
+                }
+                else {
+                    output += '<select class="routeCupsMachinesAddMachineSelect" data-native-menu="false" data-icon="false" data-disabled=true>';
+                    output += '<option>Add Machine</option>';
+                }
+                $.each(availableRouteMachines, function(indexInner, valueInner){                   
+                    output += '<option value="'+indexInner+'">'+valueInner+'</option>';
+                });
+                output += '</select></div>';
+                output += '</form>';
+                // end add machine form
+                output += '</div>';
+
+
+                // append location collapsible to collapsible set
+                $('#routeCupsMachinesPageOuterList').append(output).trigger('create');
+                // end location collapsible
+
+                // begin location add select button
+
+                $(selectMenu).empty(); // jquery mobile non native select menu
+
+                var option = $('<option></option>').text("Add Location");
+                $(selectMenu).append(option); // jquery mobile non native select menu
+
+                $.each(r.availableRouteLocations, function(index,value){
+                    optTxt = "";
+                    optTxt += value.addressLine1 + ', ';
+                    if (value.addressLine2) {
+                        optTxt += value.addressLine2 + ', ';
+                    }
+                    optTxt += value.city + ', ' + value.state + ' ' + value.zip;
+                    var option = $('<option></option>').attr("value", value.locationId).text(optTxt);
+                    $(selectMenu).append(option); // jquery mobile non native select menu
+                });
+
+                $(selectMenu).selectmenu("refresh"); // jquery mobile non native select menu
+
+                if(r.availableRouteLocations.length != 0) {
+                    $(selectMenu).selectmenu('enable'); // jquery mobile non native select menu
+                }
+                // end location add select button
+
+
+
+            }
+
+        });
+
+
+
+        return false;
+    },  
+
+    fetchRouteCupsMachinesLocationUpSubmit: function(e) {
+
+        console.log('[fetchRouteCupsMachinesLocationUpSubmit]');
+
+        // prevent vclick event attached to underlying collapsible set header so that collapsible doesn't expand/close
+        e.stopPropagation();
+        e.stopImmediatePropagation();  
+
+        // remove active state css from active listview 
+        $(".ui-collapsible-heading-toggle").removeClass('ui-btn-active', '');
+
+        var routeLocationId = this.id;
+        var rId = localStorage.getItem("routeCupsRouteId");
+
+        app.servers.private.query('routecupsmachineslocationreordersubmit', {routeId:rId,routeLocationId:routeLocationId,direction:"up"}, function(r){
+            console.log("[fetchRouteCupsMachinesLocationUpSubmit forwarding to routeCupsMachinesPage]");
+            $.mobile.changePage("#routeCupsMachinesPage", {allowSamePageTransition: true, transition: "pop"});
+        });
+
+
+
+        return false;
+    },  
+
+    fetchRouteCupsMachinesLocationDownSubmit: function(e) {
+
+        console.log('[fetchRouteCupsMachinesLocationDownSubmit]');
+
+        // prevent vclick event attached to underlying collapsible set header so that collapsible doesn't expand/close
+        e.stopPropagation();
+        e.stopImmediatePropagation();  
+
+        // remove active state css from active listview 
+        $(".ui-collapsible-heading-toggle").removeClass('ui-btn-active', '');
+
+        var routeLocationId = this.id;
+        var rId = localStorage.getItem("routeCupsRouteId");
+
+        app.servers.private.query('routecupsmachineslocationreordersubmit', {routeId:rId,routeLocationId:routeLocationId,direction:"down"}, function(r){
+            console.log("[fetchRouteCupsMachinesLocationDownSubmit forwarding to routeCupsMachinesPage]");
+            $.mobile.changePage("#routeCupsMachinesPage", {allowSamePageTransition: true, transition: "pop"});
+        });
+
+        return false;
+    },  
+
+    fetchRouteCupsMachinesLocationDeleteSubmit: function(e) {
+
+        console.log('[fetchRouteCupsMachinesLocationDeleteSubmit value]');
+
+        // prevent vclick event attached to underlying collapsible set header so that collapsible doesn't expand/close
+        e.stopPropagation();
+        e.stopImmediatePropagation();  
+
+        // remove active state css from active listview 
+        $(".ui-collapsible-heading-toggle").removeClass('ui-btn-active', '');
+
+        // selected option
+        var routeLocationId = this.id;
+        var rId = localStorage.getItem("routeCupsRouteId");
+
+
+        app.servers.private.query('routecupsmachineslocationdeletesubmit', {routeId:rId,routeLocationId:routeLocationId}, function(r){
+
+            // remove collapsible set element
+            $(".routeMachinesLocationDiv#" + routeLocationId).remove();
+
+        });
+
+
+
+        return false;
+    },  
+
 
     fetchRouteCupsFlavors: function() {
         
         console.log("[fetchRouteCupsFlavors]");
 
         var routeCupsRouteId = localStorage.getItem("routeCupsRouteId");
-        var routeCupsMachineId = localStorage.getItem("routeCupsMachineId");
+        var routeCupsRouteMachineId = localStorage.getItem("routeCupsRouteMachineId");
 
-        app.servers.private.query('routecupsflavors', {routeId:routeCupsRouteId,machineId:routeCupsMachineId}, app.callbacks.fetchRouteCupsFlavors);
+        app.servers.private.query('routecupsflavors', {routeId:routeCupsRouteId,routeMachineId:routeCupsRouteMachineId}, app.callbacks.fetchRouteCupsFlavors);
 
     },
 
@@ -524,8 +801,8 @@ var app = {
         // retrieve route date, vanName, machineType and brandName for breadcrumbs 
         console.log("[fetchRouteCupsFlavorsBreadcrumbs]");
 
-        var routeCupsMachineId = localStorage.getItem("routeCupsMachineId");
-        app.servers.private.query('machineinfo', {machineId:routeCupsMachineId}, app.callbacks.fetchRouteCupsFlavorsBreadcrumbs);
+        var routeCupsRouteMachineId = localStorage.getItem("routeCupsRouteMachineId");
+        app.servers.private.query('machineinfo', {routeMachineId:routeCupsRouteMachineId}, app.callbacks.fetchRouteCupsFlavorsBreadcrumbs);
 
     },
 
@@ -553,10 +830,10 @@ var app = {
         console.log["fetchRouteCupsFlavorAdd"];
 
         var routeCupsRouteId = localStorage.getItem("routeCupsRouteId");
-        var routeCupsMachineId = localStorage.getItem("routeCupsMachineId");
+        var routeCupsRouteMachineId = localStorage.getItem("routeCupsRouteMachineId");
 
         // fetch flavor options
-        app.servers.private.query('routecupsflavoradd', {routeId:routeCupsRouteId, machineId:routeCupsMachineId}, app.callbacks.fetchRouteCupsFlavorAdd);
+        app.servers.private.query('routecupsflavoradd', {routeId:routeCupsRouteId, routeMachineId:routeCupsRouteMachineId}, app.callbacks.fetchRouteCupsFlavorAdd);
 
     },
 
@@ -584,12 +861,12 @@ var app = {
         $("#routeCupsFlavorAddSubmitButton").button("disable");
 
         var rId = localStorage.getItem("routeCupsRouteId");
-        var mId = localStorage.getItem("routeCupsMachineId");
+        var rmId = localStorage.getItem("routeCupsRouteMachineId");
         var fId = $("#routeCupsFlavorAddFlavorName", form).val();
         var fQuantity = $("#routeCupsFlavorAddCupsCount", form).val();
 
         console.log("[Submitting route machine flavor add info.]");
-        app.servers.private.query('routecupsflavoraddsubmit', {routeId:rId,machineId:mId,flavorId:fId,flavorQuantity:fQuantity}, app.callbacks.fetchRouteCupsFlavorAddSubmit);
+        app.servers.private.query('routecupsflavoraddsubmit', {routeId:rId,routeMachineId:rmId,flavorId:fId,flavorQuantity:fQuantity}, app.callbacks.fetchRouteCupsFlavorAddSubmit);
         $("#routeCupsFlavorAddSubmitButton").button("enable");
 
         // stop form from submitting 'get' request by returning false
@@ -601,11 +878,11 @@ var app = {
         console.log["fetchRouteCupsFlavorEdit"];
 
         var routeCupsRouteId = localStorage.getItem("routeCupsRouteId");
-        var routeCupsMachineId = localStorage.getItem("routeCupsMachineId");
+        var routeCupsRouteMachineId = localStorage.getItem("routeCupsRouteMachineId");
         var routeCupsMachineFlavorLoadId = localStorage.getItem("routeCupsMachineFlavorLoadId");
 
         // fetch flavor options
-        app.servers.private.query('routecupsflavoredit', {routeId:routeCupsRouteId, machineId:routeCupsMachineId, machineFlavorLoadId:routeCupsMachineFlavorLoadId}, app.callbacks.fetchRouteCupsFlavorEdit);
+        app.servers.private.query('routecupsflavoredit', {routeId:routeCupsRouteId, routeMachineId:routeCupsRouteMachineId, machineFlavorLoadId:routeCupsMachineFlavorLoadId}, app.callbacks.fetchRouteCupsFlavorEdit);
 
     },
 
@@ -636,19 +913,17 @@ var app = {
         $("#routeCupsFlavorEditDeleteSubmitButton").button("disable");
 
         var rId = localStorage.getItem("routeCupsRouteId");
-        var mId = localStorage.getItem("routeCupsMachineId");
+        var rmId = localStorage.getItem("routeCupsRouteMachineId");
         var mflId = localStorage.getItem("routeCupsMachineFlavorLoadId");
         var fQuantity = $("#routeCupsFlavorEditFlavorQuantity", form).val();
 
-
-
         if (formType === "update") {
             console.log("[Submitting route machine flavor update.]");
-            app.servers.private.query('routecupsflavorupdatesubmit', {routeId:rId,machineId:mId,machineFlavorLoadId:mflId,flavorQuantity:fQuantity}, app.callbacks.fetchRouteCupsFlavorUpdateSubmit);
+            app.servers.private.query('routecupsflavorupdatesubmit', {routeId:rId,routeMachineId:rmId,machineFlavorLoadId:mflId,flavorQuantity:fQuantity}, app.callbacks.fetchRouteCupsFlavorUpdateSubmit);
         }
         else {
             console.log("[Submitting route machine flavor delete.]");
-            app.servers.private.query('routecupsflavordeletesubmit', {routeId:rId,machineId:mId,machineFlavorLoadId:mflId}, app.callbacks.fetchRouteCupsFlavorDeleteSubmit);
+            app.servers.private.query('routecupsflavordeletesubmit', {routeId:rId,routeMachineId:rmId,machineFlavorLoadId:mflId}, app.callbacks.fetchRouteCupsFlavorDeleteSubmit);
         }
 
         //disable the button so we can't resubmit while we wait
@@ -662,82 +937,16 @@ var app = {
 
 
 
-    fetchRouteCoinsMachines: function() {
-        
-        console.log("[fetchRouteCoinsMachines]");
 
-        var routeCoinsRouteId = localStorage.getItem("routeCoinsRouteId");
-
-        app.servers.private.query('routecoinsmachines', {routeId:routeCoinsRouteId}, app.callbacks.fetchRouteCoinsMachines);
-
-    },
-    fetchRouteCoinsMachinesBreadcrumbs: function() {
-        
-        // retrieve route date and vanName for breadcrumbs 
-        console.log("[fetchRouteCoinsMachinesBreadcrumbs]");
-
-        var routeCoinsRouteId = localStorage.getItem("routeCoinsRouteId");
-
-        app.servers.private.query('routeinfo', {routeId:routeCoinsRouteId}, app.callbacks.fetchRouteCoinsMachinesBreadcrumbs);
-
-    },
-
-    routeCoinsMachinesAttachClickListner: function() {
-
-        console.log("[routeCoinsMachinesAttachClickListner]");
-
-        // attach "on vclick" event listener to all list items
-        $("#routeCoinsMachinesPageList").on("vclick", "li", function (e) {
-            // override default event action
-            e.preventDefault();
-
-            localStorage["routeCoinsMachineId"] = this.id;
-
-            // redirect
-            console.log("[routeCoinsMachinesPageList forwarding to routeCoinsLoadPage]");
-            $.mobile.changePage("#routeCoinsLoadPage", {transition: "slide"});
-        });
-
-    },
-
-    fetchRouteCoinsRoutes: function() {
-        
-        console.log("[fetchRouteCoinsRoutes]");
-
-        app.servers.private.query('routes', {}, app.callbacks.fetchRouteCoinsRoutes);
-
-    },
-    routeCoinsRoutesAttachClickListner: function() {
-
-        console.log("[routeCoinsRoutesAttachClickListner]");
-        var listViews = ['routeCoinsRoutesPageHoldList', 'routeCoinsRoutesPageVanReadyList'];
-
-        // attach click handler for each list on the page
-        $.each(listViews, function(index,value){
-
-            // attach "on vclick" event listener to all list items
-            $("#"+value).on("vclick", "li", function (e) {
-                // override default event action
-                e.preventDefault();
-
-                localStorage["routeCoinsRouteId"] = this.id;
-
-                // redirect
-                console.log("[" + value + " forwarding to routeCoinsMachinesPage]");
-                $.mobile.changePage("#routeCoinsMachinesPage", {transition: "slide"});
-            });
-        });
-
-    },
 
     fetchRouteCoinsLoad: function() {
         
         console.log("[fetchRouteCoinsLoad]");
 
-        var routeCoinsRouteId = localStorage.getItem("routeCoinsRouteId");
-        var routeCoinsMachineId = localStorage.getItem("routeCoinsMachineId");
+        var routeCupsRouteId = localStorage.getItem("routeCupsRouteId");
+        var routeCupsRouteMachineId = localStorage.getItem("routeCupsRouteMachineId");
 
-        app.servers.private.query('routecoinsload', {routeId:routeCoinsRouteId,machineId:routeCoinsMachineId}, app.callbacks.fetchRouteCoinsLoad);
+        app.servers.private.query('routecoinsload', {routeId:routeCupsRouteId,routeMachineId:routeCupsRouteMachineId}, app.callbacks.fetchRouteCoinsLoad);
 
     },
 
@@ -746,8 +955,8 @@ var app = {
         // retrieve route date, vanName, machineType and brandName for breadcrumbs 
         console.log("[fetchRouteCoinsLoadBreadcrumbs]");
 
-        var routeCoinsMachineId = localStorage.getItem("routeCoinsMachineId");
-        app.servers.private.query('machineinfo', {machineId:routeCoinsMachineId}, app.callbacks.fetchRouteCoinsLoadBreadcrumbs);
+        var routeCupsRouteMachineId = localStorage.getItem("routeCupsRouteMachineId");
+        app.servers.private.query('machineinfo', {routeMachineId:routeCupsRouteMachineId}, app.callbacks.fetchRouteCoinsLoadBreadcrumbs);
 
     },
 
@@ -761,8 +970,8 @@ var app = {
         $("#routeCoinsLoadFormSubmitButton").button("disable");
 
         // machineId, routeId, flavorId, flavorQuantity, loadType
-        var routeCoinsRouteId = localStorage.getItem("routeCoinsRouteId");
-        var routeCoinsMachineId = localStorage.getItem("routeCoinsMachineId");
+        var routeCupsRouteId = localStorage.getItem("routeCupsRouteId");
+        var routeCupsRouteMachineId = localStorage.getItem("routeCupsRouteMachineId");
 
         coinsToLoad = []; 
         $("#routeCoinsLoadForm input[type=number]").each(function() {
@@ -782,7 +991,7 @@ var app = {
             });
 
         console.log("[Submitting machine coins to load request.]");
-        app.servers.private.query('routecoinsloadsubmit', {routeId:routeCoinsRouteId, machineId:routeCoinsMachineId, routeCoinsToLoad:coinsToLoad}, app.callbacks.fetchRouteCoinsLoadSubmit);
+        app.servers.private.query('routecoinsloadsubmit', {routeId:routeCupsRouteId, routeMachineId:routeCupsRouteMachineId, routeCoinsToLoad:coinsToLoad}, app.callbacks.fetchRouteCoinsLoadSubmit);
 
         // stop form from submitting 'get' request by returning false
         return false;
@@ -1568,60 +1777,113 @@ var app = {
                     $('#modalDialogBack').popup("open");
                 }
 
+                var currentRouteLocationId = localStorage.getItem("routeCupsRouteLocationId");
+
                 var output = '';
                 $.each(r.routeMachinesByLocation, function(index, value){                   
 
+                    // location collapsible
                     var routeMachines = value.routeMachines;
-                    output += '<div data-role="collapsible">';
-                    output += '<h3>' + value.addressLine1 + '<br>';
+                    // expand active location
+                    if (value.routeLocationId == currentRouteLocationId ) {
+                        output += '<div class="routeMachinesLocationDiv" id="' +value.routeLocationId+'" data-role="collapsible" data-collapsed="false">';
+                    }
+                    else {
+                        output += '<div class="routeMachinesLocationDiv" id="' +value.routeLocationId+'" data-role="collapsible">';
+                    }
+                    output += '<h3><div style="display:inline-block;">' + value.addressLine1 + '<br>';
                     if(value.addressLine2) {
                         output += value.addressLine2 + '<br>';
                     }
-                    output += value.city + ', ' + value.state + ' ' + value.zip + '</h3>';
-                    output += '<ul data-role="listview" data-inset="true" data-split-icon="delete">';
+                    output += value.city + ', ' + value.state + ' ' + value.zip;
+                    output += '</div>';
+                    output += '<span style="float:right; vertical-align:top"> <div data-role="controlgroup" data-type="horizontal">';
+                    output += '<a class="routeCupsMachinesLocationUp" href="#" id="' + value.routeLocationId + '" data-role="button" data-iconpos="notext" data-icon="arrow-u"><span class="ui-btn-inner ui-corner-left"><span class="ui-btn-text">Up</span></span></a>';
+                    output += '<a class="routeCupsMachinesLocationDown" href="#" id="' + value.routeLocationId + '" data-role="button" data-iconpos="notext" data-icon="arrow-d"><span class="ui-btn-inner"><span class="ui-btn-text">Up</span></span></a>';
+                    output += '<a class="routeCupsMachinesLocationDelete" href="#" id="' + value.routeLocationId + '" data-role="button" data-iconpos="notext" data-icon="delete"><span class="ui-btn-inner ui-corner-right ui-controlgroup-last"><span class="ui-btn-text">Up</span></span></a>';
+                    output += '</div></span>';
+                    output += '</h3>';
+
                     $.each(routeMachines, function(indexInner, valueInner){                   
+
+                    /* begin listview */
+                    output += '<ul data-role="listview" data-inset="true">';
 
                         var routeMachineId = valueInner.routeMachineId;
                         var type = valueInner.type;
                         var brandName = valueInner.brandName;
                         var flavorQuantityTotal = valueInner.flavorQuantityTotal;
 
-                        output += '<li id="'+ routeMachineId +'"><a href="#routeCupsFlavorsPage">' + type + ' - ' + brandName + '<span class="ui-li-count">' + flavorQuantityTotal + '</span></a><a href="#"></a></li>';
+                        output += '<li id="'+ routeMachineId +'" data-role="list-divider">'+ type + ' - ' + brandName + '</li>';
+                        output += '<li id="'+ routeMachineId +'"><a href="#routeCupsFlavorsPage" data-transition="slide">Cups<span class="ui-li-count">' + flavorQuantityTotal + '</span></a></li>';
+                        output += '<li id="'+ routeMachineId +'"><a href="#routeCoinsLoadPage" data-transition="slide">Coins</a></li>';
+                        output += '</ul>';
                     });
+                    /* end listview */
 
-                    output += '</ul>';
 
-                    output += '<ul data-role="listview" data-inset="true">';
-                    output += '<li><a href="#">Add Machine</a></li>';
-                    output += '</ul>';
+                    // begin add machine form
+                    var availableRouteMachines = value.availableRouteMachines;
+                    output += '<form id="routeCupsMachinesAddMachineForm">';
+                    output += '<input type=hidden id="routeCupsMachinesRouteLocationId" value="' + value.routeLocationId +'">';
+                    if(availableRouteMachines.length != 0) {
+                        output += '<select class="routeCupsMachinesAddMachineSelect" data-native-menu="false" data-icon="false">';
+                        output += '<option>Add Machine</option>';
+                    }
+                    else {
+                        output += '<select class="routeCupsMachinesAddMachineSelect" data-native-menu="false" data-icon="false" data-disabled=true>';
+                        output += '<option>Add Machine</option>';
+                    }
+                    $.each(availableRouteMachines, function(indexInner, valueInner){                   
+                        output += '<option value="'+indexInner+'">'+valueInner+'</option>';
+                    });
+                    output += '</select></div>';
+                    output += '</form>';
+                    // end add machine form
+
 
                     output += '</div>';
+                    // end location collapsible
+
+
+
                 });
 
-        /*
-        <ul data-role="listview" data-inset="true">
-        <li><a id="routeCupsFlavorAddLink" href="#routeCupsFlavorAddPage" data-transition="slide">Add Flavor</a></li>
-        </ul> 
-        */
-
-
+                // add output and refresh jquery mobile
                 $("#routeCupsMachinesPageOuterList").html(output).collapsibleset().trigger('create');
 
-                //append list to ul
-                /*
-                $("#routeCupsMachinesPageOuterList").html(output).promise().done(function () {
-                    // refresh listview so that jq mobile applies styles to added li elements
-                    $("#routeCupsMachinesPageOuterList ul").each(function(i) {
-                        $(this).listview(); 
-                    });
-                    //$('[data-role=collapsible-set]').collapsibleset().trigger('create');
-                    //$('[data-role=collapsible-set]').collapsibleset("refresh");
 
-                    $("ul").listview();
+
+
+
+                // add location form begin
+                var availableRouteLocations = r.availableRouteLocations;
+                output = "";
+                output += '<form id="routeCupsMachinesAddLocationForm">';
+                output += '<input type=hidden id="routeCupsMachinesRouteId" value="' + r.routeId +'">';
+                if(availableRouteLocations.length != 0) {
+                    output += '<select id="routeCupsMachinesAddLocationSelect" data-native-menu="false" data-icon="false">';
+                    output += '<option>Add Location</option>';
+                }
+                else {
+                    output += '<select id="routeCupsMachinesAddLocationSelect" data-native-menu="false" data-icon="false" data-disabled=true>';
+                    output += '<option>Add Location</option>';
+                }
+                $.each(availableRouteLocations, function(indexInner, valueInner){                   
+                    optTxt = "";
+                    optTxt += valueInner.addressLine1 + ', ';
+                    if (valueInner.addressLine2) {
+                        optTxt += valueInner.addressLine2 + ', ';
+                    }
+                    optTxt += valueInner.city + ', ' + valueInner.state + ' ' + valueInner.zip;
+                    output += '<option value="'+valueInner.locationId+'">'+optTxt+'</option>';
                 });
-                */
+                output += '</select></div>';
+                output += '</form>';
+                // add location form end
 
-
+                $("#routeCupsMachinesPageAddLocationDiv").html(output);
+                $("#routeCupsMachinesAddLocationSelect").selectmenu().selectmenu('refresh');
 
             }
             else {
@@ -1812,8 +2074,9 @@ var app = {
                 var routeCupsFlavorsDateHeader = localStorage.getItem("routeCupsDate");
                 var routeCupsFlavorsVanNameHeader = localStorage.getItem("routeCupsVanName");
 
-                localStorage["routeCupsMachineId"] = r.machineId;
+                localStorage["routeCupsRouteMachineId"] = r.routeMachineId;
                 localStorage["routeCupsMachineName"] = r.type + ' - ' + r.brandName;
+                //localStorage["routeCupsRouteLocationId"] = r.routeLocationId;
 
                 // write breadcrumbs
                 $('#routeCupsFlavorsDateHeader').html(routeCupsFlavorsDateHeader);
@@ -2199,182 +2462,7 @@ var app = {
         },
 
 
-       "fetchRouteCoinsMachines": function(r) { 
 
-            console.log("[fetchRouteCoinsMachines callback]");
-
-            if(r && r.code && r.code === "SUCCESS") {
-                console.log("[fetchRouteCoinsMachines SUCCESS]");
-
-                // record no longer exists? - customize modal dialog and return
-                if (r.result === false) {
-
-                    if (r.resultcode === "ROUTE DOES NOT EXIST") {
-
-                        console.log("[fetchRouteCoinsMachines redirecting to #routeCoinsRoutesPage]");
-                        $('#modalDialogMessage').html('Route no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#routeCoinsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else {
-                        // unrecognized error - 
-                        console.log("[fetchRouteCoinsMachines redirecting to #routeCoinsRoutesPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#routeCoinsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-
-                    }
-                }
-
-                if (r.routeMachines.length == 0) {
-                    $('#modalDialogBackMessage').html("No machines available to display.");
-                    $('#modalDialogBack').popup("open");
-                }
-
-                var output = '';
-                $.each(r.routeMachines, function(index, value){                   
-
-                    var machineId = value.machineId;
-                    var type = value.type;
-                    var brandName = value.brandName;
-                    var flavorQuantityTotal = value.flavorQuantityTotal;
-
-                    output += '<li id="'+ machineId +'"><a href="#routeCoinsLoadPage">' + type + ' - ' + brandName + '</a></li>';
-                });
-
-                //append list to ul
-                $("#routeCoinsMachinesPageList").html(output).promise().done(function () {
-                    // refresh listview so that jq mobile applies styles to added li elements
-                    $(this).listview("refresh");
-                });
-
-
-
-            }
-            else {
-                console.log("[fetchRouteCoinsMachines ERROR]");
-                console.log("[fetchRouteCoinsMachines message:" + r.message + "]");
-                console.log("[Redirecting to login.]");
-                jQuery.mobile.changePage('#loginPage');
-            }
-
-        },
-
-       "fetchRouteCoinsMachinesBreadcrumbs": function(r) { 
-
-            // retrieve route date and vanName for breadcrumbs 
-            console.log("[fetchRouteCoinsMachinesBreadcrumbs callback]");
-
-            if(r && r.code && r.code === "SUCCESS") {
-                console.log("[fetchRouteCoinsMachinesBreadcrumbs SUCCESS]");
-
-                // record no longer exists? - customize modal dialog and return
-                if (r.result === false) {
-
-                    if (r.resultcode === "ROUTE DOES NOT EXIST") {
-
-                        console.log("[fetchRouteCoinsMachinesBreadcrumbs redirecting to #routeCoinsRoutesPage]");
-                        $('#modalDialogMessage').html('Route Location no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#routeCoinsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else {
-                        // unrecognized error - forward 
-                        console.log("[fetchRouteCoinsMachinesBreadcrumbs redirecting to #routeCoinsRoutesPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#routeCoinsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-
-                    }
-                }
-
-                localStorage["routeCoinsDate"] = r.date;
-                localStorage["routeCoinsVanName"] = r.vanName;
-
-                // write breadcrumbs
-                $('#routeCoinsMachinesDateHeader').html(r.date);
-                $('#routeCoinsMachinesVanNameHeader').html(r.vanName);
-
-
-            }
-            else {
-                console.log("[fetchRouteCoinsMachinesBreadcrumbs ERROR]");
-                console.log("[fetchRouteCoinsMachinesBreadcrumbs message:" + r.message + "]");
-                console.log("[Redirecting to login.]");
-                jQuery.mobile.changePage('#loginPage');
-            }
-
-        },
-
-        "fetchRouteCoinsRoutes": function(r) { 
-
-            console.log("[fetchRouteCoinsRoutes callback]");
-
-            if(r && r.code && r.code === "SUCCESS") {
-                console.log("[fetchRouteCoinsRoutes SUCCESS]");
-
-                var holdOutput = '';
-                var vanReadyOutput = '';
-                $.each(r.routes, function(index, value){                   
-
-                    var rId = value.routeId;
-                    var vanName = value.vanName;
-                    var coinsStatus = value.coinsStatus;
-                    var date = value.date;
-
-                    if (coinsStatus=="Hold") {
-                        holdOutput += '<li id="'+ rId +'"><a href="#routeCoinsMachinesPage">' +  date + ' - ' + vanName + '</a></li>';
-                    }
-                    else {
-                        vanReadyOutput += '<li id="'+ rId +'"><a href="#routeCoinsMachinesPage">' +  date + ' - ' + vanName + ' (' +coinsStatus + ')</a></li>';
-                    }
-
-                });
-
-                var holdHeader = "";
-                var vanReadyHeader = "";
-
-                //append list to ul
-                if (holdOutput) {
-                    holdHeader = "Not Sent for Van Load:";
-                }
-                if (vanReadyOutput) {
-                    vanReadyHeader = "Sent for Van Load:";
-                }
-
-                $('#routeCoinsRoutesPageHoldListHeader').html(holdHeader);
-                $("#routeCoinsRoutesPageHoldList").html(holdOutput).promise().done(function () {
-                    // refresh listview so that jq mobile applies styles to added li elements
-                    $(this).listview("refresh");
-                });
-
-                $('#routeCoinsRoutesPageVanReadyListHeader').html(vanReadyHeader);
-                $("#routeCoinsRoutesPageVanReadyList").html(vanReadyOutput).promise().done(function () {
-                    // refresh listview so that jq mobile applies styles to added li elements
-                    $(this).listview("refresh");
-                });
-
-                if (! holdOutput && !vanReadyOutput) {
-                    $('#modalDialogBackMessage').html("No routes available to display.");
-                    $('#modalDialogBack').popup("open");
-                }
-
-
-
-
-            }
-            else {
-                console.log("[fetchRouteCoinsRoutes ERROR]");
-                console.log("[fetchRouteCoinsRoutes message:" + r.message + "]");
-                console.log("[Redirecting to login.]");
-                jQuery.mobile.changePage('#loginPage');
-            }
-
-        },
 
        "fetchRouteCoinsLoad": function(r) { 
 
@@ -2490,11 +2578,12 @@ var app = {
                 }
 
                 // get from local storage
-                var routeCoinsDateHeader = localStorage.getItem("routeCoinsDate");
-                var routeCoinsVanNameHeader = localStorage.getItem("routeCoinsVanName");
+                var routeCoinsDateHeader = localStorage.getItem("routeCupsDate");
+                var routeCoinsVanNameHeader = localStorage.getItem("routeCupsVanName");
 
-                localStorage["routeCoinsMachineId"] = r.machineId;
-                localStorage["routeCoinsMachineName"] = r.type + ' - ' + r.brandName;
+                localStorage["routeCupsRouteMachineId"] = r.routeMachineId;
+                localStorage["routeCupsMachineName"] = r.type + ' - ' + r.brandName;
+                //localStorage["routeCupsRouteLocationId"] = r.routeLocationId;
 
                 // write breadcrumbs
                 $('#routeCoinsLoadDateHeader').html(routeCoinsDateHeader);
@@ -2554,9 +2643,9 @@ var app = {
                 $("#routeCoinsLoadFormSubmitButton").button("enable");
 
                 // flavors added to machine - show modal dialog and send to machines page
-                console.log("[fetchRouteCoinsLoadSubmit redirecting to #routeCoinsMachinesPage]");
+                console.log("[fetchRouteCoinsLoadSubmit redirecting to #routeCupsMachinesPage]");
                 $('#modalDialogMessage').html('Coin Load updated.');
-                $('#modalDialogRedirect').attr('href','#routeCoinsMachinesPage');
+                $('#modalDialogRedirect').attr('href','#routeCupsMachinesPage');
                 $('#modalDialog').popup("open");
 
             }

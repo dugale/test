@@ -158,8 +158,7 @@
 
     <div data-role="content">   
         <ul data-role="listview" data-inset="true">
-        <li><a href="#routeCupsRoutesPage" data-transition="slide">Route Edit Cups</a></li>
-        <li><a href="#routeCoinsRoutesPage" data-transition="slide">Route Edit Coins</a></li>
+        <li><a href="#routeCupsRoutesPage" data-transition="slide">Routes</a></li>
         <li><a href="#vanCupsRoutesPage" data-transition="slide">Van Load Cups</a></li>
         <li><a href="#vanCoinsRoutesPage" data-transition="slide">Van Load Coins</a></li>
         <li><a href="#machineCupsRoutesPage" data-transition="slide">Machine Load Cups</a></li>
@@ -187,9 +186,8 @@
 <div id="routeCupsRoutesPage" data-role="page" data-theme="a">
 
     <div data-role="panel" class="mypanel">
-        <p><a onclick="$('.mypanel:visible').panel('close');" data-role="button">Route Edit Cups</a></p>
-        <!--<p><a href="#routeCupsPage" data-role="button">Route Edit Cups</a></p>-->
-        <p><a href="#routeCoinsRoutesPage" data-role="button">Route Edit Coins</a></p>
+        <p><a onclick="$('.mypanel:visible').panel('close');" data-role="button">Routes</a></p>
+        <!--<p><a href="#routeCupsPage" data-role="button">Routes</a></p>-->
         <p><a href="#vanCupsRoutesPage" data-role="button">Van Load Cups</a></p>
         <p><a href="#vanCoinsRoutesPage" data-role="button">Van Load Coins</a></p>
         <p><a href="#machineCupsRoutesPage" data-role="button">Machine Load Cups</a></p>
@@ -208,7 +206,7 @@
 
 
 
-    <h1>Route Edit Cups</h1>
+    <h1>Routes</h1>
     <!-- // gets populated with...
         <li> <a href="#machineFlavorsPage">Machine 1<span class="ui-li-count">250</span></a> </li>
     -->
@@ -230,8 +228,7 @@
 
 <div id="routeCupsMachinesPage" data-role="page" data-theme="a">
     <div data-role="panel" class="mypanel">
-        <p><a href="#routeCupsRoutesPage" data-role="button">Route Edit Cups</a></p>
-        <p><a href="#routeCoinsRoutesPage" data-role="button">Route Edit Coins</a></p>
+        <p><a href="#routeCupsRoutesPage" data-role="button">Routes</a></p>
         <p><a href="#vanCupsRoutesPage" data-role="button">Van Load Cups</a></p>
         <p><a href="#vanCoinsRoutesPage" data-role="button">Van Load Coins</a></p>
         <p><a href="#machineCupsRoutesPage" data-role="button">Machine Load Cups</a></p>
@@ -249,7 +246,7 @@
 
     <div data-role="content">   
 
-    <h1>Route Edit Cups</h1>
+    <h1>Routes</h1>
     <p id="routeCupsMachinesDateHeader"></p>
     <p id="routeCupsMachinesVanNameHeader"></p>
 
@@ -258,9 +255,9 @@
     <ul id="routeCupsMachinesPageList" data-role="listview" data-inset="true"></ul>
     -->
     <div id="routeCupsMachinesPageOuterList" data-role="collapsible-set"></div>
-
-
+    <div id="routeCupsMachinesPageAddLocationDiv"></div>
     </div>
+
 
     <div data-role="footer" data-position="fixed">
         <h4>&copy; U-Vend, Inc.</h4>
@@ -269,8 +266,7 @@
 
 <div id="routeCupsFlavorsPage" data-role="page" data-theme="a">
     <div data-role="panel" class="mypanel">
-        <p><a href="#routeCupsRoutesPage" data-role="button">Route Edit Cups</a></p>
-        <p><a href="#routeCoinsRoutesPage" data-role="button">Route Edit Coins</a></p>
+        <p><a href="#routeCupsRoutesPage" data-role="button">Routes</a></p>
         <p><a href="#vanCupsRoutesPage" data-role="button">Van Load Cups</a></p>
         <p><a href="#vanCoinsRoutesPage" data-role="button">Van Load Coins</a></p>
         <p><a href="#machineCupsRoutesPage" data-role="button">Machine Load Cups</a></p>
@@ -289,7 +285,7 @@
 
     <div data-role="content">   
 
-    <h1>Route Edit Cups</h1>
+    <h1>Routes</h1>
     <p id="routeCupsFlavorsDateHeader"></p>
     <p id="routeCupsFlavorsVanNameHeader"></p>
     <p id="routeCupsFlavorsMachineNameHeader"></p>
@@ -320,7 +316,7 @@
 
     <div data-role="content">   
 
-    <h1>Route Edit Cups</h1>
+    <h1>Routes</h1>
     <p id="routeCupsFlavorAddDateHeader"></p>
     <p id="routeCupsFlavorAddVanNameHeader"></p>
     <p id="routeCupsFlavorAddMachineNameHeader"></p>
@@ -367,7 +363,7 @@
 
     <div data-role="content">   
 
-    <h1>Route Edit Cups</h1>
+    <h1>Routes</h1>
     <p id="routeCupsFlavorEditDateHeader"></p>
     <p id="routeCupsFlavorEditVanNameHeader"></p>
     <p id="routeCupsFlavorEditMachineNameHeader"></p>
@@ -407,91 +403,9 @@
     </div>
 </div>
 
-
-
-<div id="routeCoinsRoutesPage" data-role="page" data-theme="a">
-
-    <div data-role="panel" class="mypanel">
-        <p><a href="#routeCupsRoutesPage" data-role="button">Route Edit Cups</a></p>
-        <p><a onclick="$('.mypanel:visible').panel('close');" data-role="button">Route Edit Coins</a></p>
-        <!--<p><a href="#routeCoinsPage" data-role="button">Route Edit Coins</a></p>-->
-        <p><a href="#vanCupsRoutesPage" data-role="button">Van Load Cups</a></p>
-        <p><a href="#vanCoinsRoutesPage" data-role="button">Van Load Coins</a></p>
-        <p><a href="#machineCupsRoutesPage" data-role="button">Machine Load Cups</a></p>
-        <p><a href="#machineCoinsRoutesPage" data-role="button">Machine Load Coins</a></p>
-        <p><a href="" data-role="button" onclick="app.logout()">Log Out</a></p>
-    </div>
-
-    <div data-role="header" data-position="fixed">
-        <a href="#homePage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
-        <h1>U-Vend, Inc.</h1>
-        <a onclick="$('.mypanel:visible').panel('open');" data-icon="bars" data-iconpos="notext" class="ui-btn-right">Bars</a>
-    </div>
-
-
-    <div data-role="content">   
-
-    <h1>Route Edit Coins</h1>
-    <!-- // gets populated with...
-        <li> <a href="#machineFlavorsPage">Machine 1<span class="ui-li-count">250</span></a> </li>
-    -->
-    <h3 id="routeCoinsRoutesPageHoldListHeader"></h3>
-    <ul id="routeCoinsRoutesPageHoldList" data-role="listview" data-inset="true"></ul>
-
-    <h3 id="routeCoinsRoutesPageVanReadyListHeader"></h3>
-    <ul id="routeCoinsRoutesPageVanReadyList" data-role="listview" data-inset="true"></ul>
-
-    </div>
-
-    <div data-role="footer" data-position="fixed">
-        <h4>&copy; U-Vend, Inc.</h4>
-    </div>
-
-
-</div>
-
-
-<div id="routeCoinsMachinesPage" data-role="page" data-theme="a">
-    <div data-role="panel" class="mypanel">
-        <p><a href="#routeCupsRoutesPage" data-role="button">Route Edit Cups</a></p>
-        <p><a href="#routeCoinsRoutesPage" data-role="button">Route Edit Coins</a></p>
-        <p><a href="#vanCupsRoutesPage" data-role="button">Van Load Cups</a></p>
-        <p><a href="#vanCoinsRoutesPage" data-role="button">Van Load Coins</a></p>
-        <p><a href="#machineCupsRoutesPage" data-role="button">Machine Load Cups</a></p>
-        <p><a href="#machineCoinsRoutesPage" data-role="button">Machine Load Coins</a></p>
-        <p><a href="" data-role="button" onclick="app.logout()">Log Out</a></p>
-
-    </div>
-
-    <div data-role="header" data-position="fixed">
-        <a href="#routeCoinsRoutesPage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
-        <h1>U-Vend, Inc.</h1>
-        <a onclick="$('.mypanel:visible').panel('open');" data-icon="bars" data-iconpos="notext" class="ui-btn-right">Bars</a>
-    </div>
-
-
-    <div data-role="content">   
-
-    <h1>Route Edit Coins</h1>
-    <p id="routeCoinsMachinesDateHeader"></p>
-    <p id="routeCoinsMachinesVanNameHeader"></p>
-    <!-- // gets populated with...
-        <li> <a href="#machineFlavorsPage">Machine 1<span class="ui-li-count">250</span></a> </li>
-    -->
-    <ul id="routeCoinsMachinesPageList" data-role="listview" data-inset="true">
-    </ul>
-
-    </div>
-
-    <div data-role="footer" data-position="fixed">
-        <h4>&copy; U-Vend, Inc.</h4>
-    </div>
-</div>
-
 <div id="routeCoinsLoadPage" data-role="page" data-theme="a">
     <div data-role="panel" class="mypanel">
-        <p><a href="#routeCupsRoutesPage" data-role="button">Route Edit Cups</a></p>
-        <p><a href="#routeCoinsRoutesPage" data-role="button">Route Edit Coins</a></p>
+        <p><a href="#routeCupsRoutesPage" data-role="button">Routes</a></p>
         <p><a href="#vanCupsRoutesPage" data-role="button">Van Load Cups</a></p>
         <p><a href="#vanCoinsRoutesPage" data-role="button">Van Load Coins</a></p>
         <p><a href="#machineCupsRoutesPage" data-role="button">Machine Load Cups</a></p>
@@ -501,14 +415,14 @@
     </div>
 
     <div data-role="header" data-position="fixed">
-        <a href="#routeCoinsMachinesPage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
+        <a href="#routeCupsMachinesPage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
         <h1>U-Vend, Inc.</h1>
     </div>
 
 
     <div data-role="content">   
 
-    <h1>Route Edit Coins</h1>
+    <h1>Routes</h1>
     <p id="routeCoinsLoadDateHeader"></p>
     <p id="routeCoinsLoadVanNameHeader"></p>
     <p id="routeCoinsLoadMachineNameHeader"></p>
@@ -571,7 +485,7 @@
 <div id="vanCupsRoutesPage" data-role="page" data-theme="a">
 
     <div data-role="panel" class="mypanel">
-        <p><a href="#routeCupsRoutesPage" data-role="button">Route Edit Cups</a></p>
+        <p><a href="#routeCupsRoutesPage" data-role="button">Routes</a></p>
         <p><a href="#routeCoinsRoutesPage" data-role="button">Route Edit Coins</a></p>
         <p><a onclick="$('.mypanel:visible').panel('close');" data-role="button">Van Load Cups</a></p>
         <!--<p><a href="#vanCupsPage" data-role="button">Van Load Cups</a></p>-->
@@ -660,7 +574,7 @@
 <div id="vanCoinsRoutesPage" data-role="page" data-theme="a">
 
     <div data-role="panel" class="mypanel">
-        <p><a href="#routeCupsRoutesPage" data-role="button">Route Edit Cups</a></p>
+        <p><a href="#routeCupsRoutesPage" data-role="button">Routes</a></p>
         <p><a href="#routeCoinsRoutesPage" data-role="button">Route Edit Coins</a></p>
         <p><a href="#vanCupsRoutesPage" data-role="button">Van Load Cups</a></p>
         <p><a onclick="$('.mypanel:visible').panel('close');" data-role="button">Van Load Coins</a></p>
@@ -781,7 +695,7 @@
 <div id="machineCupsRoutesPage" data-role="page" data-theme="a">
 
     <div data-role="panel" class="mypanel">
-        <p><a href="#routeCupsRoutesPage" data-role="button">Route Edit Cups</a></p>
+        <p><a href="#routeCupsRoutesPage" data-role="button">Routes</a></p>
         <p><a href="#routeCoinsRoutesPage" data-role="button">Route Edit Coins</a></p>
         <p><a href="#vanCupsRoutesPage" data-role="button">Van Load Cups</a></p>
         <p><a href="#vanCoinsRoutesPage" data-role="button">Van Load Coins</a></p>
@@ -824,7 +738,7 @@
 <div id="machineCupsLocationsPage" data-role="page" data-theme="a">
 
     <div data-role="panel" class="mypanel">
-        <p><a href="#routeCupsRoutesPage" data-role="button">Route Edit Cups</a></p>
+        <p><a href="#routeCupsRoutesPage" data-role="button">Routes</a></p>
         <p><a href="#routeCoinsRoutesPage" data-role="button">Route Edit Coins</a></p>
         <p><a href="#vanCupsRoutesPage" data-role="button">Van Load Cups</a></p>
         <p><a href="#vanCoinsRoutesPage" data-role="button">Van Load Coins</a></p>
@@ -865,7 +779,7 @@
 
 <div id="machineCupsMachinesPage" data-role="page" data-theme="a">
     <div data-role="panel" class="mypanel">
-        <p><a href="#routeCupsRoutesPage" data-role="button">Route Edit Cups</a></p>
+        <p><a href="#routeCupsRoutesPage" data-role="button">Routes</a></p>
         <p><a href="#routeCoinsRoutesPage" data-role="button">Route Edit Coins</a></p>
         <p><a href="#vanCupsRoutesPage" data-role="button">Van Load Cups</a></p>
         <p><a href="#vanCoinsRoutesPage" data-role="button">Van Load Coins</a></p>
@@ -952,7 +866,7 @@
 <div id="machineCoinsRoutesPage" data-role="page" data-theme="a">
 
     <div data-role="panel" class="mypanel">
-        <p><a href="#routeCupsRoutesPage" data-role="button">Route Edit Cups</a></p>
+        <p><a href="#routeCupsRoutesPage" data-role="button">Routes</a></p>
         <p><a href="#routeCoinsRoutesPage" data-role="button">Route Edit Coins</a></p>
         <p><a href="#vanCupsRoutesPage" data-role="button">Van Load Cups</a></p>
         <p><a href="#vanCoinsRoutesPage" data-role="button">Van Load Coins</a></p>
@@ -993,7 +907,7 @@
 <div id="machineCoinsLocationsPage" data-role="page" data-theme="a">
 
     <div data-role="panel" class="mypanel">
-        <p><a href="#routeCupsRoutesPage" data-role="button">Route Edit Cups</a></p>
+        <p><a href="#routeCupsRoutesPage" data-role="button">Routes</a></p>
         <p><a href="#routeCoinsRoutesPage" data-role="button">Route Edit Coins</a></p>
         <p><a href="#vanCupsRoutesPage" data-role="button">Van Load Cups</a></p>
         <p><a href="#vanCoinsRoutesPage" data-role="button">Van Load Coins</a></p>
@@ -1033,7 +947,7 @@
 
 <div id="machineCoinsMachinesPage" data-role="page" data-theme="a">
     <div data-role="panel" class="mypanel">
-        <p><a href="#routeCupsRoutesPage" data-role="button">Route Edit Cups</a></p>
+        <p><a href="#routeCupsRoutesPage" data-role="button">Routes</a></p>
         <p><a href="#routeCoinsRoutesPage" data-role="button">Route Edit Coins</a></p>
         <p><a href="#vanCupsRoutesPage" data-role="button">Van Load Cups</a></p>
         <p><a href="#vanCoinsRoutesPage" data-role="button">Van Load Coins</a></p>
@@ -1077,7 +991,7 @@
 
 <div id="machineCoinsLoadPickupOptionsPage" data-role="page" data-theme="a">
     <div data-role="panel" class="mypanel">
-        <p><a href="#routeCupsRoutesPage" data-role="button">Route Edit Cups</a></p>
+        <p><a href="#routeCupsRoutesPage" data-role="button">Routes</a></p>
         <p><a href="#routeCoinsRoutesPage" data-role="button">Route Edit Coins</a></p>
         <p><a href="#vanCupsRoutesPage" data-role="button">Van Load Cups</a></p>
         <p><a href="#vanCoinsRoutesPage" data-role="button">Van Load Coins</a></p>
