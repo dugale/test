@@ -62,7 +62,7 @@ var app = {
         $(document).on("pagebeforeshow", "#routeCupsRoutesPage", app.fetchRouteCupsRoutes);
 
         // bind the "on vclick" event listner only once during initial page 
-        //$(document).on("pagecreate", "#routeCupsMachinesPage", app.routeCupsMachinesAttachClickListner);
+        $(document).on("pagecreate", "#routeCupsMachinesPage", app.routeCupsMachinesAttachClickListner);
 
         // populate list view every time page is visited 
         $(document).on("pagebeforeshow", "#routeCupsMachinesPage", app.fetchRouteCupsMachines);
