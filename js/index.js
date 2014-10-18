@@ -1779,7 +1779,6 @@ var app = {
 
                 var currentRouteLocationId = localStorage.getItem("routeCupsRouteLocationId");
 
-                /*
                 var output = '';
                 $.each(r.routeMachinesByLocation, function(index, value){                   
 
@@ -1881,7 +1880,6 @@ var app = {
 
                 $("#routeCupsMachinesPageAddLocationDiv").html(output);
                 $("#routeCupsMachinesAddLocationSelect").selectmenu().selectmenu('refresh');
-                */
 
             }
             else {
