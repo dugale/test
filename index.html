@@ -13,17 +13,6 @@
     <!-- <link rel="stylesheet" type="text/css" href="css/index.css" /> -->
 
     <style type="text/css">
-
-        .ui-page * { 
-            -webkit-transform: rotateY(0deg);
-            -moz-transform: rotateY(0deg);
-            transform: rotateY(0deg);
-            -webkit-backface-visibility: hidden; 
-        }
-
-    </style>
-
-    <style type="text/css">
  
         body {
             /* Setting body margins to 0 to have proper positioning of #container div */
@@ -39,6 +28,19 @@
  
     </style>
 
+    <style type="text/css">
+
+        .ui-page * { 
+            -webkit-transform: rotateY(0deg);
+            -moz-transform: rotateY(0deg);
+            transform: rotateY(0deg);
+            -webkit-backface-visibility: hidden; 
+        }
+
+    </style>
+
+
+
 
 
 
@@ -49,6 +51,8 @@
     <script type="text/javascript">
         $(document).one("mobileinit", function () {
  
+            // turn transitions off
+            $.mobile.defaultPageTransition = "none";
             // Setting #container div as a jqm pageContainer
             $.mobile.pageContainer = $('#container');
  
