@@ -162,10 +162,6 @@ var app = {
 
 
         /* van coins */
-        // bind the "on vclick" event listner only once during initial page
-        $(document).on("pagecreate", "#vanCoinsRoutesPage", app.vanCoinsRoutesAttachClickListner);
-        // populate list view every time page is visited 
-        $(document).on("pagebeforeshow", "#vanCoinsRoutesPage", app.fetchVanCoinsRoutes);
 
         // populate list view every time page is visited 
         $(document).on("pagebeforeshow", "#vanCoinsLoadPage", app.fetchVanCoinsLoad);
@@ -216,19 +212,16 @@ var app = {
         // populate list view every time page is visited 
         $(document).on("pagebeforeshow", "#machineCupsRoutesPage", app.fetchMachineCupsRoutes);
 
-        // bind the "on vclick" event listner only once during initial page
-        $(document).on("pagecreate", "#machineCupsLocationsPage", app.machineCupsLocationsAttachClickListner);
+
         // populate list view every time page is visited 
-        $(document).on("pagebeforeshow", "#machineCupsLocationsPage", app.fetchMachineCupsLocations);
+        $(document).on("pagebeforeshow", "#machineCupsMachinesPage", app.fetchMachineCupsMachines);
+
         // populate breadcrumbs
-        $(document).on("pagebeforeshow", "#machineCupsLocationsPage", app.fetchMachineCupsLocationsBreadcrumbs);
+        $(document).on("pagebeforeshow", "#machineCupsMachinesPage", app.fetchMachineCupsMachinesBreadcrumbs);
 
         // bind the "on vclick" event listner only once during initial page 
         $(document).on("pagecreate", "#machineCupsMachinesPage", app.machineCupsMachinesAttachClickListner);
-        // populate list view every time page is visited 
-        $(document).on("pagebeforeshow", "#machineCupsMachinesPage", app.fetchMachineCupsMachines);
-        // populate breadcrumbs
-        $(document).on("pagebeforeshow", "#machineCupsMachinesPage", app.fetchMachineCupsMachinesBreadcrumbs);
+
 
 
         // populate list view every time page is visited 
@@ -256,27 +249,6 @@ var app = {
 
 
         /* machine coins start */
-        // bind the "on vclick" event listner only once during initial page
-        $(document).on("pagecreate", "#machineCoinsRoutesPage", app.machineCoinsRoutesAttachClickListner);
-        // populate list view every time page is visited 
-        $(document).on("pagebeforeshow", "#machineCoinsRoutesPage", app.fetchMachineCoinsRoutes);
-
-        // bind the "on vclick" event listner only once during initial page
-        $(document).on("pagecreate", "#machineCoinsLocationsPage", app.machineCoinsLocationsAttachClickListner);
-        // populate list view every time page is visited 
-        $(document).on("pagebeforeshow", "#machineCoinsLocationsPage", app.fetchMachineCoinsLocations);
-        // populate breadcrumbs
-        $(document).on("pagebeforeshow", "#machineCoinsLocationsPage", app.fetchMachineCoinsLocationsBreadcrumbs);
-
-        // bind the "on vclick" event listner only once during initial page
-        $(document).on("pagecreate", "#machineCoinsMachinesPage", app.machineCoinsMachinesAttachClickListner);
-        // populate list view every time page is visited 
-        $(document).on("pagebeforeshow", "#machineCoinsMachinesPage", app.fetchMachineCoinsMachines);
-        // populate breadcrumbs
-        $(document).on("pagebeforeshow", "#machineCoinsMachinesPage", app.fetchMachineCoinsMachinesBreadcrumbs);
-
-        // populate breadcrumbs
-        $(document).on("pagebeforeshow", "#machineCoinsLoadPickupOptionsPage", app.fetchMachineCoinsLoadPickupOptionsBreadcrumbs);
 
         // populate list view every time page is visited 
         $(document).on("pagebeforeshow", "#machineCoinsLoadPage", app.fetchMachineCoinsLoad);
@@ -299,26 +271,6 @@ var app = {
             $('#modalDialogCancel').popup('open');
         });
 
-        // populate list view every time page is visited 
-        $(document).on("pagebeforeshow", "#machineCoinsPickupPage", app.fetchMachineCoinsPickup);
-        // populate breadcrumbs
-        $(document).on("pagebeforeshow", "#machineCoinsPickupPage", app.machineCoinsPickupBreadcrumbs);
-        // unlock confirm button if machine load status is not 'Machine Pickup Complete'
-        $(document).on("pagebeforeshow", "#machineCoinsPickupPage", app.fetchMachineCoinsPickupUnlockConfirmButton);
-        // default form action
-        $("#machineCoinsPickupForm").on("submit",this.fetchMachineCoinsPickupConfirmSubmit);
-
-        // confirm popup
-        $('#machineCoinsPickupConfirmSubmitButton').on('click', function(e){
-            e.preventDefault();
-            $('#modalDialogCancelMessage').html('Are you sure?');
-            // off removes previously assigned click events
-            $('#modalDialogCancelRedirect').off("click").click( function(e){
-                $('#modalDialogCancel').popup('close');
-                $('#machineCoinsPickupForm').submit();
-            });
-            $('#modalDialogCancel').popup('open');
-        });
         /* machine coins end */
 
 
@@ -423,13 +375,67 @@ var app = {
     },
 
     /*
+    // used to redirect when ajax callback receives "missing information" responses
+    */
+
+    redirectByResult: function(proc, resultCode, resultArray, catchAll) {
+
+        /* example of what this proc expects
+
+        proc = "myProcedureName";
+
+        resultArray = [
+                {   code: 'ROUTE DOES NOT EXIST',
+                    message: 'Route no longer exists', 
+                    redirect: '#machineCupsRoutesPage', },
+
+                {   code: 'MACHINE DOES NOT EXIST',
+                    message: 'Machine no longer exists', 
+                    redirect: '#machineCupsMachinesPage', }, ];
+
+        catchAll = 
+                {   code: 'UNKNOWN',
+                    message: '', 
+                    redirect: '#machineCupsRoutesPage', };
+        */
+
+        found = false;
+        $.each(resultArray, function(index,value){
+
+            console.log("[" + proc + " resultCode:" + resultCode + "]");
+            console.log("[" + proc + " valueCode:" + value.code + "]");
+            console.log("[" + proc + " valueMessage:" + value.message + "]");
+
+            if (resultCode == value.code) {
+                console.log("[" + proc + " matched]");
+                console.log("[" + proc + " matched redirecting to " + value.redirect + "]");
+                console.log("[" + proc + " matched valueMessage:" + value.message + "]");
+                $('#modalDialogMessage').html( value.message );
+                $('#modalDialogRedirect').attr('href', value.redirect );
+                $('#modalDialog').popup("open");
+                found = true;
+                return false;// this only exits the each loop, not the function
+            }
+        });
+
+        // redirect to catchall if we get this far
+        if (catchAll && !found) {
+                console.log("[" + proc + " redirecting to catchAll proc " + catchAll['redirect'] + "]");
+                $('#modalDialogMessage').html( resultCode );
+                $('#modalDialogRedirect').attr('href', catchAll['redirect']);
+                $('#modalDialog').popup("open");
+                return false;
+        };
+
+    },
+
+    /*
     // bound to events - any function that starts with "fetch" does an ajax call and has at least one callback
     */
 
     fetchRouteCupsRoutes: function() {
         
         console.log("[fetchRouteCupsRoutes]");
-
 
         app.servers.private.query('routes', {}, app.callbacks.fetchRouteCupsRoutes);
 
@@ -438,7 +444,7 @@ var app = {
 
         console.log("[routeCupsRoutesAttachClickListner]");
 
-        listViews = ['routeCupsRoutesPageHoldList', 'routeCupsRoutesPageVanReadyList'];
+        listViews = ['routeCupsRoutesHoldList', 'routeCupsRoutesLoadRequestedList', 'routeCupsRoutesLoadCompleteList', 'routeCupsRoutesLoadVerifiedList'];
 
         // attach click handler for each list on the page
         $.each(listViews, function(index,value){
@@ -521,7 +527,7 @@ var app = {
         // move location down in order (button)
         $("#routeCupsMachinesPage").on("vclick", ".routeCupsMachinesLocationDown", app.fetchRouteCupsMachinesLocationDownSubmit);
 
-        // move location down in order (button)
+        // move location delete (button)
         $("#routeCupsMachinesPage").on("vclick", ".routeCupsMachinesLocationDelete", app.fetchRouteCupsMachinesLocationDeleteSubmit);
 
 
@@ -774,11 +780,36 @@ var app = {
 
         app.servers.private.query('routecupsmachineslocationdeletesubmit', {routeId:rId,routeLocationId:routeLocationId}, function(r){
 
+
             // remove collapsible set element
             $(".routeMachinesLocationDiv#" + routeLocationId).remove();
 
-        });
 
+
+            // update locations add button with updated location list
+            $('#routeCupsMachinesAddLocationSelect').empty(); // jquery mobile non native select menu
+
+            var option = $('<option></option>').text("Add Location");
+            $('#routeCupsMachinesAddLocationSelect').append(option); // jquery mobile non native select menu
+
+            $.each(r.availableRouteLocations, function(index,value){
+                optTxt = "";
+                optTxt += value.addressLine1 + ', ';
+                if (value.addressLine2) {
+                    optTxt += value.addressLine2 + ', ';
+                }
+                optTxt += value.city + ', ' + value.state + ' ' + value.zip;
+                var option = $('<option></option>').attr("value", value.locationId).text(optTxt);
+                $('#routeCupsMachinesAddLocationSelect').append(option); // jquery mobile non native select menu
+            });
+
+            $('#routeCupsMachinesAddLocationSelect').selectmenu("refresh"); // jquery mobile non native select menu
+
+            if(r.availableRouteLocations.length != 0) {
+                $('#routeCupsMachinesAddLocationSelect').selectmenu('enable'); // jquery mobile non native select menu
+            }
+
+        });
 
 
         return false;
@@ -801,8 +832,9 @@ var app = {
         // retrieve route date, vanName, machineType and brandName for breadcrumbs 
         console.log("[fetchRouteCupsFlavorsBreadcrumbs]");
 
+        var routeCupsRouteId = localStorage.getItem("routeCupsRouteId");
         var routeCupsRouteMachineId = localStorage.getItem("routeCupsRouteMachineId");
-        app.servers.private.query('machineinfo', {routeMachineId:routeCupsRouteMachineId}, app.callbacks.fetchRouteCupsFlavorsBreadcrumbs);
+        app.servers.private.query('machineinfo', {routeId:routeCupsRouteId, routeMachineId:routeCupsRouteMachineId}, app.callbacks.fetchRouteCupsFlavorsBreadcrumbs);
 
     },
 
@@ -955,8 +987,9 @@ var app = {
         // retrieve route date, vanName, machineType and brandName for breadcrumbs 
         console.log("[fetchRouteCoinsLoadBreadcrumbs]");
 
+        var routeCupsRouteId = localStorage.getItem("routeCupsRouteId");
         var routeCupsRouteMachineId = localStorage.getItem("routeCupsRouteMachineId");
-        app.servers.private.query('machineinfo', {routeMachineId:routeCupsRouteMachineId}, app.callbacks.fetchRouteCoinsLoadBreadcrumbs);
+        app.servers.private.query('machineinfo', {routeId:routeCupsRouteId, routeMachineId:routeCupsRouteMachineId}, app.callbacks.fetchRouteCoinsLoadBreadcrumbs);
 
     },
 
@@ -1009,7 +1042,7 @@ var app = {
 
         console.log("[vanCupsRoutesAttachClickListner]");
 
-        var listViews = ['vanCupsRoutesPageConfirmationList', 'vanCupsRoutesPageVerificationList', 'vanCupsRoutesPageVerifiedList' ];
+        var listViews = ['vanCupsRoutesPageConfirmationList', 'vanCupsRoutesPageVerificationList', 'vanCupsRoutesPageVerifiedList', 'vanCupsRoutesPageMainDiv' ];
 
         // attach click handler for each list on the page
         $.each(listViews, function(index,value){
@@ -1017,13 +1050,14 @@ var app = {
             // attach "on vclick" event listener to all list items
             $("#"+ value ).on("vclick", "li", function (e) {
                 // override default event action
-                e.preventDefault();
+                //e.preventDefault();
 
                 localStorage["vanCupsRouteId"] = this.id;
+                console.log("[vanCupsRoutesAttachClickListner writing vanCupsRouteId: "+ this.id+"]");
 
                 // redirect
-                console.log("["+ value +" forwarding to vanCupsFlavorsPage]");
-                $.mobile.changePage("#vanCupsFlavorsPage", {transition: "slide"});
+                //console.log("["+ value +" forwarding to vanCupsFlavorsPage]");
+                //$.mobile.changePage("#vanCupsFlavorsPage", {transition: "slide"});
             });
         });
 
@@ -1102,38 +1136,6 @@ var app = {
         return false;
     },
 
-    fetchVanCoinsRoutes: function() {
-        
-        console.log("[fetchVanCoinsRoutes]");
-
-        app.servers.private.query('routes', {}, app.callbacks.fetchVanCoinsRoutes);
-
-    },
-    vanCoinsRoutesAttachClickListner: function() {
-
-        console.log("[vanCoinsRoutesAttachClickListner]");
-
-
-        var listViews = ['vanCoinsRoutesPageConfirmationList', 'vanCoinsRoutesPageVerificationList', 'vanCoinsRoutesPageVerifiedList' ];
-
-        // attach click handler for each list on the page
-        $.each(listViews, function(index,value){
-
-            // attach "on vclick" event listener to all list items
-            $("#" + value ).on("vclick", "li", function (e) {
-                // override default event action
-                e.preventDefault();
-
-                localStorage["vanCoinsRouteId"] = this.id;
-
-                // redirect
-                console.log("["+ value +" forwarding to vanCoinsLoadPage]");
-                $.mobile.changePage("#vanCoinsLoadPage", {transition: "slide"});
-            });
-        });
-    },
-
-
     fetchVanCoinsLoadConfirmSubmit: function() {
 
         console.log('[fetchVanCoinsLoadConfirmSubmit]');
@@ -1146,16 +1148,16 @@ var app = {
         $("#vanCoinsLoadDriverConfirmSubmitButton").button("disable");
 
         // machineId, routeId, flavorId, flavorQuantity, loadType
-        var vanCoinsRouteId = localStorage.getItem("vanCoinsRouteId");
+        var vanCupsRouteId = localStorage.getItem("vanCupsRouteId");
 
         if (formType === "confirm") {
             console.log("[Submitting van coins load confirm.]");
-            app.servers.private.query('vancoinsloadconfirmsubmit', {routeId:vanCoinsRouteId}, app.callbacks.fetchVanCoinsLoadConfirmSubmit);
+            app.servers.private.query('vancoinsloadconfirmsubmit', {routeId:vanCupsRouteId}, app.callbacks.fetchVanCoinsLoadConfirmSubmit);
         }
         else {
             // it's a driver confirm request
             console.log("[Submitting van coins driver load confirm.]");
-            app.servers.private.query('vancoinsloaddriverconfirmsubmit', {routeId:vanCoinsRouteId}, app.callbacks.fetchVanCoinsLoadDriverConfirmSubmit);
+            app.servers.private.query('vancoinsloaddriverconfirmsubmit', {routeId:vanCupsRouteId}, app.callbacks.fetchVanCoinsLoadDriverConfirmSubmit);
         }
 
         // stop form from submitting 'get' request by returning false
@@ -1168,9 +1170,9 @@ var app = {
         
         console.log("[fetchVanCoinsLoad]");
 
-        var vanCoinsRouteId = localStorage.getItem("vanCoinsRouteId");
+        var vanCupsRouteId = localStorage.getItem("vanCupsRouteId");
 
-        app.servers.private.query('vancoinsload', {routeId:vanCoinsRouteId}, app.callbacks.fetchVanCoinsLoad);
+        app.servers.private.query('vancoinsload', {routeId:vanCupsRouteId}, app.callbacks.fetchVanCoinsLoad);
 
     },
 
@@ -1179,9 +1181,9 @@ var app = {
         // retrieve route date and vanName for breadcrumbs 
         console.log("[fetchVanCoinsLoadBreadcrumbs]");
 
-        var vanCoinsRouteId = localStorage.getItem("vanCoinsRouteId");
+        var vanCupsRouteId = localStorage.getItem("vanCupsRouteId");
 
-        app.servers.private.query('routeinfo', {routeId:vanCoinsRouteId}, app.callbacks.fetchVanCoinsLoadBreadcrumbs);
+        app.servers.private.query('routeinfo', {routeId:vanCupsRouteId}, app.callbacks.fetchVanCoinsLoadBreadcrumbs);
 
     },
 
@@ -1190,12 +1192,12 @@ var app = {
         // unlock confirm buttons based on vanLoadCoinsStatus table state
         console.log("[fetchVanCoinsLoadUnlockConfirmButton]");
 
-        var vanCoinsRouteId = localStorage.getItem("vanCoinsRouteId");
+        var vanCupsRouteId = localStorage.getItem("vanCupsRouteId");
 
         // get latest vanLoadCoinsStatus
         // if vanLoadStatus is 'Van Load Requested', then unlock both confirm buttons
         // if vanLoadStatus is 'Van Load Complete', then unlock just driver confirm button
-        app.servers.private.query('vanloadcoinsstatus', {routeId:vanCoinsRouteId}, app.callbacks.fetchVanCoinsLoadUnlockConfirmButton);
+        app.servers.private.query('vanloadcoinsstatus', {routeId:vanCupsRouteId}, app.callbacks.fetchVanCoinsLoadUnlockConfirmButton);
     },
 
 
@@ -1212,58 +1214,28 @@ var app = {
 
         console.log("[machineCupsRoutesAttachClickListner]");
 
-        // attach "on vclick" event listener to all list items
-        $("#machineCupsRoutesPageList").on("vclick", "li", function (e) {
-            // override default event action
-            e.preventDefault();
+        var listViews = ['machineCupsRoutesLoadVerifiedList'];
 
-            localStorage["machineCupsRouteId"] = this.id;
+        // attach click handler for each list on the page
+        $.each(listViews, function(index,value){
 
-            // redirect
-            console.log("[machineCupsRoutesList forwarding to machineCupsLocationsPage]");
-            $.mobile.changePage("#machineCupsLocationsPage", {transition: "slide"});
+            // attach "on vclick" event listener to all list items
+            $("#"+ value ).on("vclick", "li", function (e) {
+                // override default event action
+                //e.preventDefault();
+
+                localStorage["machineCupsRouteId"] = this.id;
+                console.log("[machineCupsRoutesAttachClickListner writing machineCupsRouteId: "+ this.id+"]");
+
+                // redirect
+                //console.log("["+ value +" forwarding to vanCupsFlavorsPage]");
+                //$.mobile.changePage("#vanCupsFlavorsPage", {transition: "slide"});
+            });
         });
 
     },
 
-    fetchMachineCupsLocations: function() {
-        
-        console.log("[fetchMachineCupsLocations]");
 
-        var machineCupsRouteId = localStorage.getItem("machineCupsRouteId");
-
-        app.servers.private.query('machinecupslocations', {routeId:machineCupsRouteId}, app.callbacks.fetchMachineCupsLocations);
-
-
-    },
-    fetchMachineCupsLocationsBreadcrumbs: function() {
-        
-        // retrieve route date and vanName for breadcrumbs 
-        console.log("[fetchMachineCupsLocationsBreadcrumbs]");
-
-        var machineCupsRouteId = localStorage.getItem("machineCupsRouteId");
-
-        app.servers.private.query('routeinfo', {routeId:machineCupsRouteId}, app.callbacks.fetchMachineCupsLocationsBreadcrumbs);
-
-
-    },
-    machineCupsLocationsAttachClickListner: function() {
-
-        console.log("[machineCupsLocationsAttachClickListner]");
-
-        // attach "on vclick" event listener to all list items
-        $("#machineCupsLocationsPageList").on("vclick", "li", function (e) {
-            // override default event action
-            e.preventDefault();
-
-            localStorage["machineCupsRouteLocationId"] = this.id;
-
-            // redirect
-            console.log("[machineCupsLocationsList forwarding to machineCupsMachinesPage]");
-            $.mobile.changePage("#machineCupsMachinesPage", {transition: "slide"});
-        });
-
-    },
 
     fetchMachineCupsMachines: function() {
         
@@ -1272,7 +1244,7 @@ var app = {
         var machineCupsRouteId = localStorage.getItem("machineCupsRouteId");
         var machineCupsRouteLocationId = localStorage.getItem("machineCupsRouteLocationId");
 
-        app.servers.private.query('machinecupsmachines', {routeLocationId:machineCupsRouteLocationId}, app.callbacks.fetchMachineCupsMachines);
+        app.servers.private.query('routecupsmachines', {routeId:machineCupsRouteId}, app.callbacks.fetchMachineCupsMachines);
 
 
     },
@@ -1281,38 +1253,54 @@ var app = {
         // retrieve route date and vanName for breadcrumbs 
         console.log("[fetchMachineCupsMachinesBreadcrumbs]");
 
-        var machineCupsRouteLocationId = localStorage.getItem("machineCupsRouteLocationId");
+        var machineCupsRouteId = localStorage.getItem("machineCupsRouteId");
 
-        app.servers.private.query('routelocationinfo', {routeLocationId:machineCupsRouteLocationId}, app.callbacks.fetchMachineCupsMachinesBreadcrumbs);
+        app.servers.private.query('routeinfo', {routeId:machineCupsRouteId}, app.callbacks.fetchMachineCupsMachinesBreadcrumbs);
 
 
     },
+
     machineCupsMachinesAttachClickListner: function() {
 
         console.log("[machineCupsMachinesAttachClickListner]");
 
-        // attach "on vclick" event listener to all list items
-        $("#machineCupsMachinesPageList").on("vclick", "li", function (e) {
-            // override default event action
-            e.preventDefault();
 
-            localStorage["machineCupsMachineId"] = this.id;
+        // attach "on vclick" event listener to all list items
+        $("#machineCupsMachinesPageOuterList" ).on("vclick", "li", function (e) {
+            // override default event action
+            //e.preventDefault();
+
+            console.log("[machineCupsMachinesPageList clicking on this id:"+this.id+"]");
+            localStorage["machineCupsRouteMachineId"] = this.id;
 
             // redirect
-            console.log("[machineCupsMachinesList forwarding to machineCupsFlavorsPage]");
-            $.mobile.changePage("#machineCupsFlavorsPage", {transition: "slide"});
+            //console.log("[routeCupsMachinesPageList forwarding to routeCupsFlavorsPage]");
+            //$.mobile.changePage("#routeCupsFlavorsPage", {transition: "slide"});
+        });
+
+        // attach "on vclick" event listener to all list items
+        $("#machineCupsMachinesPageOuterList" ).on("vclick", ".machineCupsMachinesLocationDiv ", function (e) {
+            // override default event action
+            //e.preventDefault();
+
+            console.log("[machineCupsMachinesPageList clicking on a collapsible:"+this.id+"]");
+            localStorage["machineCupsRouteLocationId"] = this.id;
+
+            // redirect
+            //console.log("[routeCupsMachinesPageList forwarding to routeCupsFlavorsPage]");
+            //$.mobile.changePage("#routeCupsFlavorsPage", {transition: "slide"});
         });
 
     },
+
     fetchMachineCupsFlavors: function() {
         
         console.log("[fetchMachineCupsFlavors]");
 
         var machineCupsRouteId = localStorage.getItem("machineCupsRouteId");
-        var machineCupsMachineId = localStorage.getItem("machineCupsMachineId");
-        var machineCupsRouteLocationId = localStorage.getItem("machineCupsRouteLocationId");
+        var machineCupsRouteMachineId = localStorage.getItem("machineCupsRouteMachineId");
 
-        app.servers.private.query('machinecupsflavors', {routeId:machineCupsRouteId,routeLocationId:machineCupsRouteLocationId,machineId:machineCupsMachineId}, app.callbacks.fetchMachineCupsFlavors);
+        app.servers.private.query('machinecupsflavors', {routeId:machineCupsRouteId,routeMachineId:machineCupsRouteMachineId}, app.callbacks.fetchMachineCupsFlavors);
 
     },
     fetchMachineCupsFlavorsBreadcrumbs: function() {
@@ -1320,8 +1308,9 @@ var app = {
         // retrieve route date and vanName for breadcrumbs 
         console.log("[fetchMachineCupsFlavorsBreadcrumbs]");
 
-        var machineCupsMachineId = localStorage.getItem("machineCupsMachineId");
-        app.servers.private.query('machineinfo', {machineId:machineCupsMachineId}, app.callbacks.fetchMachineCupsFlavorsBreadcrumbs);
+        var machineCupsRouteId = localStorage.getItem("machineCupsRouteId");
+        var machineCupsRouteMachineId = localStorage.getItem("machineCupsRouteMachineId");
+        app.servers.private.query('machineinfo', {routeId:machineCupsRouteId,routeMachineId:machineCupsRouteMachineId}, app.callbacks.fetchMachineCupsFlavorsBreadcrumbs);
 
     },
 
@@ -1330,9 +1319,9 @@ var app = {
         // unlock confirm button if machine load status is not 'Machine Load Complete'
         console.log("[fetchMachineCupsFlavorsUnlockConfirmButton]");
 
-        var machineCupsMachineId = localStorage.getItem("machineCupsMachineId");
+        var machineCupsRouteMachineId = localStorage.getItem("machineCupsRouteMachineId");
         var machineCupsRouteId = localStorage.getItem("machineCupsRouteId");
-        app.servers.private.query('machineloadstatus', {machineId:machineCupsMachineId,routeId:machineCupsRouteId}, app.callbacks.fetchMachineCupsFlavorsUnlockConfirmButton);
+        app.servers.private.query('machineloadstatus', {routeMachineId:machineCupsRouteMachineId,routeId:machineCupsRouteId}, app.callbacks.fetchMachineCupsFlavorsUnlockConfirmButton);
     },
 
 
@@ -1347,8 +1336,7 @@ var app = {
 
         // machineId, routeId, flavorId, flavorQuantity, loadType
         var machineCupsRouteId = localStorage.getItem("machineCupsRouteId");
-        var machineCupsMachineId = localStorage.getItem("machineCupsMachineId");
-        var machineCupsRouteLocationId = localStorage.getItem("machineCupsRouteLocationId");
+        var machineCupsRouteMachineId = localStorage.getItem("machineCupsRouteMachineId");
 
         var flavorsLoaded = new Array(); 
         $("#machineCupsFlavorsForm input[type=number]").each(function() {
@@ -1361,7 +1349,7 @@ var app = {
             });
 
         console.log("[Submitting machine cups flavors confirm.]");
-        app.servers.private.query('machinecupsflavorsconfirmsubmit', {routeLocationId: machineCupsRouteLocationId, routeId:machineCupsRouteId, machineId:machineCupsMachineId, machineFlavorsLoaded:flavorsLoaded}, app.callbacks.fetchMachineCupsFlavorsConfirmSubmit);
+        app.servers.private.query('machinecupsflavorsconfirmsubmit', {routeMachineId: machineCupsRouteMachineId, routeId:machineCupsRouteId, machineFlavorsLoaded:flavorsLoaded}, app.callbacks.fetchMachineCupsFlavorsConfirmSubmit);
 
         // stop form from submitting 'get' request by returning false
         return false;
@@ -1369,119 +1357,6 @@ var app = {
 
 
 
-    fetchMachineCoinsRoutes: function() {
-        
-        console.log("[fetchMachineCoinsRoutes]");
-
-        app.servers.private.query('routes', {}, app.callbacks.fetchMachineCoinsRoutes);
-
-    },
-    machineCoinsRoutesAttachClickListner: function() {
-
-        console.log("[machineCoinsRoutesAttachClickListner]");
-
-        // attach "on vclick" event listener to all list items
-        $("#machineCoinsRoutesPageList").on("vclick", "li", function (e) {
-            // override default event action
-            e.preventDefault();
-
-            localStorage["machineCoinsRouteId"] = this.id;
-
-            // redirect
-            console.log("[machineCoinsRoutesList forwarding to machineCoinsLocationsPage]");
-            $.mobile.changePage("#machineCoinsLocationsPage", {transition: "slide"});
-        });
-
-    },
-
-    fetchMachineCoinsLocations: function() {
-        
-        console.log("[fetchMachineCoinsLocations]");
-
-        var machineCoinsRouteId = localStorage.getItem("machineCoinsRouteId");
-
-        app.servers.private.query('machinecoinslocations', {routeId:machineCoinsRouteId}, app.callbacks.fetchMachineCoinsLocations);
-
-
-    },
-    fetchMachineCoinsLocationsBreadcrumbs: function() {
-        
-        // retrieve route date and vanName for breadcrumbs 
-        console.log("[fetchMachineCoinsLocationsBreadcrumbs]");
-
-        var machineCoinsRouteId = localStorage.getItem("machineCoinsRouteId");
-
-        app.servers.private.query('routeinfo', {routeId:machineCoinsRouteId}, app.callbacks.fetchMachineCoinsLocationsBreadcrumbs);
-
-
-    },
-    machineCoinsLocationsAttachClickListner: function() {
-
-        console.log("[machineCoinsLocationsAttachClickListner]");
-
-        // attach "on vclick" event listener to all list items
-        $("#machineCoinsLocationsPageList").on("vclick", "li", function (e) {
-            // override default event action
-            e.preventDefault();
-
-            localStorage["machineCoinsRouteLocationId"] = this.id;
-
-            // redirect
-            console.log("[machineCoinsLocationsList forwarding to machineCoinsMachinesPage]");
-            $.mobile.changePage("#machineCoinsMachinesPage", {transition: "slide"});
-        });
-
-    },
-
-    fetchMachineCoinsMachines: function() {
-        
-        console.log("[fetchMachineCoinsMachines]");
-
-        var machineCoinsRouteId = localStorage.getItem("machineCoinsRouteId");
-        var machineCoinsRouteLocationId = localStorage.getItem("machineCoinsRouteLocationId");
-
-        app.servers.private.query('machinecoinsmachines', {routeLocationId:machineCoinsRouteLocationId}, app.callbacks.fetchMachineCoinsMachines);
-
-
-    },
-    fetchMachineCoinsMachinesBreadcrumbs: function() {
-        
-        // retrieve route date and vanName for breadcrumbs 
-        console.log("[fetchMachineCoinsMachinesBreadcrumbs]");
-
-        var machineCoinsRouteLocationId = localStorage.getItem("machineCoinsRouteLocationId");
-
-        app.servers.private.query('routelocationinfo', {routeLocationId:machineCoinsRouteLocationId}, app.callbacks.fetchMachineCoinsMachinesBreadcrumbs);
-
-
-    },
-    machineCoinsMachinesAttachClickListner: function() {
-
-        console.log("[machineCoinsMachinesAttachClickListner]");
-
-        // attach "on vclick" event listener to all list items
-        $("#machineCoinsMachinesPageList").on("vclick", "li", function (e) {
-            // override default event action
-            e.preventDefault();
-
-            localStorage["machineCoinsMachineId"] = this.id;
-
-            // redirect
-            console.log("[machineCoinsMachinesList forwarding to machineCoinsLoadPickupOptionsPage]");
-            $.mobile.changePage("#machineCoinsLoadPickupOptionsPage", {transition: "slide"});
-        });
-
-    },
-
-    fetchMachineCoinsLoadPickupOptionsBreadcrumbs: function() {
-        
-        // retrieve route date and vanName for breadcrumbs 
-        console.log("[fetchMachineCoinsLoadPickupOptionsBreadcrumbs]");
-
-        var machineCoinsMachineId = localStorage.getItem("machineCoinsMachineId");
-        app.servers.private.query('machineinfo', {machineId:machineCoinsMachineId}, app.callbacks.fetchMachineCoinsLoadPickupOptionsBreadcrumbs);
-
-    },
 
     machineCoinsLoadBreadcrumbs: function() {
         
@@ -1506,11 +1381,10 @@ var app = {
         
         console.log("[fetchMachineCoinsLoad]");
 
-        var machineCoinsRouteId = localStorage.getItem("machineCoinsRouteId");
-        var machineCoinsMachineId = localStorage.getItem("machineCoinsMachineId");
-        var machineCoinsRouteLocationId = localStorage.getItem("machineCoinsRouteLocationId");
+        var machineCoinsRouteId = localStorage.getItem("machineCupsRouteId");
+        var machineCoinsRouteMachineId = localStorage.getItem("machineCupsRouteMachineId");
 
-        app.servers.private.query('machinecoinsload', {routeId:machineCoinsRouteId,machineId:machineCoinsMachineId}, app.callbacks.fetchMachineCoinsLoad);
+        app.servers.private.query('machinecoinsload', {routeId:machineCoinsRouteId,routeMachineId:machineCoinsRouteMachineId}, app.callbacks.fetchMachineCoinsLoad);
 
     },
 
@@ -1523,9 +1397,8 @@ var app = {
         $("#machineCoinsLoadConfirmSubmitButton").button("disable");
 
         // machineId, routeId, flavorId, flavorQuantity, loadType
-        var machineCoinsRouteId = localStorage.getItem("machineCoinsRouteId");
-        var machineCoinsMachineId = localStorage.getItem("machineCoinsMachineId");
-        var machineCoinsRouteLocationId = localStorage.getItem("machineCoinsRouteLocationId");
+        var machineCoinsRouteId = localStorage.getItem("machineCupsRouteId");
+        var machineCoinsRouteMachineId = localStorage.getItem("machineCupsRouteMachineId");
 
         coinsLoaded = []; 
         $("#machineCoinsLoadForm input[type=number]").each(function() {
@@ -1545,7 +1418,7 @@ var app = {
             });
 
         console.log("[Submitting machine coins load confirm.]");
-        app.servers.private.query('machinecoinsloadconfirmsubmit', {routeLocationId: machineCoinsRouteLocationId, routeId:machineCoinsRouteId, machineId:machineCoinsMachineId, machineCoinsLoaded:coinsLoaded}, app.callbacks.fetchMachineCoinsLoadConfirmSubmit);
+        app.servers.private.query('machinecoinsloadconfirmsubmit', {routeId:machineCoinsRouteId, routeMachineId:machineCoinsRouteMachineId, machineCoinsLoaded:coinsLoaded}, app.callbacks.fetchMachineCoinsLoadConfirmSubmit);
 
         // stop form from submitting 'get' request by returning false
         return false;
@@ -1556,89 +1429,11 @@ var app = {
         // unlock confirm button if machine load status is not 'Machine Load Complete'
         console.log("[fetchMachineCoinsLoadUnlockConfirmButton]");
 
-        var machineCoinsMachineId = localStorage.getItem("machineCoinsMachineId");
-        var machineCoinsRouteId = localStorage.getItem("machineCoinsRouteId");
-        app.servers.private.query('machinecoinsloadstatus', {machineId:machineCoinsMachineId,routeId:machineCoinsRouteId}, app.callbacks.fetchMachineCoinsLoadUnlockConfirmButton);
+        var machineCoinsRouteId = localStorage.getItem("machineCupsRouteId");
+        var machineCoinsRouteMachineId = localStorage.getItem("machineCupsRouteMachineId");
+        app.servers.private.query('machinecoinsloadstatus', {routeMachineId:machineCoinsRouteMachineId,routeId:machineCoinsRouteId}, app.callbacks.fetchMachineCoinsLoadUnlockConfirmButton);
     },
 
-
-
-
-    fetchMachineCoinsPickup: function() {
-        
-        console.log("[fetchMachineCoinsPickup]");
-
-        var machineCoinsRouteId = localStorage.getItem("machineCoinsRouteId");
-        var machineCoinsMachineId = localStorage.getItem("machineCoinsMachineId");
-        var machineCoinsRouteLocationId = localStorage.getItem("machineCoinsRouteLocationId");
-
-        app.servers.private.query('machinecoinspickup', {routeId:machineCoinsRouteId,routeLocationId:machineCoinsRouteLocationId,machineId:machineCoinsMachineId}, app.callbacks.fetchMachineCoinsPickup);
-
-    },
-
-    machineCoinsPickupBreadcrumbs: function() {
-        
-        // retrieve route date and vanName for breadcrumbs 
-        console.log("[machineCoinsPickupBreadcrumbs]");
-
-        // get from local storage
-        var machineCoinsPickupDateHeader = localStorage.getItem("machineCoinsDate");
-        var machineCoinsPickupVanNameHeader = localStorage.getItem("machineCoinsVanName");
-        var machineCoinsPickupAddressAbbrevHeader = localStorage.getItem("machineCoinsAddressAbbrev"); 
-        var machineCoinsPickupMachineName = localStorage.getItem("machineCoinsMachineName"); 
-
-        // write breadcrumbs
-        $('#machineCoinsPickupDateHeader').html(machineCoinsPickupDateHeader);
-        $('#machineCoinsPickupVanNameHeader').html(machineCoinsPickupVanNameHeader);
-        $('#machineCoinsPickupAddressAbbrevHeader').html(machineCoinsPickupAddressAbbrevHeader);
-        $('#machineCoinsPickupMachineNameHeader').html(machineCoinsPickupMachineName);
-    },
-
-    fetchMachineCoinsPickupConfirmSubmit: function() {
-
-        console.log('[fetchMachineCoinsPickupConfirmSubmit]');
-
-        var form = $("#machineCoinsPickupForm");    
-        //disable the button so we can't resubmit while we wait
-        $("#machineCoinsPickupConfirmSubmitButton").button("disable");
-
-        // machineId, routeId, flavorId, flavorQuantity, loadType
-        var machineCoinsRouteId = localStorage.getItem("machineCoinsRouteId");
-        var machineCoinsMachineId = localStorage.getItem("machineCoinsMachineId");
-        var machineCoinsRouteLocationId = localStorage.getItem("machineCoinsRouteLocationId");
-
-        coinsPickedUp = []; 
-        $("#machineCoinsPickupForm input[type=number]").each(function() {
-
-                var rollTypeUCFirst = this.id.match(/machineCoinsPickup([a-z]+)/i);
-
-                var rollTypeLCFirst = rollTypeUCFirst[1].charAt(0).toLowerCase() + rollTypeUCFirst[1].slice(1);
-                var rollType = rollTypeLCFirst;
-
-                var rollQuantity = this.value;
-
-                if(rollType) {
-                    coinsPickedUp.push({'rollType':rollType,'rollQuantity':rollQuantity});
-                }
-
-            });
-
-        console.log("[Submitting machine coins pickup confirm.]");
-        app.servers.private.query('machinecoinspickupconfirmsubmit', {routeLocationId: machineCoinsRouteLocationId, routeId:machineCoinsRouteId, machineId:machineCoinsMachineId, machineCoinsPickedUp:coinsPickedUp}, app.callbacks.fetchMachineCoinsPickupConfirmSubmit);
-
-        // stop form from submitting 'get' request by returning false
-        return false;
-    },
-
-    fetchMachineCoinsPickupUnlockConfirmButton: function() {
-        
-        // unlock confirm button if machine load status is not 'Machine Load Complete'
-        console.log("[fetchMachineCoinsPickupUnlockConfirmButton]");
-
-        var machineCoinsMachineId = localStorage.getItem("machineCoinsMachineId");
-        var machineCoinsRouteId = localStorage.getItem("machineCoinsRouteId");
-        app.servers.private.query('machinecoinspickupstatus', {machineId:machineCoinsMachineId,routeId:machineCoinsRouteId}, app.callbacks.fetchMachineCoinsPickupUnlockConfirmButton);
-    },
 
 
 
@@ -1685,51 +1480,91 @@ var app = {
                 console.log("[fetchRouteCupsRoutes routes length:" + r.routes.length + "]");
 
 
-                var holdOutput = '';
-                var vanReadyOutput = '';
+                var vanHoldOutput = '';
+                var vanLoadRequestedOutput = '';
+                var vanLoadCompleteOutput = '';
+                var vanLoadVerifiedOutput = '';
                 $.each(r.routes, function(index, value){                   
 
                     var rId = value.routeId;
                     var vanName = value.vanName;
                     var status = value.status;
                     var date = value.date;
+                    var flavorQuantityTotal = value.flavorQuantityTotal;
 
                     if (status=="Hold") {
-                        holdOutput += '<li id="'+ rId +'"><a href="#routeCupsMachinesPage">' +  date + ' - ' + vanName + '</a></li>';
+                        vanHoldOutput += '<li id="'+ rId +'"><a href="#routeCupsMachinesPage">' +  date + ' - ' + vanName + '<span class="ui-li-count">' + flavorQuantityTotal + '</span></a></li>';
+                    }
+                    else if (status =="Van Load Requested") {
+                        vanLoadRequestedOutput += '<li id="'+ rId +'"><a href="#routeCupsMachinesPage">' +  date + ' - ' + vanName + '<span class="ui-li-count">' + flavorQuantityTotal + '</span></a></li>';
+                    }
+                    else if (status =="Van Load Complete") {
+                        vanLoadCompleteOutput += '<li id="'+ rId +'"><a href="#routeCupsMachinesPage">' +  date + ' - ' + vanName + '<span class="ui-li-count">' + flavorQuantityTotal + '</span></a></li>';
                     }
                     else {
-                        vanReadyOutput += '<li id="'+ rId +'"><a href="#routeCupsMachinesPage">' +  date + ' - ' + vanName + ' (' +status + ')</a></li>';
+                        vanLoadVerifiedOutput += '<li id="'+ rId +'"><a href="#routeCupsMachinesPage">' +  date + ' - ' + vanName + '<span class="ui-li-count">' + flavorQuantityTotal + '</span></a></li>';
                     }
                 });
 
 
-                var holdHeader = "";
-                var vanReadyHeader = "";
+                // routeCupsRoutesPageRoutesList
+                var holdOutput = '';
+                var loadRequestedOutput = '';
+                var loadCompleteOutput = '';
+                var loadVerifiedOutput = '';
 
-                //append list to ul
-                if (holdOutput) {
-                    holdHeader = "Not Sent for Van Load:";
-                }
-                if (vanReadyOutput) {
-                    vanReadyHeader = "Sent for Van Load:";
+                holdOutput += '<li data-role="list-divider">Van Hold</li>';
+                if (vanHoldOutput) {
+                    holdOutput += vanHoldOutput;
+                } else {
+                    holdOutput += '<li><h3>No Routes</h3></li>';
                 }
 
-                $('#routeCupsRoutesPageHoldListHeader').html(holdHeader);
-                $("#routeCupsRoutesPageHoldList").html(holdOutput).promise().done(function () {
+                loadRequestedOutput += '<li data-role="list-divider">Van Load Requested</li>';
+                if (vanLoadRequestedOutput) {
+                    loadRequestedOutput += vanLoadRequestedOutput;
+                } else {
+                    loadRequestedOutput += '<li><h3>No Routes</h3></li>';
+                }
+
+                loadCompleteOutput += '<li data-role="list-divider">Van Load Complete</li>';
+                if (vanLoadCompleteOutput) {
+                    loadCompleteOutput += vanLoadCompleteOutput;
+                } else {
+                    loadCompleteOutput += '<li><h3>No Routes</h3></li>';
+                }
+
+                loadVerifiedOutput += '<li data-role="list-divider">Van Load Verified</li>';
+                if (vanLoadVerifiedOutput) {
+                    loadVerifiedOutput += vanLoadVerifiedOutput;
+                } else {
+                    loadVerifiedOutput += '<li><h3>No Routes</h3></li>';
+                }
+
+
+
+
+                $("#routeCupsRoutesHoldList").html(holdOutput).promise().done(function () {
+                    // refresh listview so that jq mobile applies styles to added li elements
+                    $(this).listview("refresh");
+                });
+                $("#routeCupsRoutesLoadRequestedList").html(loadRequestedOutput).promise().done(function () {
+                    // refresh listview so that jq mobile applies styles to added li elements
+                    $(this).listview("refresh");
+                });
+                $("#routeCupsRoutesLoadCompleteList").html(loadCompleteOutput).promise().done(function () {
+                    // refresh listview so that jq mobile applies styles to added li elements
+                    $(this).listview("refresh");
+                });
+                $("#routeCupsRoutesLoadVerifiedList").html(loadVerifiedOutput).promise().done(function () {
                     // refresh listview so that jq mobile applies styles to added li elements
                     $(this).listview("refresh");
                 });
 
-                $('#routeCupsRoutesPageVanReadyListHeader').html(vanReadyHeader);
-                $("#routeCupsRoutesPageVanReadyList").html(vanReadyOutput).promise().done(function () {
-                    // refresh listview so that jq mobile applies styles to added li elements
-                    $(this).listview("refresh");
-                });
 
-                if (! holdOutput && ! vanReadyOutput) {
-                    $('#modalDialogBackMessage').html("No routes available to display.");
-                    $('#modalDialogBack').popup("open");
-                }
+
+
+
 
 
 
@@ -1750,26 +1585,25 @@ var app = {
             if(r && r.code && r.code === "SUCCESS") {
                 console.log("[fetchRouteCupsMachines SUCCESS]");
 
+
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
-                    if (r.resultcode === "ROUTE DOES NOT EXIST") {
+                    var resultArray = [
+                            {   code: 'ROUTE DOES NOT EXIST',
+                                message: 'Route no longer exists!', 
+                                redirect: '#routeCupsRoutesPage' },
 
-                        console.log("[fetchRouteCupsMachines redirecting to #routeCupsRoutesPage]");
-                        $('#modalDialogMessage').html('Route no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#routeCupsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else {
-                        // unrecognized error - 
-                        console.log("[fetchRouteCupsMachines redirecting to #routeCupsRoutesPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#routeCupsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
+                    ];
 
-                    }
+                    catchAll = {
+                                redirect: '#routeCupsRoutesPage' };
+
+                    proc = "fetchRouteCupsMachines";
+
+                    app.redirectByResult(proc, r.resultcode, resultArray, catchAll);
+                    return;
+
                 }
 
                 if (r.routeMachinesByLocation.length == 0) {
@@ -1797,10 +1631,11 @@ var app = {
                     }
                     output += value.city + ', ' + value.state + ' ' + value.zip;
                     output += '</div>';
-                    output += '<span style="float:right; vertical-align:top"> <div data-role="controlgroup" data-type="horizontal" data-mini="true">';
+                    output += '<span style="float:right; vertical-align:top">';
+                    output += '<div data-role="controlgroup" data-type="horizontal" data-mini="true">';
                     output += '<a class="routeCupsMachinesLocationUp" href="#" id="' + value.routeLocationId + '" data-role="button" data-iconpos="notext" data-icon="arrow-u"><span class="ui-btn-inner ui-corner-left"><span class="ui-btn-text">Up</span></span></a>';
-                    output += '<a class="routeCupsMachinesLocationDown" href="#" id="' + value.routeLocationId + '" data-role="button" data-iconpos="notext" data-icon="arrow-d"><span class="ui-btn-inner"><span class="ui-btn-text">Up</span></span></a>';
-                    output += '<a class="routeCupsMachinesLocationDelete" href="#" id="' + value.routeLocationId + '" data-role="button" data-iconpos="notext" data-icon="delete"><span class="ui-btn-inner ui-corner-right ui-controlgroup-last"><span class="ui-btn-text">Up</span></span></a>';
+                    output += '<a class="routeCupsMachinesLocationDown" href="#" id="' + value.routeLocationId + '" data-role="button" data-iconpos="notext" data-icon="arrow-d"><span class="ui-btn-inner"><span class="ui-btn-text">Down</span></span></a>';
+                    output += '<a class="routeCupsMachinesLocationDelete" href="#" id="' + value.routeLocationId + '" data-role="button" data-iconpos="notext" data-icon="delete"><span class="ui-btn-inner ui-corner-right ui-controlgroup-last"><span class="ui-btn-text">Delete</span></span></a>';
                     output += '</div></span>';
                     output += '</h3>';
 
@@ -1814,7 +1649,20 @@ var app = {
                         var brandName = valueInner.brandName;
                         var flavorQuantityTotal = valueInner.flavorQuantityTotal;
 
-                        output += '<li id="'+ routeMachineId +'" data-role="list-divider">'+ type + ' - ' + brandName + '</li>';
+                        output += '<li id="'+ routeMachineId +'" data-role="list-divider">';
+
+                        output += '<div style="display:inline-block;">';
+                        output += type + ' - ' + brandName; 
+                        output += '</div>';
+
+                        output += '<span style="float:right; vertical-align:top;">';
+                        output += '<div data-role="controlgroup" data-type="horizontal" data-mini="true">';
+                        output += '<a class="routeCupsMachinesMachineNotes" href="#" id="' + routeMachineId + '" data-role="button" data-iconpos="notext" data-icon="comment"><span class="ui-btn-inner ui-corner-left"><span class="ui-btn-text">Info</span></span></a>';
+                        output += '<a class="routeCupsMachinesMachineRemove" href="#" id="' + routeMachineId + '" data-role="button" data-iconpos="notext" data-icon="delete"><span class="ui-btn-inner"><span class="ui-btn-text">Delete</span></span></a>';
+                        output += '</div>';
+                        output += '</span>';
+
+                        output += '</li>';
                         output += '<li id="'+ routeMachineId +'"><a href="#routeCupsFlavorsPage" data-transition="slide">Cups<span class="ui-li-count">' + flavorQuantityTotal + '</span></a></li>';
                         output += '<li id="'+ routeMachineId +'"><a href="#routeCoinsLoadPage" data-transition="slide">Coins</a></li>';
                         output += '</ul>';
@@ -1899,26 +1747,24 @@ var app = {
             if(r && r.code && r.code === "SUCCESS") {
                 console.log("[fetchRouteCupsMachinesBreadcrumbs SUCCESS]");
 
+
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
-                    if (r.resultcode === "ROUTE DOES NOT EXIST") {
+                    var resultArray = [
+                            {   code: 'ROUTE DOES NOT EXIST',
+                                message: 'Route no longer exists!', 
+                                redirect: '#routeCupsRoutesPage' },
+                    ];
 
-                        console.log("[fetchRouteCupsMachinesBreadcrumbs redirecting to #routeCupsRoutesPage]");
-                        $('#modalDialogMessage').html('Route Location no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#routeCupsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else {
-                        // unrecognized error - forward 
-                        console.log("[fetchRouteCupsMachinesBreadcrumbs redirecting to #routeCupsRoutesPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#routeCupsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
+                    catchAll = {
+                                redirect: '#routeCupsRoutesPage' };
 
-                    }
+                    proc = "fetchRouteCupsMachinesBreadcrumbs";
+
+                    app.redirectByResult(proc, r.resultcode, resultArray, catchAll);
+                    return;
+
                 }
 
                 // save to local storage
@@ -1948,34 +1794,28 @@ var app = {
             if(r && r.code && r.code === "SUCCESS") {
                 console.log("[fetchRouteCupsFlavors SUCCESS]");
 
+
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
-                    if (r.resultcode === "ROUTE DOES NOT EXIST") {
+                    var resultArray = [
+                            {   code: 'ROUTE DOES NOT EXIST',
+                                message: 'Route no longer exists!', 
+                                redirect: '#routeCupsRoutesPage' },
 
-                        console.log("[fetchRouteCupsFlavors redirecting to #routeCupsRoutesPage]");
-                        $('#modalDialogMessage').html('Route no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#routeCupsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else if (r.resultcode === "MACHINE DOES NOT EXIST") {
+                            {   code: 'MACHINE DOES NOT EXIST',
+                                message: 'Machine no longer exists!', 
+                                redirect: '#routeCupsMachinesPage' },
+                    ];
 
-                        console.log("[fetchRouteCupsFlavors redirecting to #routeCupsMachinesPage]");
-                        $('#modalDialogMessage').html('Machine no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#routeCupsMachinesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    } 
-                    else {
-                        // unrecognized error - 
-                        console.log("[fetchRouteCupsFlavors redirecting to #routeCupsRoutesPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#routeCupsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
+                    catchAll = {
+                                redirect: '#routeCupsRoutesPage' };
 
-                    }
+                    proc = "fetchRouteCupsFlavors";
+
+                    app.redirectByResult(proc, r.resultcode, resultArray, catchAll);
+                    return;
+
                 }
 
                 if (r.machineFlavors.length == 0) {
@@ -2044,27 +1884,30 @@ var app = {
             if(r && r.code && r.code === "SUCCESS") {
                 console.log("[fetchRouteCupsFlavorsBreadcrumbs SUCCESS]");
 
+
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
-                    if (r.resultcode === "MACHINE DOES NOT EXIST") {
+                    var resultArray = [
+                            {   code: 'ROUTE DOES NOT EXIST',
+                                message: 'Route no longer exists!', 
+                                redirect: '#routeCupsRoutesPage' },
 
-                        console.log("[fetchRouteCupsFlavorsBreadcrumbs redirecting to #routeCupsMachinesPage]");
-                        $('#modalDialogMessage').html('Machine no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#routeCupsMachinesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else {
-                        // unrecognized error - forward 
-                        console.log("[fetchRouteCupsFlavorsBreadcrumbs redirecting to #routeCupsMachinesPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#routeCupsMachinesPage');
-                        $('#modalDialog').popup("open");
-                        return;
+                            {   code: 'MACHINE DOES NOT EXIST',
+                                message: 'Machine no longer exists!', 
+                                redirect: '#routeCupsMachinesPage' },
+                    ];
 
-                    }
+                    catchAll = {
+                                redirect: '#routeCupsRoutesPage' };
+
+                    proc = "fetchRouteCupsFlavorsBreadcrumbs";
+
+                    app.redirectByResult(proc, r.resultcode, resultArray, catchAll);
+                    return;
+
                 }
+
 
                 // get from local storage
                 var routeCupsFlavorsDateHeader = localStorage.getItem("routeCupsDate");
@@ -2101,32 +1944,26 @@ var app = {
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
-                    if (r.resultcode === "ROUTE DOES NOT EXIST") {
+                    var resultArray = [
+                            {   code: 'ROUTE DOES NOT EXIST',
+                                message: 'Route no longer exists!', 
+                                redirect: '#routeCupsRoutesPage' },
 
-                        console.log("[fetchRouteCupsFlavorAdd redirecting to #routeCupsRoutesPage]");
-                        $('#modalDialogMessage').html('Route Location no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#routeCupsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else if (r.resultcode === "MACHINE DOES NOT EXIST") {
+                            {   code: 'MACHINE DOES NOT EXIST',
+                                message: 'Machine no longer exists!', 
+                                redirect: '#routeCupsMachinesPage' },
+                    ];
 
-                        console.log("[fetchRouteCupsFlavorAdd redirecting to #routeCupsMachinesPage]");
-                        $('#modalDialogMessage').html('Machine no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#routeCupsMachinesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    } 
-                    else {
-                        // unrecognized error - 
-                        console.log("[fetchRouteCupsFlavorAdd redirecting to #routeCupsFlavorsPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#routeCupsFlavorsPage');
-                        $('#modalDialog').popup("open");
-                        return;
+                    catchAll = {
+                                redirect: '#routeCupsRoutesPage' };
 
-                    }
+                    proc = "fetchRouteCupsFlavorAdd";
+
+                    app.redirectByResult(proc, r.resultcode, resultArray, catchAll);
+                    return;
+
                 }
+
 
                 console.log("machine available flavors:" + r.machineAvailableFlavors.flavors.length);
 
@@ -2178,60 +2015,26 @@ var app = {
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
-                    // first check if the route is editable
-                    if (r.resultcode === "ROUTE IS LOCKED") {
+                    var resultArray = [
+                            {   code: 'ROUTE DOES NOT EXIST',
+                                message: 'Route no longer exists!', 
+                                redirect: '#routeCupsRoutesPage' },
 
-                        console.log("[fetchRouteCupsFlavorAddSubmit redirecting to #routeCupsFlavorsPage]");
-                        $('#modalDialogMessage').html('Route is locked - no changes can be made.');
-                        $('#modalDialogRedirect').attr('href','#routeCupsFlavorsPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    } 
+                            {   code: 'MACHINE DOES NOT EXIST',
+                                message: 'Machine no longer exists!', 
+                                redirect: '#routeCupsMachinesPage' },
+                    ];
 
-                    if (r.resultcode === "ROUTE DOES NOT EXIST") {
+                    catchAll = {
+                                redirect: '#routeCupsRoutesPage' };
 
-                        console.log("[fetchRouteCupsFlavorAddSubmit redirecting to #routeCupsRoutesPage]");
-                        $('#modalDialogMessage').html('Route no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#routeCupsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else if (r.resultcode === "MACHINE DOES NOT EXIST") {
+                    proc = "fetchRouteCupsFlavorAddSubmit";
 
-                        console.log("[fetchRouteCupsFlavorAddSubmit redirecting to #routeCupsMachinesPage]");
-                        $('#modalDialogMessage').html('Machine no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#routeCupsMachinesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    } 
-                    else if (r.resultcode === "FLAVOR DOES NOT EXIST") {
-
-                        console.log("[fetchRouteCupsFlavorAddSubmit redirecting to #routeCupsFlavorsPage]");
-                        $('#modalDialogMessage').html('Flavor no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#routeCupsFlavorsPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    } 
-                    else if (r.resultcode === "FLAVOR EXISTS FOR ROUTE MACHINE") {
-
-                        console.log("[fetchRouteCupsFlavorAddSubmit redirecting to #routeCupsFlavorAddPage]");
-                        $('#modalDialogMessage').html('Flavor no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#routeCupsFlavorAddPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    } 
-
-                    else {
-                        // unrecognized error - 
-                        console.log("[fetchRouteCupsFlavorAddSubmit redirecting to #routeCupsFlavorsPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#routeCupsFlavorsPage');
-                        $('#modalDialog').popup("open");
-                        return;
-
-                    }
+                    app.redirectByResult(proc, r.resultcode, resultArray, catchAll);
+                    return;
 
                 }
+
 
                 // flavors added to machine - show modal dialog and send to machines page
                 console.log("[fetchRouteCupsFlavorAddSubmit redirecting to #routeCupsFlavorsPage]");
@@ -2259,39 +2062,24 @@ var app = {
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
-                    if (r.resultcode === "ROUTE DOES NOT EXIST") {
+                    var resultArray = [
+                            {   code: 'ROUTE DOES NOT EXIST',
+                                message: 'Route no longer exists!', 
+                                redirect: '#routeCupsRoutesPage' },
 
-                        console.log("[fetchRouteCupsFlavorEdit redirecting to #routeCupsRoutesPage]");
-                        $('#modalDialogMessage').html('Route Location no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#routeCupsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else if (r.resultcode === "MACHINE DOES NOT EXIST") {
+                            {   code: 'MACHINE DOES NOT EXIST',
+                                message: 'Machine no longer exists!', 
+                                redirect: '#routeCupsMachinesPage' },
+                    ];
 
-                        console.log("[fetchRouteCupsFlavorEdit redirecting to #routeCupsMachinesPage]");
-                        $('#modalDialogMessage').html('Machine no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#routeCupsMachinesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    } 
-                    else if (r.resultcode === "FLAVOR NO LONGER ASSIGNED TO MACHINE") {
+                    catchAll = {
+                                redirect: '#routeCupsRoutesPage' };
 
-                        console.log("[fetchRouteCupsFlavorEdit redirecting to #routeCupsFlavorsPage]");
-                        $('#modalDialogMessage').html('Flavor no longer assigned to machine.');
-                        $('#modalDialogRedirect').attr('href','#routeCupsFlavorsPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    } 
-                    else {
-                        // unrecognized error - 
-                        console.log("[fetchRouteCupsFlavorEdit redirecting to #routeCupsFlavorsPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#routeCupsFlavorsPage');
-                        $('#modalDialog').popup("open");
-                        return;
+                    proc = "fetchRouteCupsFlavorEdit";
 
-                    }
+                    app.redirectByResult(proc, r.resultcode, resultArray, catchAll);
+                    return;
+
                 }
 
                 var flavorName = r.flavorName;
@@ -2319,55 +2107,30 @@ var app = {
             if(r && r.code && r.code === "SUCCESS") {
                 console.log("[fetchRouteCupsFlavorUpdateSubmit SUCCESS]");
 
+
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
-                    // first check if the route is editable
-                    if (r.resultcode === "ROUTE IS LOCKED") {
+                    var resultArray = [
+                            {   code: 'ROUTE DOES NOT EXIST',
+                                message: 'Route no longer exists!', 
+                                redirect: '#routeCupsRoutesPage' },
 
-                        console.log("[fetchRouteCupsFlavorUpdateSubmit redirecting to #routeCupsFlavorsPage]");
-                        $('#modalDialogMessage').html('Route is locked - no changes can be made.');
-                        $('#modalDialogRedirect').attr('href','#routeCupsFlavorsPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    } 
+                            {   code: 'MACHINE DOES NOT EXIST',
+                                message: 'Machine no longer exists!', 
+                                redirect: '#routeCupsMachinesPage' },
+                    ];
 
+                    catchAll = {
+                                redirect: '#routeCupsRoutesPage' };
 
-                    if (r.resultcode === "ROUTE DOES NOT EXIST") {
+                    proc = "fetchRouteCupsFlavorUpdateSubmit";
 
-                        console.log("[fetchRouteCupsFlavorUpdateSubmit redirecting to #routeCupsRoutesPage]");
-                        $('#modalDialogMessage').html('Route no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#routeCupsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else if (r.resultcode === "MACHINE DOES NOT EXIST") {
-
-                        console.log("[fetchRouteCupsFlavorUpdateSubmit redirecting to #routeCupsMachinesPage]");
-                        $('#modalDialogMessage').html('Machine no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#routeCupsMachinesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    } 
-                    else if (r.resultcode === "FLAVOR NO LONGER ASSIGNED TO MACHINE") {
-
-                        console.log("[fetchRouteCupsFlavorUpdateSubmit redirecting to #routeCupsFlavorsPage]");
-                        $('#modalDialogMessage').html('Machine no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#machineCupsMachinesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    } 
-                    else {
-                        // unrecognized error - 
-                        console.log("[fetchRouteCupsFlavorUpdateSubmit redirecting to #routeCupsFlavorsPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#routeCupsFlavorsPage');
-                        $('#modalDialog').popup("open");
-                        return;
-
-                    }
+                    app.redirectByResult(proc, r.resultcode, resultArray, catchAll);
+                    return;
 
                 }
+
 
                 // flavors added to machine - show modal dialog and send to machines page
                 console.log("[fetchRouteCupsFlavorUpdateSubmit redirecting to #routeCupsFlavorsPage]");
@@ -2392,54 +2155,30 @@ var app = {
             if(r && r.code && r.code === "SUCCESS") {
                 console.log("[fetchRouteCupsFlavorDeleteSubmit SUCCESS]");
 
+
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
-                    // first check if the route is editable
-                    if (r.resultcode === "ROUTE IS LOCKED") {
+                    var resultArray = [
+                            {   code: 'ROUTE DOES NOT EXIST',
+                                message: 'Route no longer exists!', 
+                                redirect: '#routeCupsRoutesPage' },
 
-                        console.log("[fetchRouteCupsFlavorUpdateSubmit redirecting to #routeCupsFlavorsPage]");
-                        $('#modalDialogMessage').html('Route is locked - no changes can be made.');
-                        $('#modalDialogRedirect').attr('href','#routeCupsFlavorsPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    } 
+                            {   code: 'MACHINE DOES NOT EXIST',
+                                message: 'Machine no longer exists!', 
+                                redirect: '#routeCupsMachinesPage' },
+                    ];
 
-                    if (r.resultcode === "ROUTE DOES NOT EXIST") {
+                    catchAll = {
+                                redirect: '#routeCupsRoutesPage' };
 
-                        console.log("[fetchRouteCupsFlavorDeleteSubmit redirecting to #routeCupsRoutesPage]");
-                        $('#modalDialogMessage').html('Route no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#routeCupsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else if (r.resultcode === "MACHINE DOES NOT EXIST") {
+                    proc = "fetchRouteCupsFlavorDeleteSubmit";
 
-                        console.log("[fetchRouteCupsFlavorDeleteSubmit redirecting to #routeCupsMachinesPage]");
-                        $('#modalDialogMessage').html('Machine no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#routeCupsMachinesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    } 
-                    else if (r.resultcode === "FLAVOR NO LONGER ASSIGNED TO MACHINE") {
-
-                        console.log("[fetchRouteCupsFlavorDeleteSubmit redirecting to #routeCupsFlavorsPage]");
-                        $('#modalDialogMessage').html('Machine no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#machineCupsMachinesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    } 
-                    else {
-                        // unrecognized error - 
-                        console.log("[fetchRouteCupsFlavorDeleteSubmit redirecting to #routeCupsFlavorsPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#routeCupsFlavorsPage');
-                        $('#modalDialog').popup("open");
-                        return;
-
-                    }
+                    app.redirectByResult(proc, r.resultcode, resultArray, catchAll);
+                    return;
 
                 }
+
 
                 // flavors added to machine - show modal dialog and send to machines page
                 console.log("[fetchRouteCupsFlavorDeleteSubmit redirecting to #routeCupsFlavorsPage]");
@@ -2470,32 +2209,26 @@ var app = {
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
-                    if (r.resultcode === "ROUTE DOES NOT EXIST") {
+                    var resultArray = [
+                            {   code: 'ROUTE DOES NOT EXIST',
+                                message: 'Route no longer exists!', 
+                                redirect: '#routeCupsRoutesPage' },
 
-                        console.log("[fetchRouteCoinsLoad redirecting to #routeCoinsRoutesPage]");
-                        $('#modalDialogMessage').html('Route no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#routeCoinsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else if (r.resultcode === "MACHINE DOES NOT EXIST") {
+                            {   code: 'MACHINE DOES NOT EXIST',
+                                message: 'Machine no longer exists!', 
+                                redirect: '#routeCupsMachinesPage' },
+                    ];
 
-                        console.log("[fetchRouteCoinsLoad redirecting to #routeCoinsMachinesPage]");
-                        $('#modalDialogMessage').html('Machine no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#routeCoinsMachinesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    } 
-                    else {
-                        // unrecognized error - 
-                        console.log("[fetchRouteCoinsLoad redirecting to #routeCoinsMachinesPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#routeCoinsMachinesPage');
-                        $('#modalDialog').popup("open");
-                        return;
+                    catchAll = {
+                                redirect: '#routeCupsRoutesPage' };
 
-                    }
+                    proc = "fetchRouteCoinsLoad";
+
+                    app.redirectByResult(proc, r.resultcode, resultArray, catchAll);
+                    return;
+
                 }
+
 
                 var vanLoadCoinsStatus = r.vanLoadCoinsStatus;
 
@@ -2554,24 +2287,26 @@ var app = {
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
-                    if (r.resultcode === "MACHINE DOES NOT EXIST") {
+                    var resultArray = [
+                            {   code: 'ROUTE DOES NOT EXIST',
+                                message: 'Route no longer exists!', 
+                                redirect: '#routeCupsRoutesPage' },
 
-                        console.log("[fetchRouteCoinsLoadBreadcrumbs redirecting to #routeCoinsMachinesPage]");
-                        $('#modalDialogMessage').html('Machine no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#routeCoinsMachinesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else {
-                        // unrecognized error - forward 
-                        console.log("[fetchRouteCoinsLoadBreadcrumbs redirecting to #routeCoinsMachinesPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#routeCoinsMachinesPage');
-                        $('#modalDialog').popup("open");
-                        return;
+                            {   code: 'MACHINE DOES NOT EXIST',
+                                message: 'Machine no longer exists!', 
+                                redirect: '#routeCupsMachinesPage' },
+                    ];
 
-                    }
+                    catchAll = {
+                                redirect: '#routeCupsRoutesPage' };
+
+                    proc = "fetchRouteCoinsLoadBreadcrumbs";
+
+                    app.redirectByResult(proc, r.resultcode, resultArray, catchAll);
+                    return;
+
                 }
+
 
                 // get from local storage
                 var routeCoinsDateHeader = localStorage.getItem("routeCupsDate");
@@ -2607,33 +2342,26 @@ var app = {
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
-                    if (r.resultcode === "ROUTE DOES NOT EXIST") {
+                    var resultArray = [
+                            {   code: 'ROUTE DOES NOT EXIST',
+                                message: 'Route no longer exists!', 
+                                redirect: '#routeCupsRoutesPage' },
 
-                        console.log("[fetchRouteCoinsLoadSubmit redirecting to #routeCoinsRoutesPage]");
-                        $('#modalDialogMessage').html('Route no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#routeCoinsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else if (r.resultcode === "MACHINE DOES NOT EXIST") {
+                            {   code: 'MACHINE DOES NOT EXIST',
+                                message: 'Machine no longer exists!', 
+                                redirect: '#routeCupsMachinesPage' },
+                    ];
 
-                        console.log("[fetchRouteCoinsLoadSubmit redirecting to #routeCoinsMachinesPage]");
-                        $('#modalDialogMessage').html('Machine no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#routeCoinsMachinesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    } 
-                    else {
-                        // unrecognized error - 
-                        console.log("[fetchRouteCoinsLoadSubmit redirecting to #routeCoinsLoadPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#routeCoinsLoadPage');
-                        $('#modalDialog').popup("open");
-                        return;
+                    catchAll = {
+                                redirect: '#routeCupsRoutesPage' };
 
-                    }
+                    proc = "fetchRouteCoinsLoadSubmit";
+
+                    app.redirectByResult(proc, r.resultcode, resultArray, catchAll);
+                    return;
 
                 }
+
 
                 // enable submit button for future updates
                 $("#routeCoinsLoadFormSubmitButton").button("enable");
@@ -2668,69 +2396,43 @@ var app = {
                 var confirmationOutput = '';
                 var verificationOutput = '';
                 var verifiedOutput = '';
+                var output = '';
+
                 $.each(r.routes, function(index, value){                   
 
                     var rId = value.routeId;
                     var vanName = value.vanName;
                     var status = value.status;
                     var date = value.date;
+                    var flavorQuantityTotal = value.flavorQuantityTotal;
+
                     console.log("[status:"+status +"]");
 
-                    // don't list hold status routes
-                    if(status == "Hold") {
-                        // don't show it
-                    }
-                    else if(status == "Van Load Requested") {
-                        confirmationOutput += '<li id="'+ rId +'"><a href="#vanCupsFlavorsPage">' +  date + ' - ' + vanName + '</a></li>';
-                    }
-                    else if (status == "Van Load Complete") {
-                        verificationOutput += '<li id="'+ rId +'"><a href="#vanCupsFlavorsPage">' +  date + ' - ' + vanName + '</a></li>';
-                    }
-                    else {
-                        verifiedOutput += '<li id="'+ rId +'"><a href="#vanCupsFlavorsPage">' +  date + ' - ' + vanName + '</a></li>';
-                    }
+                    // begin listview 
+                    output += '<ul id="vanCupsRoutesMainDivList'+ rId +'" data-role="listview" data-inset="true">';
+                    output += '<li id="'+ rId +'" data-role="list-divider">'+ date + ' - ' + vanName + '</li>';
+                    output += '<li id="'+ rId +'"><a href="#vanCupsFlavorsPage" data-transition="slide">Cups<span class="ui-li-count">' + flavorQuantityTotal + '</span></a></li>';
+                    output += '<li id="'+ rId +'"><a href="#vanCoinsLoadPage" data-transition="slide">Coins</a></li>';
+                    output += '</ul>';
+                    // end listview 
+
                 });
 
-                
-
-                var confirmationHeader = "";
-                var verificationHeader = "";
-                var verifiedHeader = "";
-
-                if (confirmationOutput) {
-                    var confirmationHeader = "To Load:";
-                }
-                if (verificationOutput) {
-                    var verificationHeader = "To Verify:";
-                }
-                if (verifiedOutput) {
-                    var verifiedHeader = "Loaded and Verified:";
-                }
-
-                $('#vanCupsRoutesPageConfirmationListHeader').html(confirmationHeader);
-                $("#vanCupsRoutesPageConfirmationList").html(confirmationOutput).promise().done(function () {
+                $("#vanCupsRoutesPageMainDiv").empty();
+                $("#vanCupsRoutesPageMainDiv").html(output).promise().done(function () {
                     // refresh listview so that jq mobile applies styles to added li elements
-                    $(this).listview("refresh");
+                    $.each(r.routes, function(index, value){                   
+                        //$('#vanCupsRoutesMainDivList'+value.routeId).trigger("create");
+                        $('#vanCupsRoutesMainDivList'+value.routeId).listview().listview("refresh");
+                    });
                 });
 
-                //append list to ul
-                $('#vanCupsRoutesPageVerificationListHeader').html(verificationHeader);
-                $("#vanCupsRoutesPageVerificationList").html(verificationOutput).promise().done(function () {
-                    // refresh listview so that jq mobile applies styles to added li elements
-                    $(this).listview("refresh");
-                });
-
-                //append list to ul
-                $('#vanCupsRoutesPageVerifiedListHeader').html(verifiedHeader);
-                $("#vanCupsRoutesPageVerifiedList").html(verifiedOutput).promise().done(function () {
-                    // refresh listview so that jq mobile applies styles to added li elements
-                    $(this).listview("refresh");
-                });
-
+                /*
                 if (!confirmationOutput && !verificationOutput && !verifiedOutput) {
                     $('#modalDialogBackMessage').html("No routes available to display.");
                     $('#modalDialogBack').popup("open");
                 }
+                */
 
 
             }
@@ -2751,26 +2453,25 @@ var app = {
             if(r && r.code && r.code === "SUCCESS") {
                 console.log("[fetchVanCupsFlavors SUCCESS]");
 
+
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
-                    if (r.resultcode === "ROUTE DOES NOT EXIST") {
+                    var resultArray = [
+                            {   code: 'ROUTE DOES NOT EXIST',
+                                message: 'Route no longer exists!', 
+                                redirect: '#vanCupsRoutesPage' },
 
-                        console.log("[fetchVanCupsFlavors redirecting to #vanCupsRoutesPage]");
-                        $('#modalDialogMessage').html('Route no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#vanCupsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else {
-                        // unrecognized error - 
-                        console.log("[fetchVanCupsFlavors redirecting to #vanCupsRoutesPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#vanCupsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
+                    ];
 
-                    }
+                    catchAll = {
+                                redirect: '#vanCupsRoutesPage' };
+
+                    proc = "fetchVanCupsFlavors";
+
+                    app.redirectByResult(proc, r.resultcode, resultArray, catchAll);
+                    return;
+
                 }
 
                 if (r.vanFlavors.length == 0) {
@@ -2842,23 +2543,21 @@ var app = {
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
-                    if (r.resultcode === "ROUTE DOES NOT EXIST") {
+                    var resultArray = [
+                            {   code: 'ROUTE DOES NOT EXIST',
+                                message: 'Route no longer exists!', 
+                                redirect: '#vanCupsRoutesPage' },
 
-                        console.log("[fetchVanCupsFlavorsBreadcrumbs redirecting to #vanCupsRoutesPage]");
-                        $('#modalDialogMessage').html('Route no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#vanCupsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else {
-                        // unrecognized error - forward to vanCupsRoutesPage
-                        console.log("[fetchVanCupsFlavorsBreadcrumbs redirecting to #vanCupsRoutesPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#vanCupsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
+                    ];
 
-                    }
+                    catchAll = {
+                                redirect: '#vanCupsRoutesPage' };
+
+                    proc = "fetchVanCupsFlavorsBreadcrumbs";
+
+                    app.redirectByResult(proc, r.resultcode, resultArray, catchAll);
+                    return;
+
                 }
 
                 // no other pages after this, so no need to write to local storage
@@ -2888,23 +2587,21 @@ var app = {
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
-                    if (r.resultcode === "ROUTE DOES NOT EXIST") {
+                    var resultArray = [
+                            {   code: 'ROUTE DOES NOT EXIST',
+                                message: 'Route no longer exists!', 
+                                redirect: '#vanCupsRoutesPage' },
 
-                        console.log("[fetchVanCupsFlavorsUnlockConfirmButton redirecting to #vanCupsRoutesPage]");
-                        $('#modalDialogMessage').html('Route no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#vanCupsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else {
-                        // unrecognized error - forward to vanCupsRoutesPage
-                        console.log("[fetchVanCupsFlavorsUnlockConfirmButton redirecting to #vanCupsRoutesPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#vanCupsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
+                    ];
 
-                    }
+                    catchAll = {
+                                redirect: '#vanCupsRoutesPage' };
+
+                    proc = "fetchVanCupsFlavorsUnlockConfirmButton";
+
+                    app.redirectByResult(proc, r.resultcode, resultArray, catchAll);
+                    return;
+
                 }
 
                 console.log('[Van Load Status:'+ r.status +']');
@@ -2982,23 +2679,20 @@ var app = {
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
-                    if (r.resultcode === "ROUTE LOCATION DOES NOT EXIST") {
+                    var resultArray = [
+                            {   code: 'ROUTE DOES NOT EXIST',
+                                message: 'Route no longer exists!', 
+                                redirect: '#vanCupsRoutesPage' },
 
-                        console.log("[fetchVanCupsFlavorsConfirmSubmit redirecting to #machineCupsRoutesPage]");
-                        $('#modalDialogMessage').html('Route Location no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#machineCupsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else {
-                        // unrecognized error - 
-                        console.log("[fetchVanCupsFlavorsConfirmSubmit redirecting to #vanCupsFlavorsPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#vanCupsFlavorsPage');
-                        $('#modalDialog').popup("open");
-                        return;
+                    ];
 
-                    }
+                    catchAll = {
+                                redirect: '#vanCupsRoutesPage' };
+
+                    proc = "fetchVanCupsFlavorsConfirmSubmit";
+
+                    app.redirectByResult(proc, r.resultcode, resultArray, catchAll);
+                    return;
 
                 }
 
@@ -3029,23 +2723,20 @@ var app = {
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
-                    if (r.resultcode === "ROUTE LOCATION DOES NOT EXIST") {
+                    var resultArray = [
+                            {   code: 'ROUTE DOES NOT EXIST',
+                                message: 'Route no longer exists!', 
+                                redirect: '#vanCupsRoutesPage' },
 
-                        console.log("[fetchVanCupsFlavorsDriverConfirmSubmit redirecting to #machineCupsRoutesPage]");
-                        $('#modalDialogMessage').html('Route Location no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#machineCupsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else {
-                        // unrecognized error - 
-                        console.log("[fetchVanCupsFlavorsDriverConfirmSubmit redirecting to #vanCupsFlavorsPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#vanCupsFlavorsPage');
-                        $('#modalDialog').popup("open");
-                        return;
+                    ];
 
-                    }
+                    catchAll = {
+                                redirect: '#vanCupsRoutesPage' };
+
+                    proc = "fetchVanCupsFlavorsDriverConfirmSubmit";
+
+                    app.redirectByResult(proc, r.resultcode, resultArray, catchAll);
+                    return;
 
                 }
 
@@ -3066,94 +2757,6 @@ var app = {
 
         },
 
-
-        "fetchVanCoinsRoutes": function(r) { 
-
-            console.log("[fetchVanCoinsRoutes callback]");
-
-            if(r && r.code && r.code === "SUCCESS") {
-                console.log("[fetchVanCoinsRoutes SUCCESS]");
-
-
-                var confirmationOutput = '';
-                var verificationOutput = '';
-                var verifiedOutput = '';
-                $.each(r.routes, function(index, value){                   
-
-                    var rId = value.routeId;
-                    var vanName = value.vanName;
-                    var coinsStatus = value.coinsStatus;
-                    var date = value.date;
-
-                    // don't list hold status routes
-                    if(coinsStatus == "Hold") {
-                        // don't show it
-                    }
-                    else if(coinsStatus == "Van Load Requested") {
-                        confirmationOutput += '<li id="'+ rId +'"><a href="#vanCoinsLoadPage">' +  date + ' - ' + vanName + '</a></li>';
-                    }
-                    else if (coinsStatus == "Van Load Complete") {
-                        verificationOutput += '<li id="'+ rId +'"><a href="#vanCoinsLoadPage">' +  date + ' - ' + vanName + '</a></li>';
-                    }
-                    else {
-                        verifiedOutput += '<li id="'+ rId +'"><a href="#vanCoinsLoadPage">' +  date + ' - ' + vanName + '</a></li>';
-                    }
-                });
-
-
-
-                var confirmationHeader = "";
-                var verificationHeader = "";
-                var verifiedHeader = "";
-
-                if (confirmationOutput) {
-                    var confirmationHeader = "To Load:";
-                }
-                if (verificationOutput) {
-                    var verificationHeader = "To Verify:";
-                }
-                if (verifiedOutput) {
-                    var verifiedHeader = "Loaded and Verified:";
-                }
-
-                //append list to ul
-                $('#vanCoinsRoutesPageConfirmationListHeader').html(confirmationHeader);
-                $("#vanCoinsRoutesPageConfirmationList").html(confirmationOutput).promise().done(function () {
-                    // refresh listview so that jq mobile applies styles to added li elements
-                    $(this).listview("refresh");
-                });
-
-                //append list to ul
-                $('#vanCoinsRoutesPageVerificationListHeader').html(verificationHeader);
-                $("#vanCoinsRoutesPageVerificationList").html(verificationOutput).promise().done(function () {
-                    // refresh listview so that jq mobile applies styles to added li elements
-                    $(this).listview("refresh");
-                });
-
-                //append list to ul
-                $('#vanCoinsRoutesPageVerifiedListHeader').html(verifiedHeader);
-                $("#vanCoinsRoutesPageVerifiedList").html(verifiedOutput).promise().done(function () {
-                    // refresh listview so that jq mobile applies styles to added li elements
-                    $(this).listview("refresh");
-                });
-
-                if (!confirmationOutput && !verificationOutput && !verifiedOutput) {
-                    $('#modalDialogBackMessage').html("No routes available to display.");
-                    $('#modalDialogBack').popup("open");
-                }
-
-
-
-            }
-            else {
-                console.log("[fetchVanCoinsRoutes ERROR]");
-                console.log("[fetchVanCoinsRoutes message:" + r.message + "]");
-                console.log("[Redirecting to login.]");
-                jQuery.mobile.changePage('#loginPage');
-            }
-
-        },
-
        "fetchVanCoinsLoad": function(r) { 
 
             console.log("[fetchVanCoinsLoad callback]");
@@ -3164,23 +2767,21 @@ var app = {
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
-                    if (r.resultcode === "ROUTE LOCATION DOES NOT EXIST") {
+                    var resultArray = [
+                            {   code: 'ROUTE DOES NOT EXIST',
+                                message: 'Route no longer exists!', 
+                                redirect: '#vanCupsRoutesPage' },
 
-                        console.log("[fetchVanCoinsLoad redirecting to #vanCoinsRoutesPage]");
-                        $('#modalDialogMessage').html('Route Location no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#vanCoinsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else {
-                        // unrecognized error - 
-                        console.log("[fetchVanCoinsLoad redirecting to #vanCoinsRoutesPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#vanCoinsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
+                    ];
 
-                    }
+                    catchAll = {
+                                redirect: '#vanCupsRoutesPage' };
+
+                    proc = "fetchVanCoinsLoad";
+
+                    app.redirectByResult(proc, r.resultcode, resultArray, catchAll);
+                    return;
+
                 }
 
                 // toggle form field visibility based on van load status
@@ -3236,23 +2837,21 @@ var app = {
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
-                    if (r.resultcode === "ROUTE DOES NOT EXIST") {
+                    var resultArray = [
+                            {   code: 'ROUTE DOES NOT EXIST',
+                                message: 'Route no longer exists!', 
+                                redirect: '#vanCupsRoutesPage' },
 
-                        console.log("[fetchVanCoinsLoadBreadcrumbs redirecting to #vanCoinsRoutesPage]");
-                        $('#modalDialogMessage').html('Route no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#vanCoinsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else {
-                        // unrecognized error - forward to vanCupsRoutesPage
-                        console.log("[fetchVanCoinsLoadBreadcrumbs redirecting to #vanCoinsRoutesPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#vanCoinsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
+                    ];
 
-                    }
+                    catchAll = {
+                                redirect: '#vanCupsRoutesPage' };
+
+                    proc = "fetchVanCoinsLoadBreadcrumbs";
+
+                    app.redirectByResult(proc, r.resultcode, resultArray, catchAll);
+                    return;
+
                 }
 
                 // no other pages after this, so no need to write to local storage
@@ -3282,23 +2881,21 @@ var app = {
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
-                    if (r.resultcode === "ROUTE DOES NOT EXIST") {
+                    var resultArray = [
+                            {   code: 'ROUTE DOES NOT EXIST',
+                                message: 'Route no longer exists!', 
+                                redirect: '#vanCupsRoutesPage' },
 
-                        console.log("[fetchVanCoinsLoadUnlockConfirmButton redirecting to #vanCoinsRoutesPage]");
-                        $('#modalDialogMessage').html('Route no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#vanCoinsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else {
-                        // unrecognized error - forward to vanCoinsRoutesPage
-                        console.log("[fetchVanCoinsLoadUnlockConfirmButton redirecting to #vanCoinsRoutesPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#vanCoinsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
+                    ];
 
-                    }
+                    catchAll = {
+                                redirect: '#vanCupsRoutesPage' };
+
+                    proc = "fetchVanCoinsLoadUnlockConfirmButton";
+
+                    app.redirectByResult(proc, r.resultcode, resultArray, catchAll);
+                    return;
+
                 }
 
                 console.log('[Van Coins Load Status:'+ r.coinsStatus +']');
@@ -3373,33 +2970,31 @@ var app = {
             if(r && r.code && r.code === "SUCCESS") {
                 console.log("[fetchVanCoinsLoadConfirmSubmit SUCCESS]");
 
+
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
-                    if (r.resultcode === "ROUTE LOCATION DOES NOT EXIST") {
+                    var resultArray = [
+                            {   code: 'ROUTE DOES NOT EXIST',
+                                message: 'Route no longer exists!', 
+                                redirect: '#vanCupsRoutesPage' },
 
-                        console.log("[fetchVanCoinsLoadConfirmSubmit redirecting to #vanCoinsRoutesPage]");
-                        $('#modalDialogMessage').html('Route Location no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#vanCoinsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else {
-                        // unrecognized error - 
-                        console.log("[fetchVanCoinsLoadConfirmSubmit redirecting to #vanCoinsLoadPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#vanCoinsLoadPage');
-                        $('#modalDialog').popup("open");
-                        return;
+                    ];
 
-                    }
+                    catchAll = {
+                                redirect: '#vanCupsRoutesPage' };
+
+                    proc = "fetchVanCoinsLoadConfirmSubmit";
+
+                    app.redirectByResult(proc, r.resultcode, resultArray, catchAll);
+                    return;
 
                 }
 
                 // confirmed coins loaded in van - show modal dialog and send to same page page
-                console.log("[fetchVanCoinsLoadConfirmSubmit redirecting to #vanCoinsRoutesPage]");
+                console.log("[fetchVanCoinsLoadConfirmSubmit redirecting to #vanCupsRoutesPage]");
                 $('#modalDialogMessage').html('Van Load confirmed.');
-                $('#modalDialogRedirect').attr('href','#vanCoinsRoutesPage');
+                $('#modalDialogRedirect').attr('href','#vanCupsRoutesPage');
                 $('#modalDialog').popup("open");
 
 
@@ -3424,30 +3019,27 @@ var app = {
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
-                    if (r.resultcode === "ROUTE LOCATION DOES NOT EXIST") {
+                    var resultArray = [
+                            {   code: 'ROUTE DOES NOT EXIST',
+                                message: 'Route no longer exists!', 
+                                redirect: '#vanCupsRoutesPage' },
 
-                        console.log("[fetchVanCoinsLoadDriverConfirmSubmit redirecting to #vanCoinsRoutesPage]");
-                        $('#modalDialogMessage').html('Route Location no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#vanCoinsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else {
-                        // unrecognized error - 
-                        console.log("[fetchVanCoinsLoadDriverConfirmSubmit redirecting to #vanCoinsLoadPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#vanCoinsLoadPage');
-                        $('#modalDialog').popup("open");
-                        return;
+                    ];
 
-                    }
+                    catchAll = {
+                                redirect: '#vanCupsRoutesPage' };
+
+                    proc = "fetchVanCoinsLoadDriverConfirmSubmit";
+
+                    app.redirectByResult(proc, r.resultcode, resultArray, catchAll);
+                    return;
 
                 }
 
                 // verified coins loaded in van - show modal dialog and send to same page page
-                console.log("[fetchVanCoinsLoadDriverConfirmSubmit redirecting to #vanCoinsRoutesPage]");
+                console.log("[fetchVanCoinsLoadDriverConfirmSubmit redirecting to #vanCupsRoutesPage]");
                 $('#modalDialogMessage').html('Driver Confirm Van Load Complete.');
-                $('#modalDialogRedirect').attr('href','#vanCoinsRoutesPage');
+                $('#modalDialogRedirect').attr('href','#vanCupsRoutesPage');
                 $('#modalDialog').popup("open");
 
 
@@ -3470,38 +3062,90 @@ var app = {
             if(r && r.code && r.code === "SUCCESS") {
                 console.log("[fetchMachineCupsRoutes SUCCESS]");
 
-                var output = '';
+                var vanHoldOutput = '';
+                var vanLoadRequestedOutput = '';
+                var vanLoadCompleteOutput = '';
+                var vanLoadVerifiedOutput = '';
                 $.each(r.routes, function(index, value){                   
 
                     var rId = value.routeId;
                     var vanName = value.vanName;
                     var status = value.status;
                     var date = value.date;
+                    var flavorQuantityTotal = value.flavorQuantityTotal;
 
-                    // disable viewing and editing of routes that are not machine load ready
-                    if (status=="Van Load Verified") {
-                        output += '<li id="'+ rId +'"><a href="#machineCupsLocationsPage">' +  date + ' - ' + vanName + '</a></li>';
+                    if (status=="Hold") {
+                        vanHoldOutput += '<li id="'+ rId +'"><a href="#machineCupsMachinesPage">' +  date + ' - ' + vanName + '<span class="ui-li-count">' + flavorQuantityTotal + '</span></a></li>';
+                    }
+                    else if (status =="Van Load Requested") {
+                        vanLoadRequestedOutput += '<li id="'+ rId +'"><a href="#machineCupsMachinesPage">' +  date + ' - ' + vanName + '<span class="ui-li-count">' + flavorQuantityTotal + '</span></a></li>';
+                    }
+                    else if (status =="Van Load Complete") {
+                        vanLoadCompleteOutput += '<li id="'+ rId +'"><a href="#machineCupsMachinesPage">' +  date + ' - ' + vanName + '<span class="ui-li-count">' + flavorQuantityTotal + '</span></a></li>';
+                    }
+                    else {
+                        vanLoadVerifiedOutput += '<li id="'+ rId +'"><a href="#machineCupsMachinesPage">' +  date + ' - ' + vanName + '<span class="ui-li-count">' + flavorQuantityTotal + '</span></a></li>';
                     }
                 });
 
-                var verifiedHeader = "";
 
+                // routeCupsRoutesPageRoutesList
+                var holdOutput = '';
+                var loadRequestedOutput = '';
+                var loadCompleteOutput = '';
+                var loadVerifiedOutput = '';
 
-                if (output) {
-                    verifiedHeader = "To Load";
+                /*
+                holdOutput += '<li data-role="list-divider">Van Hold</li>';
+                if (vanHoldOutput) {
+                    holdOutput += vanHoldOutput;
+                } else {
+                    holdOutput += '<li>No Routes</li>';
                 }
 
-                //append list to ul
-                $('#machineCupsRoutesPageListHeader').html(verifiedHeader);
-                $("#machineCupsRoutesPageList").html(output).promise().done(function () {
+                loadRequestedOutput += '<li data-role="list-divider">Van Load Requested</li>';
+                if (vanLoadRequestedOutput) {
+                    loadRequestedOutput += vanLoadRequestedOutput;
+                } else {
+                    loadRequestedOutput += '<li>No Routes</li>';
+                }
+
+                loadCompleteOutput += '<li data-role="list-divider">Van Load Complete</li>';
+                if (vanLoadCompleteOutput) {
+                    loadCompleteOutput += vanLoadCompleteOutput;
+                } else {
+                    loadCompleteOutput += '<li>No Routes</li>';
+                }
+                */
+
+                loadVerifiedOutput += '<li data-role="list-divider">Van Load Verified</li>';
+                if (vanLoadVerifiedOutput) {
+                    loadVerifiedOutput += vanLoadVerifiedOutput;
+                } else {
+                    loadVerifiedOutput += '<li><h3>No Routes</h3></li>';
+                }
+
+
+
+
+                /*
+                $("#routeCupsRoutesHoldList").html(holdOutput).promise().done(function () {
                     // refresh listview so that jq mobile applies styles to added li elements
                     $(this).listview("refresh");
                 });
-
-                if (!output) {
-                    $('#modalDialogBackMessage').html("No routes available to display.");
-                    $('#modalDialogBack').popup("open");
-                }
+                $("#routeCupsRoutesLoadRequestedList").html(loadRequestedOutput).promise().done(function () {
+                    // refresh listview so that jq mobile applies styles to added li elements
+                    $(this).listview("refresh");
+                });
+                $("#routeCupsRoutesLoadCompleteList").html(loadCompleteOutput).promise().done(function () {
+                    // refresh listview so that jq mobile applies styles to added li elements
+                    $(this).listview("refresh");
+                });
+                */
+                $("#machineCupsRoutesLoadVerifiedList").html(loadVerifiedOutput).promise().done(function () {
+                    // refresh listview so that jq mobile applies styles to added li elements
+                    $(this).listview("refresh");
+                });
 
 
 
@@ -3509,124 +3153,6 @@ var app = {
             else {
                 console.log("[fetchMachineCupsRoutes ERROR]");
                 console.log("[fetchMachineCupsRoutes message:" + r.message + "]");
-                console.log("[Redirecting to login.]");
-                jQuery.mobile.changePage('#loginPage');
-            }
-
-        },
-
-       "fetchMachineCupsLocations": function(r) { 
-
-            console.log("[fetchMachineCupsLocations callback]");
-
-            if(r && r.code && r.code === "SUCCESS") {
-                console.log("[fetchMachineCupsLocations SUCCESS]");
-
-                // record no longer exists? - customize modal dialog and return
-                if (r.result === false) {
-
-                    if (r.resultcode === "ROUTE DOES NOT EXIST") {
-
-                        console.log("[fetchMachineCupsLocations redirecting to #machineCupsRoutesPage]");
-                        $('#modalDialogMessage').html('Route no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#machineCupsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else {
-                        // unrecognized error - forward to machineCupsRoutesPage
-                        console.log("[fetchMachineCupsLocations redirecting to #machineCupsRoutesPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#machineCupsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-
-                    }
-                }
-
-                if (r.routeLocations.length == 0) {
-                    $('#modalDialogBackMessage').html("No locations available to display.");
-                    $('#modalDialogBack').popup("open");
-                }
-
-                var output = '';
-                var vanLoadStatus = r.vanLoadStatus;
-                $.each(r.routeLocations, function(index, value){                   
-
-                    var routeLocationId = value.routeLocationId;
-                    var addressAbbrev = value.addressAbbrev;
-
-                    // disable viewing/editing machine info if van load has not been verified
-                    if(vanLoadStatus == "Van Load Verified") {
-                        output += '<li id="'+ routeLocationId +'"><a href="#machineCupsMachinesPage">' + addressAbbrev + '</a></li>';
-                    }
-                    else {
-                        output += '<li class="ui-disabled" id="'+ routeLocationId +'"><a href="#machineCupsMachinesPage">' + addressAbbrev + '</a></li>';
-                    }
-
-                });
-
-                //append list to ul
-                $("#machineCupsLocationsPageList").html(output).promise().done(function () {
-                    // refresh listview so that jq mobile applies styles to added li elements
-                    $(this).listview("refresh");
-                });
-
-
-
-            }
-            else {
-                console.log("[fetchMachineCupsLocations ERROR]");
-                console.log("[fetchMachineCupsLocations message:" + r.message + "]");
-                console.log("[Redirecting to login.]");
-                jQuery.mobile.changePage('#loginPage');
-            }
-
-        },
-
-       "fetchMachineCupsLocationsBreadcrumbs": function(r) { 
-
-            // retrieve route date and vanName for breadcrumbs 
-            console.log("[fetchMachineCupsLocationsBreadcrumbs callback]");
-
-            if(r && r.code && r.code === "SUCCESS") {
-                console.log("[fetchMachineCupsLocationsBreadcrumbs SUCCESS]");
-
-                // record no longer exists? - customize modal dialog and return
-                if (r.result === false) {
-
-                    if (r.resultcode === "ROUTE DOES NOT EXIST") {
-
-                        console.log("[fetchMachineCupsLocationsBreadcrumbs redirecting to #machineCupsRoutesPage]");
-                        $('#modalDialogMessage').html('Route no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#machineCupsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else {
-                        // unrecognized error - forward to machineCupsRoutesPage
-                        console.log("[fetchMachineCupsLocationsBreadcrumbs redirecting to #machineCupsRoutesPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#machineCupsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-
-                    }
-                }
-
-                // save to local storage
-                localStorage["machineCupsDate"] = r.date;
-                localStorage["machineCupsVanName"] = r.vanName;
-
-                // breadcrumbs
-                $('#machineCupsLocationDateHeader').html(r.date);
-                $('#machineCupsLocationVanNameHeader').html(r.vanName);
-
-
-            }
-            else {
-                console.log("[fetchMachineCupsLocationsBreadcrumbs ERROR]");
-                console.log("[fetchMachineCupsLocationsBreadcrumbs message:" + r.message + "]");
                 console.log("[Redirecting to login.]");
                 jQuery.mobile.changePage('#loginPage');
             }
@@ -3644,48 +3170,77 @@ var app = {
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
-                    if (r.resultcode === "ROUTE LOCATION DOES NOT EXIST") {
+                    var resultArray = [
+                            {   code: 'ROUTE DOES NOT EXIST',
+                                message: 'Route no longer exists!', 
+                                redirect: '#machineCupsRoutesPage' },
 
-                        console.log("[fetchMachineCupsMachines redirecting to #machineCupsLocationsPage]");
-                        $('#modalDialogMessage').html('Route Location no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#machineCupsLocationsPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else {
-                        // unrecognized error - 
-                        console.log("[fetchMachineCupsMachines redirecting to #machineCupsLocationsPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#machineCupsLocationsPage');
-                        $('#modalDialog').popup("open");
-                        return;
+                    ];
 
-                    }
+                    catchAll = {
+                                redirect: '#machineCupsRoutesPage' };
+
+                    proc = "fetchMachineCupsMachines";
+
+                    app.redirectByResult(proc, r.resultcode, resultArray, catchAll);
+                    return;
+
                 }
 
-                if (r.routeMachines.length == 0) {
-                    $('#modalDialogBackMessage').html("No machines available to display.");
+
+                if (r.routeMachinesByLocation.length == 0) {
+                    $('#modalDialogBackMessage').html("No locations available to display.");
                     $('#modalDialogBack').popup("open");
                 }
 
+                var currentRouteLocationId = localStorage.getItem("machineCupsRouteLocationId");
+
                 var output = '';
-                $.each(r.routeMachines, function(index, value){                   
+                $.each(r.routeMachinesByLocation, function(index, value){                   
 
-                    var machineId = value.machineId;
-                    var type = value.type;
-                    var brandName = value.brandName;
-                    var flavorQuantityTotal = value.flavorQuantityTotal;
+                    // location collapsible
+                    var routeMachines = value.routeMachines;
+                    // expand active location
+                    if (value.routeLocationId == currentRouteLocationId ) {
+                        output += '<div class="machineCupsMachinesLocationDiv" id="' +value.routeLocationId+'" data-role="collapsible" data-collapsed="false">';
+                    }
+                    else {
+                        output += '<div class="machineCupsMachinesLocationDiv" id="' +value.routeLocationId+'" data-role="collapsible">';
+                    }
+                    output += '<h3><div style="display:inline-block;">' + value.addressLine1 + '<br>';
+                    if(value.addressLine2) {
+                        output += value.addressLine2 + '<br>';
+                    }
+                    output += value.city + ', ' + value.state + ' ' + value.zip;
+                    output += '</div>';
+                    output += '</h3>';
 
-                    output += '<li id="'+ machineId +'"><a href="#machineCupsFlavorsPage">' + type + ' - ' + brandName + '<span class="ui-li-count">' + flavorQuantityTotal + '</span></a></li>';
+                    $.each(routeMachines, function(indexInner, valueInner){                   
+
+                    // begin listview 
+                    output += '<ul data-role="listview" data-inset="true">';
+
+                        var routeMachineId = valueInner.routeMachineId;
+                        var type = valueInner.type;
+                        var brandName = valueInner.brandName;
+                        var flavorQuantityTotal = valueInner.flavorQuantityTotal;
+
+                        output += '<li id="'+ routeMachineId +'" data-role="list-divider">'+ type + ' - ' + brandName + '</li>';
+                        output += '<li id="'+ routeMachineId +'"><a href="#machineCupsFlavorsPage" data-transition="slide">Cups<span class="ui-li-count">' + flavorQuantityTotal + '</span></a></li>';
+                        output += '<li id="'+ routeMachineId +'"><a href="#machineCoinsLoadPage" data-transition="slide">Coins</a></li>';
+                        output += '</ul>';
+                    });
+                    // end listview 
+
+                    output += '</div>';
+                    // end location collapsible
+
+
+
                 });
 
-                //append list to ul
-                $("#machineCupsMachinesPageList").html(output).promise().done(function () {
-                    // refresh listview so that jq mobile applies styles to added li elements
-                    $(this).listview("refresh");
-                });
-
-
+                // add output and refresh jquery mobile
+                $("#machineCupsMachinesPageOuterList").html(output).collapsibleset().trigger('create');
 
             }
             else {
@@ -3708,37 +3263,32 @@ var app = {
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
-                    if (r.resultcode === "ROUTE LOCATION DOES NOT EXIST") {
+                    var resultArray = [
+                            {   code: 'ROUTE DOES NOT EXIST',
+                                message: 'Route no longer exists!', 
+                                redirect: '#machineCupsRoutesPage' },
 
-                        console.log("[fetchMachineCupsMachinesBreadcrumbs redirecting to #machineCupsRouteLocationsPage]");
-                        $('#modalDialogMessage').html('Route Location no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#machineCupsRouteLocationsPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else {
-                        // unrecognized error - forward 
-                        console.log("[fetchMachineCupsMachinesBreadcrumbs redirecting to #machineCupsRouteLocationsPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#machineCupsRouteLocationsPage');
-                        $('#modalDialog').popup("open");
-                        return;
+                    ];
 
-                    }
+                    catchAll = {
+                                redirect: '#machineCupsRoutesPage' };
+
+                    proc = "fetchMachineCupsMachinesBreadcrumbs";
+
+                    app.redirectByResult(proc, r.resultcode, resultArray, catchAll);
+                    return;
+
                 }
 
-                // save to local storage
-                localStorage["machineCupsAddressAbbrev"] = r.addressAbbrev;
-                var machineCupsMachinesAddressAbbrevHeader = r.addressAbbrev;
 
-                // get from local storage
-                var machineCupsMachinesDateHeader = localStorage.getItem("machineCupsDate");
-                var machineCupsMachinesVanNameHeader = localStorage.getItem("machineCupsVanName");
+                // save to local storage
+                localStorage["machineCupsRouteId"] = r.routeId;
+                localStorage["machineCupsDate"] = r.date;
+                localStorage["machineCupsVanName"] = r.vanName;
 
                 // write breadcrumbs
-                $('#machineCupsMachinesDateHeader').html(machineCupsMachinesDateHeader);
-                $('#machineCupsMachinesVanNameHeader').html(machineCupsMachinesVanNameHeader);
-                $('#machineCupsMachinesAddressAbbrevHeader').html(machineCupsMachinesAddressAbbrevHeader);
+                $('#machineCupsMachinesDateHeader').html(r.date);
+                $('#machineCupsMachinesVanNameHeader').html(r.vanName);
 
 
             }
@@ -3751,6 +3301,9 @@ var app = {
 
         },
 
+
+
+
        "fetchMachineCupsFlavors": function(r) { 
 
             console.log("[fetchMachineCupsFlavors callback]");
@@ -3761,32 +3314,28 @@ var app = {
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
-                    if (r.resultcode === "ROUTE LOCATION DOES NOT EXIST") {
+                    var resultArray = [
+                            {   code: 'ROUTE DOES NOT EXIST',
+                                message: 'Route no longer exists!', 
+                                redirect: '#machineCupsRoutesPage' },
 
-                        console.log("[fetchMachineCupsFlavors redirecting to #machineCupsRoutesPage]");
-                        $('#modalDialogMessage').html('Route Location no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#machineCupsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else if (r.resultcode === "MACHINE DOES NOT EXIST") {
+                            {   code: 'MACHINE DOES NOT EXIST',
+                                message: 'Machine no longer exists!', 
+                                redirect: '#machineCupsMachinesPage' },
+                    ];
 
-                        console.log("[fetchMachineCupsFlavors redirecting to #machineCupsMachinesPage]");
-                        $('#modalDialogMessage').html('Machine no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#machineCupsMachinesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    } 
-                    else {
-                        // unrecognized error - 
-                        console.log("[fetchMachineCupsFlavors redirecting to #machineCupsLocationsPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#machineCupsLocationsPage');
-                        $('#modalDialog').popup("open");
-                        return;
+                    catchAll = {
+                                message: '', 
+                                redirect: '#machineCupsRoutesPage' };
 
-                    }
+                    proc = "fetchMachineCupsFlavors";
+
+                    app.redirectByResult(proc, r.resultcode, resultArray, catchAll);
+                    return;
+
                 }
+
+                console.log("[fetchMachineCupsFlavors got past return stmt]");
 
                 if (r.machineFlavors.length == 0) {
                     $('#modalDialogBackMessage').html("No flavors available to display.");
@@ -3860,24 +3409,27 @@ var app = {
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
-                    if (r.resultcode === "MACHINE DOES NOT EXIST") {
+                    resultArray = [
+                            {   code: 'ROUTE DOES NOT EXIST',
+                                message: 'Route no longer exists!', 
+                                redirect: '#machineCupsRoutesPage' },
 
-                        console.log("[fetchMachineCupsFlavorsBreadcrumbs redirecting to #machineCupsMachinesPage]");
-                        $('#modalDialogMessage').html('Machine no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#machineCupsMachinesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else {
-                        // unrecognized error - forward 
-                        console.log("[fetchMachineCupsFlavorsBreadcrumbs redirecting to #machineCupsMachinesPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#machineCupsMachinesPage');
-                        $('#modalDialog').popup("open");
-                        return;
+                            {   code: 'MACHINE DOES NOT EXIST',
+                                message: 'Machine no longer exists!', 
+                                redirect: '#machineCupsMachinesPage' },
+                    ];
 
-                    }
+                    catchAll = {
+                                message: '', 
+                                redirect: '#machineCupsRoutesPage' };
+
+                    proc = "fetchMachineCupsFlavorsBreadcrumbs";
+
+                    app.redirectByResult(proc, r.resultcode, resultArray, catchAll);
+                    return;
+
                 }
+
 
                 // save to local storage
                 //localStorage["machineCupsAddressAbbrev"] = r.addressAbbrev;
@@ -3912,27 +3464,31 @@ var app = {
             if(r && r.code && r.code === "SUCCESS") {
                 console.log("[fetchMachineCupsFlavorsUnlockConfirmButton SUCCESS]");
 
+
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
-                    if (r.resultcode === "MACHINE DOES NOT EXIST") {
+                    resultArray = [
+                            {   code: 'ROUTE DOES NOT EXIST',
+                                message: 'Route no longer exists!', 
+                                redirect: '#machineCupsRoutesPage' },
 
-                        console.log("[fetchMachineCupsFlavorsUnlockConfirmButton redirecting to #machineCupsMachinesPage]");
-                        $('#modalDialogMessage').html('Machine no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#machineCupsMachinesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else {
-                        // unrecognized error - forward 
-                        console.log("[fetchMachineCupsFlavorsUnlockConfirmButton redirecting to #machineCupsMachinesPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#machineCupsMachinesPage');
-                        $('#modalDialog').popup("open");
-                        return;
+                            {   code: 'MACHINE DOES NOT EXIST',
+                                message: 'Machine no longer exists!', 
+                                redirect: '#machineCupsMachinesPage' },
+                    ];
 
-                    }
+                    catchAll = {
+                                message: '', 
+                                redirect: '#machineCupsRoutesPage' };
+
+
+                    proc = "fetchMachineCupsFlavorsUnlockConfirmButton";
+
+                    app.redirectByResult(proc, r.resultcode, resultArray, catchAll);
+                    return;
                 }
+
 
                 console.log('[Machine Load Status:'+ r.status +']');
 
@@ -3970,31 +3526,24 @@ var app = {
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
-                    if (r.resultcode === "ROUTE LOCATION DOES NOT EXIST") {
+                    var resultArray = [
+                            {   code: 'ROUTE DOES NOT EXIST',
+                                message: 'Route no longer exists!', 
+                                redirect: '#machineCupsRoutesPage' },
 
-                        console.log("[fetchMachineCupsFlavorsConfirmSubmit redirecting to #machineCupsRoutesPage]");
-                        $('#modalDialogMessage').html('Route Location no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#machineCupsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else if (r.resultcode === "MACHINE DOES NOT EXIST") {
+                            {   code: 'MACHINE DOES NOT EXIST',
+                                message: 'Machine no longer exists!', 
+                                redirect: '#machineCupsMachinesPage' },
+                    ];
 
-                        console.log("[fetchMachineCupsFlavorsConfirmSubmit redirecting to #machineCupsMachinesPage]");
-                        $('#modalDialogMessage').html('Machine no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#machineCupsMachinesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    } 
-                    else {
-                        // unrecognized error - 
-                        console.log("[fetchMachineCupsFlavorsConfirmSubmit redirecting to #machineCupsFlavorsPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#machineCupsFlavorsPage');
-                        $('#modalDialog').popup("open");
-                        return;
+                    catchAll = {
+                                message: '', 
+                                redirect: '#machineCupsRoutesPage' };
 
-                    }
+                    proc = "fetchMachineCupsFlavorsConfirmSubmit";
+
+                    app.redirectByResult(proc, r.resultcode, resultArray, catchAll);
+                    return;
 
                 }
 
@@ -4015,347 +3564,6 @@ var app = {
 
         },
 
-        "fetchMachineCoinsRoutes": function(r) { 
-
-            console.log("[fetchMachineCoinsRoutes callback]");
-
-            if(r && r.code && r.code === "SUCCESS") {
-                console.log("[fetchMachineCoinsRoutes SUCCESS]");
-
-
-                var output = '';
-                $.each(r.routes, function(index, value){                   
-
-                    var rId = value.routeId;
-                    var vanName = value.vanName;
-                    var coinsStatus = value.coinsStatus;
-                    var date = value.date;
-
-                    // disable viewing and editing of any route with "van load coins status" of hold
-                    if (coinsStatus=="Van Load Verified") {
-                        output += '<li id="'+ rId +'"><a href="#machineCoinsLocationsPage">' +  date + ' - ' + vanName + '</a></li>';
-                    }
-
-                });
-
-                var verifiedHeader = "";
-
-                if (output) {
-                    verifiedHeader = "To Load:";
-                }
-
-                //append list to ul
-                $('#machineCoinsRoutesPageListHeader').html(verifiedHeader);
-                $("#machineCoinsRoutesPageList").html(output).promise().done(function () {
-                    // refresh listview so that jq mobile applies styles to added li elements
-                    $(this).listview("refresh");
-                });
-
-                if (!output) {
-                    $('#modalDialogBackMessage').html("No routes available to display.");
-                    $('#modalDialogBack').popup("open");
-                }
-
-
-            }
-            else {
-                console.log("[fetchMachineCoinsRoutes ERROR]");
-                console.log("[fetchMachineCoinsRoutes message:" + r.message + "]");
-                console.log("[Redirecting to login.]");
-                jQuery.mobile.changePage('#loginPage');
-            }
-
-        },
-
-       "fetchMachineCoinsLocations": function(r) { 
-
-            console.log("[fetchMachineCoinsLocations callback]");
-
-            if(r && r.code && r.code === "SUCCESS") {
-                console.log("[fetchMachineCoinsLocations SUCCESS]");
-
-                // record no longer exists? - customize modal dialog and return
-                if (r.result === false) {
-
-                    if (r.resultcode === "ROUTE DOES NOT EXIST") {
-
-                        console.log("[fetchMachineCoinsLocations redirecting to #machineCoinsRoutesPage]");
-                        $('#modalDialogMessage').html('Route no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#machineCoinsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else {
-                        // unrecognized error - forward to machineCoinsRoutesPage
-                        console.log("[fetchMachineCoinsLocations redirecting to #machineCoinsRoutesPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#machineCoinsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-
-                    }
-                }
-
-
-
-                // use this to turn route viewing/editing on or off
-                var vanLoadStatus = r.vanLoadStatus;
-
-                var output = '';
-                $.each(r.routeLocations, function(index, value){                   
-
-                    var routeLocationId = value.routeLocationId;
-                    var addressAbbrev = value.addressAbbrev;
-
-                    console.log("[fetchMachineCoinsLocations van status:"+vanLoadStatus+"]");
-
-                    output += '<li id="'+ routeLocationId +'"><a href="#machineCoinsMachinesPage">' + addressAbbrev + '</a></li>';
-
-                });
-
-                //append list to ul
-                $("#machineCoinsLocationsPageList").html(output).promise().done(function () {
-                    // refresh listview so that jq mobile applies styles to added li elements
-                    $(this).listview("refresh");
-                });
-
-                if (!output) {
-                    $('#modalDialogBackMessage').html("Nox locations available to display.");
-                    $('#modalDialogBack').popup("open");
-                }
-
-
-
-            }
-            else {
-                console.log("[fetchMachineCoinsLocations ERROR]");
-                console.log("[fetchMachineCoinsLocations message:" + r.message + "]");
-                console.log("[Redirecting to login.]");
-                jQuery.mobile.changePage('#loginPage');
-            }
-
-        },
-
-       "fetchMachineCoinsLocationsBreadcrumbs": function(r) { 
-
-            // retrieve route date and vanName for breadcrumbs 
-            console.log("[fetchMachineCoinsLocationsBreadcrumbs callback]");
-
-            if(r && r.code && r.code === "SUCCESS") {
-                console.log("[fetchMachineCoinsLocationsBreadcrumbs SUCCESS]");
-
-                // record no longer exists? - customize modal dialog and return
-                if (r.result === false) {
-
-                    if (r.resultcode === "ROUTE DOES NOT EXIST") {
-
-                        console.log("[fetchMachineCoinsLocationsBreadcrumbs redirecting to #machineCoinsRoutesPage]");
-                        $('#modalDialogMessage').html('Route no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#machineCoinsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else {
-                        // unrecognized error - forward to machineCoinsRoutesPage
-                        console.log("[fetchMachineCoinsLocationsBreadcrumbs redirecting to #machineCoinsRoutesPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#machineCoinsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-
-                    }
-                }
-
-                // save to local storage
-                localStorage["machineCoinsDate"] = r.date;
-                localStorage["machineCoinsVanName"] = r.vanName;
-
-                // breadcrumbs
-                $('#machineCoinsLocationDateHeader').html(r.date);
-                $('#machineCoinsLocationVanNameHeader').html(r.vanName);
-
-
-            }
-            else {
-                console.log("[fetchMachineCoinsLocationsBreadcrumbs ERROR]");
-                console.log("[fetchMachineCoinsLocationsBreadcrumbs message:" + r.message + "]");
-                console.log("[Redirecting to login.]");
-                jQuery.mobile.changePage('#loginPage');
-            }
-
-        },
-
-
-       "fetchMachineCoinsMachines": function(r) { 
-
-            console.log("[fetchMachineCoinsMachines callback]");
-
-            if(r && r.code && r.code === "SUCCESS") {
-                console.log("[fetchMachineCoinsMachines SUCCESS]");
-
-                // record no longer exists? - customize modal dialog and return
-                if (r.result === false) {
-
-                    if (r.resultcode === "ROUTE LOCATION DOES NOT EXIST") {
-
-                        console.log("[fetchMachineCoinsMachines redirecting to #machineCoinsLocationsPage]");
-                        $('#modalDialogMessage').html('Route Location no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#machineCoinsLocationsPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else {
-                        // unrecognized error - 
-                        console.log("[fetchMachineCoinsMachines redirecting to #machineCoinsLocationsPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#machineCoinsLocationsPage');
-                        $('#modalDialog').popup("open");
-                        return;
-
-                    }
-                }
-
-                if (r.routeMachines.length == 0) {
-                    $('#modalDialogBackMessage').html("No machines available to display.");
-                    $('#modalDialogBack').popup("open");
-                }
-
-                var output = '';
-                $.each(r.routeMachines, function(index, value){                   
-
-                    var machineId = value.machineId;
-                    var type = value.type;
-                    var brandName = value.brandName;
-
-                    output += '<li id="'+ machineId +'"><a href="#machineCoinsFlavorsPage">' + type + ' - ' + brandName + '</a></li>';
-                });
-
-                //append list to ul
-                $("#machineCoinsMachinesPageList").html(output).promise().done(function () {
-                    // refresh listview so that jq mobile applies styles to added li elements
-                    $(this).listview("refresh");
-                });
-
-
-
-            }
-            else {
-                console.log("[fetchMachineCoinsMachines ERROR]");
-                console.log("[fetchMachineCoinsMachines message:" + r.message + "]");
-                console.log("[Redirecting to login.]");
-                jQuery.mobile.changePage('#loginPage');
-            }
-
-        },
-
-       "fetchMachineCoinsMachinesBreadcrumbs": function(r) { 
-
-            // retrieve route date and vanName for breadcrumbs 
-            console.log("[fetchMachineCoinsMachinesBreadcrumbs callback]");
-
-            if(r && r.code && r.code === "SUCCESS") {
-                console.log("[fetchMachineCoinsMachinesBreadcrumbs SUCCESS]");
-
-                // record no longer exists? - customize modal dialog and return
-                if (r.result === false) {
-
-                    if (r.resultcode === "ROUTE LOCATION DOES NOT EXIST") {
-
-                        console.log("[fetchMachineCoinsMachinesBreadcrumbs redirecting to #machineCoinsRouteLocationsPage]");
-                        $('#modalDialogMessage').html('Route Location no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#machineCoinsRouteLocationsPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else {
-                        // unrecognized error - forward 
-                        console.log("[fetchMachineCoinsMachinesBreadcrumbs redirecting to #machineCoinsRouteLocationsPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#machineCoinsRouteLocationsPage');
-                        $('#modalDialog').popup("open");
-                        return;
-
-                    }
-                }
-
-                // save to local storage
-                localStorage["machineCoinsAddressAbbrev"] = r.addressAbbrev;
-                var machineCoinsMachinesAddressAbbrevHeader = r.addressAbbrev;
-
-                // get from local storage
-                var machineCoinsMachinesDateHeader = localStorage.getItem("machineCoinsDate");
-                var machineCoinsMachinesVanNameHeader = localStorage.getItem("machineCoinsVanName");
-
-                // write breadcrumbs
-                $('#machineCoinsMachinesDateHeader').html(machineCoinsMachinesDateHeader);
-                $('#machineCoinsMachinesVanNameHeader').html(machineCoinsMachinesVanNameHeader);
-                $('#machineCoinsMachinesAddressAbbrevHeader').html(machineCoinsMachinesAddressAbbrevHeader);
-
-
-            }
-            else {
-                console.log("[fetchMachineCoinsMachinesBreadcrumbs ERROR]");
-                console.log("[fetchMachineCoinsMachinesBreadcrumbs message:" + r.message + "]");
-                console.log("[Redirecting to login.]");
-                jQuery.mobile.changePage('#loginPage');
-            }
-
-        },
-
-       "fetchMachineCoinsLoadPickupOptionsBreadcrumbs": function(r) { 
-
-            // retrieve route date and vanName for breadcrumbs 
-            console.log("[fetchMachineCoinsLoadPickupOptionsBreadcrumbs callback]");
-
-            if(r && r.code && r.code === "SUCCESS") {
-                console.log("[fetchMachineCoinsLoadPickupOptionsBreadcrumbs SUCCESS]");
-
-                // record no longer exists? - customize modal dialog and return
-                if (r.result === false) {
-
-                    if (r.resultcode === "MACHINE DOES NOT EXIST") {
-
-                        console.log("[fetchMachineCoinsLoadPickupOptionsBreadcrumbs redirecting to #machineCoinsMachinesPage]");
-                        $('#modalDialogMessage').html('Machine no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#machineCoinsMachinesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else {
-                        // unrecognized error - forward 
-                        console.log("[fetchMachineCoinsLoadPickupOptionsBreadcrumbs redirecting to #machineCoinsMachinesPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#machineCoinsMachinesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-
-                    }
-                }
-
-                // save to local storage
-                localStorage["machineCoinsMachineName"] = r.type + ' - ' + r.brandName;
-
-                // get from local storage
-                var machineCoinsLoadPickupOptionsDateHeader = localStorage.getItem("machineCoinsDate");
-                var machineCoinsLoadPickupOptionsVanNameHeader = localStorage.getItem("machineCoinsVanName");
-                var machineCoinsLoadPickupOptionsAddressAbbrevHeader = localStorage.getItem("machineCoinsAddressAbbrev"); 
-
-                // write breadcrumbs
-                $('#machineCoinsLoadPickupOptionsDateHeader').html(machineCoinsLoadPickupOptionsDateHeader);
-                $('#machineCoinsLoadPickupOptionsVanNameHeader').html(machineCoinsLoadPickupOptionsVanNameHeader);
-                $('#machineCoinsLoadPickupOptionsAddressAbbrevHeader').html(machineCoinsLoadPickupOptionsAddressAbbrevHeader);
-                $('#machineCoinsLoadPickupOptionsMachineNameHeader').html(r.type + ' - ' + r.brandName);
-
-
-            }
-            else {
-                console.log("[fetchMachineCoinsLoadPickupOptionsBreadcrumbs ERROR]");
-                console.log("[fetchMachineCoinsLoadPickupOptionsBreadcrumbs message:" + r.message + "]");
-                console.log("[Redirecting to login.]");
-                jQuery.mobile.changePage('#loginPage');
-            }
-
-        },
 
        "fetchMachineCoinsLoad": function(r) { 
 
@@ -4364,35 +3572,31 @@ var app = {
             if(r && r.code && r.code === "SUCCESS") {
                 console.log("[fetchMachineCoinsLoad SUCCESS]");
 
+
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
-                    if (r.resultcode === "ROUTE DOES NOT EXIST") {
+                    var resultArray = [
+                            {   code: 'ROUTE DOES NOT EXIST',
+                                message: 'Route no longer exists!', 
+                                redirect: '#machineCupsRoutesPage' },
 
-                        console.log("[fetchMachineCoinsLoad redirecting to #machineCoinsRoutesPage]");
-                        $('#modalDialogMessage').html('Route Location no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#machineCoinsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else if (r.resultcode === "MACHINE DOES NOT EXIST") {
+                            {   code: 'MACHINE DOES NOT EXIST',
+                                message: 'Machine no longer exists!', 
+                                redirect: '#machineCupsMachinesPage' },
+                    ];
 
-                        console.log("[fetchMachineCoinsLoad redirecting to #machineCoinsMachinesPage]");
-                        $('#modalDialogMessage').html('Machine no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#machineCoinsMachinesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    } 
-                    else {
-                        // unrecognized error - 
-                        console.log("[fetchMachineCoinsLoad redirecting to #machineCoinsLocationsPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#machineCoinsLocationsPage');
-                        $('#modalDialog').popup("open");
-                        return;
+                    catchAll = {
+                                message: '', 
+                                redirect: '#machineCupsRoutesPage' };
 
-                    }
+                    proc = "fetchMachineCoinsLoad";
+
+                    app.redirectByResult(proc, r.resultcode, resultArray, catchAll);
+                    return;
+
                 }
+
 
                 var machineCoinsLoadStatus = r.machineCoinsLoadStatus;
 
@@ -4441,41 +3645,36 @@ var app = {
             if(r && r.code && r.code === "SUCCESS") {
                 console.log("[fetchMachineCoinsLoadConfirmSubmit SUCCESS]");
 
+
+
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
-                    if (r.resultcode === "ROUTE LOCATION DOES NOT EXIST") {
+                    var resultArray = [
+                            {   code: 'ROUTE DOES NOT EXIST',
+                                message: 'Route no longer exists!', 
+                                redirect: '#machineCupsRoutesPage' },
 
-                        console.log("[fetchMachineCoinsLoadConfirmSubmit redirecting to #machineCoinsRoutesPage]");
-                        $('#modalDialogMessage').html('Route Location no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#machineCoinsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else if (r.resultcode === "MACHINE DOES NOT EXIST") {
+                            {   code: 'MACHINE DOES NOT EXIST',
+                                message: 'Machine no longer exists!', 
+                                redirect: '#machineCupsMachinesPage' },
+                    ];
 
-                        console.log("[fetchMachineCoinsLoadConfirmSubmit redirecting to #machineCoinsMachinesPage]");
-                        $('#modalDialogMessage').html('Machine no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#machineCoinsMachinesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    } 
-                    else {
-                        // unrecognized error - 
-                        console.log("[fetchMachineCoinsLoadConfirmSubmit redirecting to #machineCoinsLoadPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#machineCoinsLoadPage');
-                        $('#modalDialog').popup("open");
-                        return;
+                    catchAll = {
+                                message: '', 
+                                redirect: '#machineCupsRoutesPage' };
 
-                    }
+                    proc = "fetchMachineCoinsLoadConfirmSubmit";
+
+                    app.redirectByResult(proc, r.resultcode, resultArray, catchAll);
+                    return;
 
                 }
 
                 // machine coins load confirmed - show modal dialog 
-                console.log("[fetchMachineCoinsLoadConfirmSubmit redirecting to #machineCoinsMachinesPage]");
+                console.log("[fetchMachineCoinsLoadConfirmSubmit redirecting to #machineCupsMachinesPage]");
                 $('#modalDialogMessage').html('Coin Load confirmed.');
-                $('#modalDialogRedirect').attr('href','#machineCoinsMachinesPage');
+                $('#modalDialogRedirect').attr('href','#machineCupsMachinesPage');
                 $('#modalDialog').popup("open");
 
 
@@ -4499,26 +3698,29 @@ var app = {
             if(r && r.code && r.code === "SUCCESS") {
                 console.log("[fetchMachineCoinsLoadUnlockConfirmButton SUCCESS]");
 
+
                 // record no longer exists? - customize modal dialog and return
                 if (r.result === false) {
 
-                    if (r.resultcode === "MACHINE DOES NOT EXIST") {
+                    var resultArray = [
+                            {   code: 'ROUTE DOES NOT EXIST',
+                                message: 'Route no longer exists!', 
+                                redirect: '#machineCupsRoutesPage' },
 
-                        console.log("[fetchMachineCoinsLoadUnlockConfirmButton redirecting to #machineCoinsMachinesPage]");
-                        $('#modalDialogMessage').html('Machine no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#machineCoinsMachinesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else {
-                        // unrecognized error - forward 
-                        console.log("[fetchMachineCoinsLoadUnlockConfirmButton redirecting to #machineCoinsMachinesPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#machineCoinsMachinesPage');
-                        $('#modalDialog').popup("open");
-                        return;
+                            {   code: 'MACHINE DOES NOT EXIST',
+                                message: 'Machine no longer exists!', 
+                                redirect: '#machineCupsMachinesPage' },
+                    ];
 
-                    }
+                    catchAll = {
+                                message: '', 
+                                redirect: '#machineCupsRoutesPage' };
+
+                    proc = "fetchMachineCoinsLoadUnlockConfirmButton";
+
+                    app.redirectByResult(proc, r.resultcode, resultArray, catchAll);
+                    return;
+
                 }
 
                 console.log('[Machine Load Status:'+ r.status +']');
@@ -4550,195 +3752,6 @@ var app = {
 
         },
 
-       "fetchMachineCoinsPickup": function(r) { 
-
-            console.log("[fetchMachineCoinsPickup callback]");
-
-            if(r && r.code && r.code === "SUCCESS") {
-                console.log("[fetchMachineCoinsPickup SUCCESS]");
-
-                // record no longer exists? - customize modal dialog and return
-                if (r.result === false) {
-
-                    if (r.resultcode === "ROUTE DOES NOT EXIST") {
-
-                        console.log("[fetchMachineCoinsPickup redirecting to #machineCoinsRoutesPage]");
-                        $('#modalDialogMessage').html('Route Location no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#machineCoinsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else if (r.resultcode === "MACHINE DOES NOT EXIST") {
-
-                        console.log("[fetchMachineCoinsPickup redirecting to #machineCoinsMachinesPage]");
-                        $('#modalDialogMessage').html('Machine no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#machineCoinsMachinesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    } 
-                    else {
-                        // unrecognized error - 
-                        console.log("[fetchMachineCoinsPickup redirecting to #machineCoinsLocationsPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#machineCoinsLocationsPage');
-                        $('#modalDialog').popup("open");
-                        return;
-
-                    }
-                }
-
-                var inputIds = [];
-                var output = '';
-
-                var rollTypes = ['quarters','dimes','nickels','pennies'];
-
-                $.each(rollTypes, function(index,value){
-                    if (value in r.machineCoins) {
-                        console.log("[fetchMachineCoinsPickup:"+value+"]");
-                        var rollQuantity = r.machineCoins[value].rollQuantity;
-                        var rollQuantityLoaded = r.machineCoins[value].rollQuantityLoaded;
-                        valueFirstLetterUppercased = value.charAt(0).toUpperCase() + value.slice(1);
-                        $('#machineCoinsToPickup' + valueFirstLetterUppercased ).html(rollQuantity);
-                        $('#machineCoinsPickup' + valueFirstLetterUppercased ).val(rollQuantityLoaded);
-                    }
-                });
-
-
-
-
-            }
-            else {
-                console.log("[fetchMachineCoinsPickup ERROR]");
-                console.log("[fetchMachineCoinsPickup message:" + r.message + "]");
-                console.log("[Redirecting to login.]");
-                jQuery.mobile.changePage('#loginPage');
-            }
-
-        },
-
-        "fetchMachineCoinsPickupConfirmSubmit": function(r) { 
-
-            console.log("[fetchMachineCoinsPickupConfirmSubmit callback]");
-
-            if(r && r.code && r.code === "SUCCESS") {
-                console.log("[fetchMachineCoinsPickupConfirmSubmit SUCCESS]");
-
-                // record no longer exists? - customize modal dialog and return
-                if (r.result === false) {
-
-                    if (r.resultcode === "ROUTE LOCATION DOES NOT EXIST") {
-
-                        console.log("[fetchMachineCoinsPickupConfirmSubmit redirecting to #machineCoinsRoutesPage]");
-                        $('#modalDialogMessage').html('Route Location no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#machineCoinsRoutesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else if (r.resultcode === "MACHINE DOES NOT EXIST") {
-
-                        console.log("[fetchMachineCoinsPickupConfirmSubmit redirecting to #machineCoinsMachinesPage]");
-                        $('#modalDialogMessage').html('Machine no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#machineCoinsMachinesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    } 
-                    else {
-                        // unrecognized error - 
-                        console.log("[fetchMachineCoinsPickupConfirmSubmit redirecting to #machineCoinsPickupPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#machineCoinsPickupPage');
-                        $('#modalDialog').popup("open");
-                        return;
-
-                    }
-
-                }
-
-                // coins removed from machine - show modal dialog and send to pickup page
-                console.log("[fetchMachineCoinsPickupConfirmSubmit redirecting to #machineCoinsMachinesPage]");
-                $('#modalDialogMessage').html('Coin Pick Up confirmed.');
-                $('#modalDialogRedirect').attr('href','#machineCoinsMachinesPage');
-                $('#modalDialog').popup("open");
-
-            }
-            else {
-                console.log("[fetchMachineCoinsPickupConfirmSubmit ERROR]");
-                console.log("[fetchMachineCoinsPickupConfirmSubmit message:" + r.message + "]");
-                console.log("[Redirecting to login.]");
-                jQuery.mobile.changePage('#loginPage');
-            }
-
-        },
-
-       "fetchMachineCoinsPickupUnlockConfirmButton": function(r) { 
-
-            // retrieve route date and vanName for breadcrumbs 
-            console.log("[fetchMachineCoinsPickupUnlockConfirmButton callback]");
-
-            if(r && r.code && r.code === "SUCCESS") {
-                console.log("[fetchMachineCoinsPickupUnlockConfirmButton SUCCESS]");
-
-                // record no longer exists? - customize modal dialog and return
-                if (r.result === false) {
-
-                    if (r.resultcode === "MACHINE DOES NOT EXIST") {
-
-                        console.log("[fetchMachineCoinsPickupUnlockConfirmButton redirecting to #machineCoinsMachinesPage]");
-                        $('#modalDialogMessage').html('Machine no longer exists.');
-                        $('#modalDialogRedirect').attr('href','#machineCoinsMachinesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-                    }
-                    else {
-                        // unrecognized error - forward 
-                        console.log("[fetchMachineCoinsPickupUnlockConfirmButton redirecting to #machineCoinsMachinesPage]");
-                        $('#modalDialogMessage').html(r.resultcode);
-                        $('#modalDialogRedirect').attr('href','#machineCoinsMachinesPage');
-                        $('#modalDialog').popup("open");
-                        return;
-
-                    }
-                }
-
-                console.log('[Machine Load Status:'+ r.status +']');
-
-                // if status is Machine Load Complete, do nothing
-                if (r.status == 'Machine Removal Complete') {
-                    // update status 
-                    $('#machineCoinsLoadMachinePickupStatus').html(r.status);
-                    // make sure button is disabled
-                    $("#machineCoinsPickupConfirmSubmitButton").button("disable");
-
-                    /*
-                    $("#machineCoinsLoadQuarters").button('disable');
-                    $("#machineCoinsLoadDimes").button('disable');
-                    $("#machineCoinsLoadNickels").button('disable');
-                    $("#machineCoinsLoadPennies").button('disable');
-                    */
-                    return;
-                }
-
-                // unlock machineCupsFlavorsConfirmSubmitButton 
-                $('#machineCoinsPickupMachineLoadStatus').html('Machine Not Loaded');
-                console.log('[fetchMachineCoinsPickupUnlockConfirmButton - unlocking submit button]');
-
-                $("#machineCoinsPickupConfirmSubmitButton").button('enable');
-                /*
-                $("#machineCoinsLoadQuarters").button('enable');
-                $("#machineCoinsLoadDimes").button('enable');
-                $("#machineCoinsLoadNickels").button('enable');
-                $("#machineCoinsLoadPennies").button('enable');
-                */
-
-            }
-            else {
-                console.log("[fetchMachineCoinsPickupUnlockConfirmButton ERROR]");
-                console.log("[fetchMachineCoinsPickupUnlockConfirmButton message:" + r.message + "]");
-                console.log("[Redirecting to login.]");
-                jQuery.mobile.changePage('#loginPage');
-            }
-
-        },
 
 
 
