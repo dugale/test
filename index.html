@@ -114,8 +114,6 @@
         <a id="modalDialogRedirect" href="#" data-role="button">OK</a>
     </div>
 
-    <div data-role="footer">
-    </div>
 
 </div>
 
@@ -131,8 +129,6 @@
         <a id="modalDialogBackRedirect" href="#" data-role="button" data-rel="back">OK</a>
     </div>
 
-    <div data-role="footer">
-    </div>
 
 </div>
 
@@ -150,8 +146,6 @@
         <a id="modalDialogCancelCancel" href="#" data-role="button" data-rel="back" transition="flow">Cancel</a>
     </div>
 
-    <div data-role="footer">
-    </div>
 
 </div>
 <!-- end popup dialogs -->
@@ -203,7 +197,7 @@
 
     <div data-role="content">   
         <ul data-role="listview" data-inset="true">
-        <li><a href="#routeCupsRoutesPage" data-transition="slide">Routes</a></li>
+        <li><a href="#routeCupsRoutesPage" data-transition="slide">Route Create</a></li>
         <li><a href="#vanCupsRoutesPage" data-transition="slide">Van Load</a></li>
         <li><a href="#machineCupsRoutesPage" data-transition="slide">Machine Load</a></li>
         </ul>
@@ -229,7 +223,7 @@
 <div id="routeCupsRoutesPage" data-role="page" data-theme="a">
 
     <div data-role="panel" class="mypanel">
-        <p><a onclick="$('.mypanel:visible').panel('close');" data-role="button">Routes</a></p>
+        <p><a onclick="$('.mypanel:visible').panel('close');" data-role="button">Route Create</a></p>
         <!--<p><a href="#routeCupsPage" data-role="button">Routes</a></p>-->
         <p><a href="#vanCupsRoutesPage" data-role="button">Van Load</a></p>
         <p><a href="#machineCupsRoutesPage" data-role="button">Machine Load</a></p>
@@ -247,22 +241,20 @@
 
 
 
-    <h1>Routes</h1>
-    <!-- // gets populated with...
-        <li> <a href="#machineFlavorsPage">Machine 1<span class="ui-li-count">250</span></a> </li>
-    -->
-    <!--
-    <h3 id="routeCupsRoutesPageHoldListHeader"></h3>
-    <ul id="routeCupsRoutesPageHoldList" data-role="listview" data-inset="true"></ul>
+    <h1>Route Create</h1>
 
-    <h3 id="routeCupsRoutesPageVanReadyListHeader"></h3>
-    <ul id="routeCupsRoutesPageVanReadyList" data-role="listview" data-inset="true"></ul>
-    -->
+    <ul id="routeCupsRoutesInProgress" data-role="listview" data-inset="true">
+        <li data-role="list-divider">In Progress</li>
+        <li><div id="routeCupsRoutesInProgressDiv"></div></li>
+    </ul>
 
-    <ul id="routeCupsRoutesHoldList" data-role="listview" data-inset="true"></ul>
-    <ul id="routeCupsRoutesLoadRequestedList" data-role="listview" data-inset="true"></ul>
-    <ul id="routeCupsRoutesLoadCompleteList" data-role="listview" data-inset="true"></ul>
-    <ul id="routeCupsRoutesLoadVerifiedList" data-role="listview" data-inset="true"></ul>
+    <ul id="routeCupsRoutesSent" data-role="listview" data-inset="true">
+        <li data-role="list-divider">Sent</li>
+        <li><div id="routeCupsRoutesSentDiv"></div></li>
+    </ul>
+
+
+
 
     </div>
 
@@ -276,7 +268,7 @@
 
 <div id="routeCupsMachinesPage" data-role="page" data-theme="a">
     <div data-role="panel" class="mypanel">
-        <p><a href="#routeCupsRoutesPage" data-role="button">Routes</a></p>
+        <p><a href="#routeCupsRoutesPage" data-role="button">Route Create</a></p>
         <p><a href="#vanCupsRoutesPage" data-role="button">Van Load</a></p>
         <p><a href="#machineCupsRoutesPage" data-role="button">Machine Load</a></p>
         <p><a href="" data-role="button" onclick="app.logout()">Log Out</a></p>
@@ -292,14 +284,11 @@
 
     <div data-role="content">   
 
-    <h1>Routes</h1>
-    <p id="routeCupsMachinesDateHeader"></p>
-    <p id="routeCupsMachinesVanNameHeader"></p>
+    <h1>Route Create</h1>
+    <div data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">
+    <p><span id="routeCupsMachinesDateHeader"></span> - <span id="routeCupsMachinesVanNameHeader"></span></p>
+    </div>
 
-    <!-- // gets populated with...
-        <li> <a href="#machineFlavorsPage">Machine 1<span class="ui-li-count">250</span></a> </li>
-    <ul id="routeCupsMachinesPageList" data-role="listview" data-inset="true"></ul>
-    -->
     <div id="routeCupsMachinesPageOuterList" data-role="collapsible-set"></div>
     <div id="routeCupsMachinesPageAddLocationDiv"></div>
     </div>
@@ -312,7 +301,7 @@
 
 <div id="routeCupsFlavorsPage" data-role="page" data-theme="a">
     <div data-role="panel" class="mypanel">
-        <p><a href="#routeCupsRoutesPage" data-role="button">Routes</a></p>
+        <p><a href="#routeCupsRoutesPage" data-role="button">Route Create</a></p>
         <p><a href="#vanCupsRoutesPage" data-role="button">Van Load</a></p>
         <p><a href="#machineCupsRoutesPage" data-role="button">Machine Load</a></p>
         <p><a href="" data-role="button" onclick="app.logout()">Log Out</a></p>
@@ -329,66 +318,24 @@
 
     <div data-role="content">   
 
-    <h1>Routes</h1>
-    <p id="routeCupsFlavorsDateHeader"></p>
-    <p id="routeCupsFlavorsVanNameHeader"></p>
+    <h1>Route Create</h1>
+    <div data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">
+    <p><span id="routeCupsFlavorsDateHeader"></span> - <span id="routeCupsFlavorsVanNameHeader"></span></p>
+    <p id="routeCupsFlavorsLocationHeader"></p>
     <p id="routeCupsFlavorsMachineNameHeader"></p>
+    </div>
 
 
         <ul id="routeCupsFlavorsPageList" data-role="listview" data-inset="true">
         </ul>
 
 
+        <!--
         <ul data-role="listview" data-inset="true">
         <li><a id="routeCupsFlavorAddLink" href="#routeCupsFlavorAddPage" data-transition="slide">Add Flavor</a></li>
         </ul> 
-
-    </div>
-
-    <div data-role="footer">
-        <h4>&copy; U-Vend, Inc.</h4>
-    </div>
-</div>
-
-<div id="routeCupsFlavorAddPage" data-role="page" data-theme="a">
-
-    <div data-role="header">
-        <a href="#routeCupsFlavorsPage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
-        <h1>U-Vend, Inc.</h1>
-    </div>
-
-
-    <div data-role="content">   
-
-    <h1>Routes</h1>
-    <p id="routeCupsFlavorAddDateHeader"></p>
-    <p id="routeCupsFlavorAddVanNameHeader"></p>
-    <p id="routeCupsFlavorAddMachineNameHeader"></p>
-
-        <form id="routeCupsFlavorAddForm">
-        <ul data-role="listview" data-inset="true">
-
-            <li>
-            <div data-role="fieldcontain">
-            <label for="routeCupsFlavorAddFlavorName">Flavor</label>
-            <select name="routeCupsFlavorAddFlavorName" id="routeCupsFlavorAddFlavorName">
-            </select>
-            </div>
-            </li>
-
-
-            <li>
-            <div data-role="fieldcontain">
-            <label for="routeCupsFlavorAddCupsCount">Cups</label>
-            <input name="routeCupsFlavorAddCupsCount" id="routeCupsFlavorAddCupsCount" type="number" value="0" required digits/>
-            </div>
-            </li>
-        </ul>
-
-        <input type="submit" value="Add Flavor" id="routeCupsFlavorAddSubmitButton">
-
-        </form>
-
+        -->
+        <select id="routeCupsFlavorsAddFlavorSelect" data-native-menu="false" data-icon="false"></select>
 
     </div>
 
@@ -407,10 +354,12 @@
 
     <div data-role="content">   
 
-    <h1>Routes</h1>
-    <p id="routeCupsFlavorEditDateHeader"></p>
-    <p id="routeCupsFlavorEditVanNameHeader"></p>
+    <h1>Route Create</h1>
+    <div data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">
+    <p><span id="routeCupsFlavorEditDateHeader"></span> - <span id="routeCupsFlavorEditVanNameHeader"></span></p>
+    <p id="routeCupsFlavorEditLocationHeader"></p>
     <p id="routeCupsFlavorEditMachineNameHeader"></p>
+    </div>
 
         <form id="routeCupsFlavorEditForm">
         <ul data-role="listview" data-inset="true">
@@ -449,7 +398,7 @@
 
 <div id="routeCoinsLoadPage" data-role="page" data-theme="a">
     <div data-role="panel" class="mypanel">
-        <p><a href="#routeCupsRoutesPage" data-role="button">Routes</a></p>
+        <p><a href="#routeCupsRoutesPage" data-role="button">Route Create</a></p>
         <p><a href="#vanCupsRoutesPage" data-role="button">Van Load</a></p>
         <p><a href="#machineCupsRoutesPage" data-role="button">Machine Load</a></p>
         <p><a href="" data-role="button" onclick="app.logout()">Log Out</a></p>
@@ -464,10 +413,12 @@
 
     <div data-role="content">   
 
-    <h1>Routes</h1>
+    <h1>Route Create</h1>
+    <div data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">
     <p id="routeCoinsLoadDateHeader"></p>
     <p id="routeCoinsLoadVanNameHeader"></p>
     <p id="routeCoinsLoadMachineNameHeader"></p>
+    </div>
 
 
 
@@ -527,7 +478,7 @@
 <div id="vanCupsRoutesPage" data-role="page" data-theme="a">
 
     <div data-role="panel" class="mypanel">
-        <p><a href="#routeCupsRoutesPage" data-role="button">Routes</a></p>
+        <p><a href="#routeCupsRoutesPage" data-role="button">Route Create</a></p>
         <p><a onclick="$('.mypanel:visible').panel('close');" data-role="button">Van Load</a></p>
         <!--<p><a href="#vanCupsPage" data-role="button">Van Load Cups</a></p>-->
         <p><a href="#machineCupsRoutesPage" data-role="button">Machine Load</a></p>
@@ -544,24 +495,17 @@
     <div data-role="content">   
 
     <h1>Van Load</h1>
-    <!-- // gets populated with...
-        <li> <a href="#machineFlavorsPage">Machine 1<span class="ui-li-count">250</span></a> </li>
-    -->
 
-    <h3 id="vanCupsRoutesPageConfirmationListHeader"></h3>
-    <ul id="vanCupsRoutesPageConfirmationList" data-role="listview" data-inset="true">
-    </ul>
-    <h3 id="vanCupsRoutesPageVerificationListHeader"></h3>
-    <ul id="vanCupsRoutesPageVerificationList" data-role="listview" data-inset="true">
-    </ul>
-    <h3 id="vanCupsRoutesPageVerifiedListHeader"></h3>
-    <ul id="vanCupsRoutesPageVerifiedList" data-role="listview" data-inset="true">
+    <ul id="vanCupsRoutesInProgress" data-role="listview" data-inset="true">
+        <li data-role="list-divider">In Progress</li>
+        <li><div id="vanCupsRoutesInProgressDiv"></div></li>
     </ul>
 
-    <ul id="vanCupsRoutesPageVerifiedList" data-role="listview" data-inset="true">
-    <li data-role="list-divider" >Van Load Ready</li>
-    <li><div id="vanCupsRoutesPageMainDiv"></div></li>
+    <ul id="vanCupsRoutesLoaded" data-role="listview" data-inset="true">
+        <li data-role="list-divider">Loaded & Verified</li>
+        <li><div id="vanCupsRoutesLoadedDiv"></div></li>
     </ul>
+        
 
     </div>
 
@@ -584,11 +528,13 @@
 
     <h1>Van Load Cups</h1>
 
+    <div data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">
     <p id="vanCupsFlavorsDateHeader"></p>
     <p id="vanCupsFlavorsVanNameHeader"></p>
 
-        <div>Van Loaded: <span id="vanCupsFlavorsVanLoadStatus"></span></div>
-        <div>Van Loaded Driver: <span id="vanCupsFlavorsVanLoadStatusDriver"></span></div>
+        <p>Van Loaded: <span id="vanCupsFlavorsVanLoadStatus"></span></p>
+        <p>Van Loaded Driver: <span id="vanCupsFlavorsVanLoadStatusDriver"></span></p>
+    </div>
 
         <form id="vanCupsFlavorsForm">
 
@@ -626,11 +572,12 @@
     <div data-role="content">   
 
     <h1>Van Load Coins</h1>
+    <div data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">
     <p id="vanCoinsLoadDateHeader"></p>
     <p id="vanCoinsLoadVanNameHeader"></p>
-
-        <div>Van Loaded: <span id="vanCoinsLoadVanLoadStatus"></span></div>
-        <div>Van Loaded Driver: <span id="vanCoinsLoadVanLoadStatusDriver"></span></div>
+    <p>Van Loaded: <span id="vanCoinsLoadVanLoadStatus"></span></p>
+    <p>Van Loaded Driver: <span id="vanCoinsLoadVanLoadStatusDriver"></span></p>
+    </div>
 
         <form id="vanCoinsLoadForm">
 
@@ -688,7 +635,7 @@
 <div id="machineCupsRoutesPage" data-role="page" data-theme="a">
 
     <div data-role="panel" class="mypanel">
-        <p><a href="#routeCupsRoutesPage" data-role="button">Routes</a></p>
+        <p><a href="#routeCupsRoutesPage" data-role="button">Route Create</a></p>
         <p><a href="#vanCupsRoutesPage" data-role="button">Van Load</a></p>
         <p><a onclick="$('.mypanel:visible').panel('close');" data-role="button">Machine Load</a></p>
         <!--<p><a href="#machineCupsRoutesPage" data-role="button">Machine Load Cups</a></p>-->
@@ -696,7 +643,6 @@
     </div>
 
     <div data-role="header">
-    <!-- <a href="" data-rel="back" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>-->
         <a href="#homePage" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-transition="slide">Back</a>
         <h1>U-Vend, Inc.</h1>
         <a onclick="$('.mypanel:visible').panel('open');" data-icon="bars" data-iconpos="notext" class="ui-btn-right">Bars</a>
@@ -706,12 +652,18 @@
     <div data-role="content">   
 
     <h1>Machine Load</h1>
-    <!-- // gets populated with...
-        <li> <a href="#machineFlavorsPage">Machine 1<span class="ui-li-count">250</span></a> </li>
-    -->
 
 
-    <ul id="machineCupsRoutesLoadVerifiedList" data-role="listview" data-inset="true"></ul>
+
+    <ul id="machineCupsRoutesInProgress" data-role="listview" data-inset="true">
+        <li data-role="list-divider">In Progress</li>
+        <li><div id="machineCupsRoutesInProgressDiv"></div></li>
+    </ul>
+
+    <ul id="machineCupsRoutesLoaded" data-role="listview" data-inset="true">
+        <li data-role="list-divider">Loaded & Verified</li>
+        <li><div id="machineCupsRoutesLoadedDiv"></div></li>
+    </ul>
 
     </div>
 
@@ -726,7 +678,7 @@
 
 <div id="machineCupsMachinesPage" data-role="page" data-theme="a">
     <div data-role="panel" class="mypanel">
-        <p><a href="#routeCupsRoutesPage" data-role="button">Routes</a></p>
+        <p><a href="#routeCupsRoutesPage" data-role="button">Route Create</a></p>
         <p><a href="#vanCupsRoutesPage" data-role="button">Van Load</a></p>
         <p><a href="#machineCupsRoutesPage" data-role="button">Machine Load</a></p>
         <p><a href="" data-role="button" onclick="app.logout()">Log Out</a></p>
@@ -743,13 +695,12 @@
 
     <div data-role="content">   
 
-    <h1>Machine Load Cups</h1>
-    <p id="machineCupsMachinesDateHeader"></p>
-    <p id="machineCupsMachinesVanNameHeader"></p>
-    <p id="machineCupsMachinesAddressAbbrevHeader"></p>
-    <!-- // gets populated with...
-        <li> <a href="#machineFlavorsPage">Machine 1<span class="ui-li-count">250</span></a> </li>
-    -->
+    <h1>Machine Load</h1>
+
+    <div data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">
+    <p><span id="machineCupsMachinesDateHeader"></span> - <span id="machineCupsMachinesVanNameHeader"></span></p>
+    </div>
+
     <div id="machineCupsMachinesPageOuterList" data-role="collapsible-set"></div>
 
     </div>
@@ -771,12 +722,13 @@
     <div data-role="content">   
 
     <h1>Machine Load Cups</h1>
-    <p id="machineCupsFlavorsDateHeader"></p>
-    <p id="machineCupsFlavorsVanNameHeader"></p>
-    <p id="machineCupsFlavorsAddressAbbrevHeader"></p>
+    <div data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">
+    <p><span id="machineCupsFlavorsDateHeader"></span> - <span id="machineCupsFlavorsVanNameHeader"></span></p>
+    <p id="machineCupsFlavorsLocationHeader"></p>
     <p id="machineCupsFlavorsMachineNameHeader"></p>
+    <p>Machine Load Status: <span id="machineCupsFlavorsMachineLoadStatus">Machine Not Loaded</span></p>
+    </div>
 
-        <div>Machine Load Status: <span id="machineCupsFlavorsMachineLoadStatus">Machine Not Loaded</span></div>
 
         <!-- // gets populated with...
         <li>
@@ -826,12 +778,14 @@
     <div data-role="content">   
 
     <h1>Machine Load Coins</h1>
-    <p id="machineCoinsLoadDateHeader"></p>
-    <p id="machineCoinsLoadVanNameHeader"></p>
-    <p id="machineCoinsLoadAddressAbbrevHeader"></p>
+    <div data-form="ui-body-a" class="ui-body ui-body-a ui-corner-all">
+    <p><span id="machineCoinsLoadDateHeader"></span> - <span id="machineCoinsLoadVanNameHeader"></span></p>
+    <p id="machineCoinsLoadLocationHeader"></p>
     <p id="machineCoinsLoadMachineNameHeader"></p>
+    <p>Machine Load Status: <span id="machineCoinsLoadMachineLoadStatus">Machine Not Loaded</span></p>
+    </div>
 
-    <div>Machine Load Status: <span id="machineCoinsLoadMachineLoadStatus">Machine Not Loaded</span></div>
+
 
         <form id="machineCoinsLoadForm">
 
